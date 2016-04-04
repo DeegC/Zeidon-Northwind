@@ -1,0 +1,61 @@
+<div *ngIf="product">
+ <h2>Product {{product.ProductId}} details</h2>
+ <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+  <div>
+   <label>id: </label>{{product.ProductId}}
+  </div>
+  <div>
+   <label>category: </label> 
+   {{product.Category.CategoryName}}
+  </div>
+  <div>
+   <label>name: </label> <input [(ngModel)]="product.ProductName"
+    placeholder="name" />
+  </div>
+  
+  <div>
+   <label>unit price: </label>
+   <input [(ngModel)]="product.UnitPrice" placeholder="price" />
+  </div>
+
+  <div>
+   <label>units in stock: </label>
+   <input [(ngModel)]="product.UnitsInStock" placeholder="in stock" />
+  </div>
+
+  <div>
+   <label>quantity per unit: </label>
+   <input [(ngModel)]="product.QuantityPerUnit" placeholder="quantity/unit" />
+  </div>
+
+  <div>
+   <label>reorder level: </label>
+   <input [(ngModel)]="product.ReorderLevel" placeholder="reorder level" />
+  </div>
+
+  <div>
+   <label>units on order: </label>
+   <input [(ngModel)]="product.UnitsOnOrder" placeholder="in stock" />
+  </div>
+
+  <div>
+   <label>discontinued? </label>
+   <input [(ngModel)]="product.Discontinued" type="checkbox" />
+  </div>
+  
+  <h2>Supplier</h2>
+  
+  <div>
+   <label>company name: </label> 
+   <input [(ngModel)]="product.Supplier.CompanyName" [readonly]="true" />
+  </div>
+  <div>
+   <label>contact name: </label> 
+   <input [(ngModel)]="product.Supplier.ContactName" [readonly]="true" />
+  </div>
+
+  <button type="submit" class="btn btn-default">Save</button>
+  <button (click)="goBack()">Back</button>
+ </form>
+</div>
+

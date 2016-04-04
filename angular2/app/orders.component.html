@@ -1,0 +1,15 @@
+<h2>Orders List</h2>
+ <div>
+  <label>Search: </label> <input [(ngModel)]="searchText" placeholder="search" />
+ </div>
+<button (click)="searchOrders()">Search</button>
+<pagination [pagination]='pagination'></pagination>
+<ul class="orders">
+    <li *ngFor="#order of orders" 
+      [class.selected]="order === selectedOrder"
+      (click)="gotoDetail(order)">
+      <span class="badge">{{order.OrderId}}</span> 
+      <span class="shipdate">{{order.OrderDate}}</span>
+      <span> {{order.ShipName}} </span>
+    </li>
+</ul>

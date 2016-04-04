@@ -1,0 +1,19 @@
+<div *ngIf="shipper">
+ <h2>{{shipper.ShipperId}} details!</h2>
+ <form (ngSubmit)="onSubmit()" #shipperForm="ngForm">
+  <div>
+   <label>id: </label>{{shipper.ShipperId}}
+  </div>
+  <div>
+   <label>name: </label> <input [(ngModel)]="shipper.CompanyName"
+    placeholder="name" />
+  </div>
+  <div>
+   <label>phone: </label> <input [(ngModel)]="shipper.Phone"
+    placeholder="phone" />
+  </div>
+  <button type="submit" class="btn btn-default">Save</button>
+  <button (click)="goBack()">Back</button>
+ </form>
+</div>
+
