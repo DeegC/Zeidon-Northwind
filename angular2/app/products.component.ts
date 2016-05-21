@@ -1,7 +1,7 @@
-import {Component} from 'angular2/core';
-import {Output} from 'angular2/core';
-import { Router } from 'angular2/router';
-import {OnInit} from 'angular2/core';
+import {Component} from '@angular/core';
+import {Output} from '@angular/core';
+import { Router } from '@angular/router';
+import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {Pagination} from './pagination';
 import {PaginationComponent} from './pagination.component';

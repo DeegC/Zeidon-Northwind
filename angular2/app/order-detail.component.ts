@@ -1,6 +1,6 @@
-import { Component, OnInit } from 'angular2/core';
-import {RouteParams} from 'angular2/router';
-import {NgForm}    from 'angular2/common';
+import { Component, OnInit } from '@angular/core';
+import {RouteParams} from '@angular/router-deprecated';
+import {NgForm}    from '@angular/common';
 import { NorthwindService } from './northwind.service';
 
 @Component({

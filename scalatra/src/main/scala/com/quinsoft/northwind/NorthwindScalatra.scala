@@ -58,7 +58,8 @@ class NorthwindScalatra extends ScalatraServlet
 
     get("/:lod/:id") {
         activate { task =>
-            val order = View( task ) basedOn params( "lod" )
+            val lodName = params( "lod" )
+            val order = View( task ) basedOn lodName
             order.buildQual( _.root.key = params("id" ) ).readOnly.activate()
         }
     }

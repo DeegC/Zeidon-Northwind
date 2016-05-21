@@ -3,7 +3,7 @@
     "target": "es5",
     "outDir" : "./target",
     "rootDir" : "./app",
-    "module": "system",
+    "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
     "emitDecoratorMetadata": true,
@@ -17,4 +17,3 @@
     "typings/main.d.ts"
   ]
 }
-
