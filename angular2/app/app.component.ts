@@ -23,8 +23,8 @@ import { ProductDetailComponent } from './product-detail.component';
   styleUrls: ['app/app.component.css'],
   directives: [ROUTER_DIRECTIVES],
   providers: [
-    ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
+    ROUTER_PROVIDERS,
     NorthwindService
   ]
 })
