@@ -3,15 +3,16 @@
  */
 package com.quinsoft.northwind
 
-import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import org.junit.Before
 import org.junit.Test
-import com.quinsoft.zeidon.scala.ZeidonOperations
+import com.quinsoft.zeidon.Blob
+import com.quinsoft.zeidon.PessimisticLockingException
+import com.quinsoft.zeidon.ZeidonException
 import com.quinsoft.zeidon.scala.View
 import com.quinsoft.zeidon.standardoe.JavaObjectEngine
-import com.quinsoft.zeidon.ZeidonException
-import com.quinsoft.zeidon.PessimisticLockingException
+import org.apache.commons.io.FileUtils
+import java.io.File
 
 /**
  * Unit tests that use Northwind to test Zeidon JOE.
@@ -84,5 +85,23 @@ class ZeidonUnitTests {
             // This will remove the pessimistic lock.
             product drop()
         }
+    }
+
+    @Test
+    def testBlobs() {
+        val empl = View( task ) basedOn "Employee"
+        empl.activateWhere( _.Employee.EmployeeId = 1 )
+
+        import java.nio.file.{Files, Paths}
+        val byteArray = Files.readAllBytes(Paths.get("src/test/resources/picture.jpg"))
+        empl.Employee.Photo = byteArray
+        empl commit()
+
+        val empl2 = View( task ) basedOn "Employee"
+        empl2.activateWhere( _.Employee.EmployeeId = 1 )
+
+        assertEquals( empl.Employee.Photo, empl2.Employee.Photo )
+        Files.write(Paths.get("target/picture.jpg"), empl2.Employee.Photo.getBlob.getBytes )
+        FileUtils.write( new File( "target/picture.txt"), empl2.Employee.Photo.getString() )
     }
 }
