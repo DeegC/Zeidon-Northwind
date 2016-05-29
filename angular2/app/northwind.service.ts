@@ -1,9 +1,10 @@
 import {ORDERS} from './mock-orders';
 import {Injectable} from '@angular/core';
-import {Http, Response} from '@angular/http';
 import {Observable}     from 'rxjs/Observable';
-import {Headers, RequestOptions} from '@angular/http';
 import {Pagination} from './pagination';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+
+import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class NorthwindService {
@@ -19,10 +20,12 @@ export class NorthwindService {
             searchParam = "&product=" + searchText;
         
         return this.http.get(this._northwindUrl + '/Order' + pagination.getQueryParam() + searchParam )
-                    .map(res => <any> res.json() )
-                    .do( json => {
+                    .toPromise()
+                    .then(res => { 
+                        let json = <any> res.json();
                         pagination.setFromResuts(json);
-                     })
+                        return json;
+                    } )
                     .catch(this.handleError);
     }
     
@@ -30,8 +33,8 @@ export class NorthwindService {
         console.log( "trying to get orders from " + this.http );
         
         return this.http.get(this._northwindUrl + '/Order/' + id  )
-                    .map(res => <any> res.json().Order[0] )
-                    .do(data => console.log(data)) // eyeball results in the console
+                    .toPromise()
+                    .then(res => <any> res.json().Order[0] )
                     .catch(this.handleError);
     }
     
@@ -39,8 +42,8 @@ export class NorthwindService {
         console.log( "trying to get orders from " + this.http );
         
         return this.http.get(this._northwindUrl + '/Shipper' )
-                    .map(res => <any[]> res.json().Shipper )
-                    .do(data => console.log(data)) // eyeball results in the console
+                    .toPromise()
+                    .then(res => <any[]> res.json().Shipper )
                     .catch(this.handleError);
     }
     
@@ -48,17 +51,17 @@ export class NorthwindService {
         console.log( "trying to get shipper from " + this.http );
         
         return this.http.get(this._northwindUrl + '/Shipper/' + id  )
-                    .map(res => <any> res.json().Shipper[0] )
-                    .do(data => console.log(data)) // eyeball results in the console
+                    .toPromise()
+                    .then(res => <any> res.json().Shipper[0] )
                     .catch(this.handleError);
     }
  
-    addShipper( name: string ): Observable<any> {
+    addShipper( name: string ): Promise<any> {
         let shipper = { "CompanyName": name };
         return this.commitLod( shipper, 'Shipper' );
     }
     
-    commitShipper( shipper: any ): Observable<any> {
+    commitShipper( shipper: any ): Promise<any> {
         return this.commitLod( shipper, "Shipper" );
     }
     
@@ -69,10 +72,12 @@ export class NorthwindService {
             searchParam = "&name=" + searchText;
         
         return this.http.get(this._northwindUrl + '/Product' + pagination.getQueryParam() + searchParam )
-                    .map(res => <any> res.json() )
-                    .do( json => {
+                    .toPromise()
+                    .then(res => { 
+                        let json = <any> res.json();
                         pagination.setFromResuts(json);
-                     })
+                        return json;
+                    } )
                     .catch(this.handleError);
     }
     
@@ -80,21 +85,21 @@ export class NorthwindService {
         console.log( "trying to get product from " + this.http );
         
         return this.http.get(this._northwindUrl + '/Product/' + id  )
-                    .map(res => <any> res.json().Product[0] )
-                    .do(data => console.log(data)) // eyeball results in the console
+                    .toPromise()
+                    .then(res => <any> res.json().Product[0] )
                     .catch(this.handleError);
     }
  
-    addProduct( name: string ): Observable<any> {
+    addProduct( name: string ): Promise<any> {
         let product = { "CompanyName": name };
         return this.commitLod( product, 'Product' );
     }
     
-    commitProduct( product: any ): Observable<any> {
+    commitProduct( product: any ): Promise<any> {
         return this.commitLod( product, "Product" );
     }
     
-    private commitLod( lod: any, lodName: string ): Observable<any> {
+    private commitLod( lod: any, lodName: string ): Promise<any> {
         let payload = {}
         payload[lodName] = [ lod ];
         let body = JSON.stringify( payload );
@@ -103,9 +108,10 @@ export class NorthwindService {
         let headers = new Headers( { 'Content-Type': 'text' });
         let options = new RequestOptions( { headers: headers });
 
-        return this.http.post( this._northwindUrl + '/' + lodName, body, options )
-            .map( res => <any>res.json().data )
-            .catch( this.handleError )
+        return this.http.post( this._northwindUrl + '/' + lodName, body, { headers: headers } )
+                    .toPromise()
+                    .then( res => <any>res.json().data )
+                    .catch( this.handleError )
     }
     
     private handleError(error: Response) {

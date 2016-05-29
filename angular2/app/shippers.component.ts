@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import { Router } from '@angular/router';
+import { Router } from '@angular/router-deprecated';
 import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {ShipperDetailComponent} from './shipper-detail.component';
@@ -21,7 +21,7 @@ export class ShippersComponent implements OnInit {
 
     getShippers() {
         this._northwindService.getShippers()
-                     .subscribe(
+                     .then(
                           shippers => this.shippers = shippers,
                           error =>  this.errorMessage = <any>error);
     }
@@ -29,15 +29,15 @@ export class ShippersComponent implements OnInit {
     addShipper( name: string ) {
         if ( !name ) { return; }
         this._northwindService.addShipper( name )
-            .subscribe( shipper => this.shippers.push( shipper ),
-                        error => this.errorMessage = <any>error );
+            .then( shipper => this.shippers.push( shipper ),
+                   error => this.errorMessage = <any>error );
     }
 
     ngOnInit() {
         this.getShippers();
     }
 
-    gotoDetail( shipper) {
+    gotoDetail( shipper: any ) {
         this.selectedShipper = shipper;
         this._router.navigate(['ShipperDetail', { id: this.selectedShipper.ShipperId }]);
     }

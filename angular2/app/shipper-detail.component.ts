@@ -23,16 +23,16 @@ export class ShipperDetailComponent implements OnInit {
         console.log( "ShipperDetail init" );
 
         this._northwindService.getShipper( id )
-            .subscribe(
-            shipper => this.shipper = shipper,
-            error => this.errorMessage = <any>error );
+            .then(
+                shipper => this.shipper = shipper,
+                error => this.errorMessage = <any>error );
     }
 
     onSubmit() {
         console.log( JSON.stringify( this.shipper, null, 2 ) );
         this._northwindService.commitShipper( this.shipper )
-            .subscribe( shipper => {},
-                        error => this.errorMessage = <any>error );
+            .then( shipper => {},
+                   error => this.errorMessage = <any>error );
     }
     
     goBack() {

@@ -24,8 +24,7 @@ export class OrderDetailComponent implements OnInit {
         console.log( "OrderDetail init" );
 
         this._northwindService.getOrder( id )
-            .subscribe( order => this.order = order,
-                        error => this.errorMessage = <any>error );
+            .then( order => this.order = order );
     }
 
     onSubmit() { 
