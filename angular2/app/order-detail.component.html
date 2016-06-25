@@ -43,7 +43,7 @@
 		        </tr>
 		    </thead>
 		    <tbody>
-		        <tr *ngFor="#detail of order.OrderDetail">
+		        <tr *ngFor="let detail of order.OrderDetail">
 		            <td>{{detail.Product.ProductName}}</td>
                     <td>{{detail.Quantity}}</td>
                     <td>{{detail.UnitPrice}}</td>

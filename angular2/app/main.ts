@@ -1,6 +1,9 @@
-import {bootstrap}    from 'angular2/platform/browser'
-import {AppComponent} from './app.component'
-// Add all operators to Observable
-import 'rxjs/Rx';
+import {bootstrap}    from '@angular/platform-browser-dynamic';
+import {AppComponent} from './app.component';
+import { HTTP_PROVIDERS } from '@angular/http';
+
 
 bootstrap(AppComponent);
+bootstrap(AppComponent, [
+    HTTP_PROVIDERS
+]);

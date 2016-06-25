@@ -1,6 +1,6 @@
-import { Component } from 'angular2/core';
-import { HTTP_PROVIDERS } from 'angular2/http';
-import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
+import { Component } from '@angular/core';
+import { HTTP_PROVIDERS } from '@angular/http';
+import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
 import { NorthwindService }     from './northwind.service';
 import { OrdersComponent } from './orders.component';
 import { OrderDetailComponent } from './order-detail.component';
@@ -23,8 +23,8 @@ import { ProductDetailComponent } from './product-detail.component';
   styleUrls: ['app/app.component.css'],
   directives: [ROUTER_DIRECTIVES],
   providers: [
-    ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
+    ROUTER_PROVIDERS,
     NorthwindService
   ]
 })

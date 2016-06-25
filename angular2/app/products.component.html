@@ -7,7 +7,7 @@
 <pagination [pagination]='pagination'></pagination>
 
 <ul class="products">
-    <li *ngFor="#product of products" 
+    <li *ngFor="let product of products" 
       [class.selected]="product === selectedProduct"
       (click)="gotoDetail(product)">
       <span class="badge">{{product.ProductId}}</span> {{product.ProductName}}

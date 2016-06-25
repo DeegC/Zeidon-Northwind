@@ -33,7 +33,7 @@ export class Pagination {
         return pageParam;
     }
     
-    setFromResuts( json ) {
+    setFromResuts( json: any ) {
         if ( json.totalRootCount ) {
             this.totalCount = json.totalRootCount;
             this.totalPages = Math.floor( this.totalCount / 20 ) + 1;

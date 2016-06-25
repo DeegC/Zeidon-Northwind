@@ -1,6 +1,6 @@
-import {Component} from 'angular2/core';
-import { Router } from 'angular2/router';
-import {OnInit} from 'angular2/core';
+import {Component} from '@angular/core';
+import { Router } from '@angular/router-deprecated';
+import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {OrderDetailComponent} from './order-detail.component';
 import {Pagination} from './pagination';
@@ -26,9 +26,7 @@ export class OrdersComponent implements OnInit {
 
     getOrders() {
         this._northwindService.getOrders( this.pagination, this.searchText )
-                     .subscribe(
-                          json => this.orders = json.Order,
-                          error =>  this.errorMessage = <any>error);
+                     .then( json => this.orders = json.Order );
     }
     
     ngOnInit() {
@@ -40,7 +38,7 @@ export class OrdersComponent implements OnInit {
         this.getOrders();
     }
 
-    gotoDetail( order) {
+    gotoDetail( order: any ) {
         this.selectedOrder = order;
         this._router.navigate(['OrderDetail', { id: this.selectedOrder.OrderId }]);
     }

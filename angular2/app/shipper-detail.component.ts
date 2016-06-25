@@ -1,7 +1,7 @@
-import { Component, OnInit } from 'angular2/core';
-import {RouteParams} from 'angular2/router';
+import { Component, OnInit } from '@angular/core';
+import {RouteParams} from '@angular/router-deprecated';
 import { NorthwindService } from './northwind.service';
-import {NgForm}    from 'angular2/common';
+import {NgForm}    from '@angular/common';
 
 @Component({
   selector: 'shipper-detail',
@@ -23,16 +23,16 @@ export class ShipperDetailComponent implements OnInit {
         console.log( "ShipperDetail init" );
 
         this._northwindService.getShipper( id )
-            .subscribe(
-            shipper => this.shipper = shipper,
-            error => this.errorMessage = <any>error );
+            .then(
+                shipper => this.shipper = shipper,
+                error => this.errorMessage = <any>error );
     }
 
     onSubmit() {
         console.log( JSON.stringify( this.shipper, null, 2 ) );
         this._northwindService.commitShipper( this.shipper )
-            .subscribe( shipper => {},
-                        error => this.errorMessage = <any>error );
+            .then( shipper => {},
+                   error => this.errorMessage = <any>error );
     }
     
     goBack() {

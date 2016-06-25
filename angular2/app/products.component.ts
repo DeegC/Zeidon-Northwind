@@ -1,7 +1,7 @@
-import {Component} from 'angular2/core';
-import {Output} from 'angular2/core';
-import { Router } from 'angular2/router';
-import {OnInit} from 'angular2/core';
+import {Component} from '@angular/core';
+import {Output} from '@angular/core';
+import { Router } from '@angular/router-deprecated';
+import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {Pagination} from './pagination';
 import {PaginationComponent} from './pagination.component';
@@ -27,11 +27,9 @@ export class ProductsComponent implements OnInit {
 
     getProducts() {
         this._northwindService.getProducts( this.pagination, this.searchText )
-                     .subscribe(
-                          json => { 
-                            this.products = json.Product; 
-                          },
-                          error =>  this.errorMessage = <any>error);
+                     .then( json => { 
+                              this.products = json.Product; 
+                            } );
     }
 
     searchProducts() {
@@ -42,8 +40,8 @@ export class ProductsComponent implements OnInit {
     addProduct( name: string ) {
         if ( !name ) { return; }
         this._northwindService.addProduct( name )
-            .subscribe( product => this.products.push( product ),
-                        error => this.errorMessage = <any>error );
+            .then( product => this.products.push( product ),
+                   error => this.errorMessage = <any>error );
     }
     
     // Called from Pagination to load page.
@@ -55,7 +53,7 @@ export class ProductsComponent implements OnInit {
         this.getProducts();
     }
 
-    gotoDetail( product) {
+    gotoDetail( product: any ) {
         this.selectedProduct = product;
         this._router.navigate(['ProductDetail', { id: this.selectedProduct.ProductId }]);
     }

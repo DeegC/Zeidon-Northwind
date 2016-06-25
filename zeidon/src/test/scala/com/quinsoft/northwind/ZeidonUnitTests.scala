@@ -36,6 +36,8 @@ class ZeidonUnitTests {
                 .to( _.Product.ProductName isNotNull )
             .readOnly
             .activate()
+
+        order.serializeOi.withIncremental.toFile("/tmp/orders.json")
     }
 
     @Test
