@@ -5,3 +5,8 @@
 target/
 *~
 npm-debug.log
+
+.gradle/
+build/
+.cache-main
+.cache-tests
