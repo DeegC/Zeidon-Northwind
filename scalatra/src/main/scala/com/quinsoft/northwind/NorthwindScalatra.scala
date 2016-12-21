@@ -2,39 +2,26 @@ package com.quinsoft.northwind
 
 import org.scalatra._
 import java.net.URL
-import org.scalatra.scalate.ScalateSupport
-import org.json4s.{DefaultFormats, Formats}
-import org.scalatra.json._
 import com.quinsoft.zeidon.standardoe.JavaObjectEngine
 import com.quinsoft.zeidon.scala.View
 import com.quinsoft.zeidon.scala.Implicits._
+import com.quinsoft.zeidon.ObjectEngine
 import com.quinsoft.zeidon.Task
 import com.quinsoft.zeidon.standardoe.IncrementalEntityFlags
 import com.quinsoft.zeidon.scala.QualBuilder
+import com.quinsoft.zeidon.scalatra.ZeidonRestScalatra
 
-class NorthwindScalatra extends ScalatraServlet
-                           with ScalateSupport
-                           with JacksonJsonSupport
+class NorthwindScalatra extends ZeidonRestScalatra
                            with CorsSupport {
 
-    protected implicit val jsonFormats: Formats = DefaultFormats
     val oe = JavaObjectEngine.getInstance()
 
+    def getObjectEngine(): ObjectEngine = {
+        return oe
+    }
+
     options("/*") {
-        response.setHeader("Access-Control-Allow-Methods", "POST");
         response.setHeader("Access-Control-Allow-Headers", request.getHeader("Access-Control-Request-Headers"));
-    }
-
-    error {
-      case e: Throwable => {
-        oe.getSystemTask.log().error(e)
-        e.printStackTrace();
-      }
-    }
-
-    // Before every action runs, set the content type to be in JSON format.
-    before() {
-        contentType = formats("json")
     }
 
     get("/:lod") {

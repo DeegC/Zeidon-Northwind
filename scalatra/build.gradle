@@ -1,0 +1,16 @@
+description ="""
+Scalatra server for handling Northwind REST requests.
+
+Project name: ${project.name}
+"""
+
+apply plugin: 'war'
+
+dependencies {
+    compile project(':northwind-zeidon')
+    compile( 'com.quinsoft.zeidon:zeidon-scalatra-rest:1.4.1-SNAPSHOT' ) {
+        exclude module: 'scala-xml_2.11'
+    }
+
+//    compile 'org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016'
+}
