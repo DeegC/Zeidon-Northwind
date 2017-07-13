@@ -13,6 +13,7 @@ import { ZeidonRestConfiguration } from './zeidon-rest-client';
 import { ErrorElementDirective }   from './zeidon-angular';
 
 import { OrdersComponent } from './orders.component';
+import { OrderDetailComponent } from './order-detail.component';
 import { NorthwindService } from './northwind.service';
 
 // If we are running under browserSync then we'll set the port number to be 8080.
@@ -41,11 +42,16 @@ const REST_VALUES: ZeidonRestValues = {
                     {
                         path: 'orders',
                         component: OrdersComponent
+                    },
+                    {
+                        path: 'order/:id',
+                        component: OrderDetailComponent
                     }
                   ])
    ],
   declarations: [ AppComponent,
                   OrdersComponent,
+                  OrderDetailComponent,
                   ErrorElementDirective ],
   providers: [ NorthwindService,
                { provide: ZeidonRestValues, useValue: REST_VALUES },

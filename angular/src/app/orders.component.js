@@ -36,7 +36,7 @@ var OrdersComponent = (function () {
     };
     OrdersComponent.prototype.gotoDetail = function (order) {
         this.selectedOrder = order;
-        this._router.navigate(['OrderDetail', { id: this.selectedOrder.OrderId }]);
+        this._router.navigate(['/order', this.selectedOrder.OrderId]);
     };
     OrdersComponent.prototype.searchOrders = function () {
         this.pagination.reset();

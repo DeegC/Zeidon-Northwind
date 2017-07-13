@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {Pagination} from './pagination';
@@ -42,7 +42,7 @@ export class OrdersComponent implements OnInit {
 
     gotoDetail( order: any ) {
         this.selectedOrder = order;
-        this._router.navigate(['OrderDetail', { id: this.selectedOrder.OrderId }]);
+        this._router.navigate( ['/order', this.selectedOrder.OrderId ] );
     }
 
     searchOrders() {
