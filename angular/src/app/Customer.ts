@@ -1,0 +1,520 @@
+
+/*
+  Generated from LOD Customer
+
+*/
+
+import * as zeidon from './zeidon';
+import { Observable } from 'rxjs';
+import { Northwind_DomainList } from './Northwind-DomainList';
+import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
+
+
+
+// Customer LOD.
+export class Customer extends zeidon.ObjectInstance {
+    protected rootEntityName(): string { return "Customer" };
+
+    public getApplicationName(): String { return "Northwind" };
+
+    getPrototype(entityName: string): any {
+        return CustomerEntityPrototypes[entityName];
+    }
+
+    public getLodDef() {
+        return Customer_LodDef;
+    };
+
+    public getDomain( name: string ): zeidon.Domain { 
+        return Northwind_DomainList[name];
+    };
+
+    public getDomainFunctions( name: string ): any { 
+        return Northwind_DomainFunctions[name];
+    }
+
+
+    get Customer(): zeidon.EntityArray<Customer_Customer> {
+        return this.roots as zeidon.EntityArray<Customer_Customer>;
+    }
+
+    get Customer$(): Customer_Customer {
+        return this.roots.selected() as Customer_Customer;
+    }
+
+    public static activate( qual?: any ): Observable<Customer> {
+        return zeidon.ObjectInstance.activateOi( new Customer(), qual );
+    }
+}
+
+
+export class Customer_Customer extends zeidon.EntityInstance {
+    public get entityName(): string { return "Customer" };
+
+    get CustomerId(): string { return this.getAttribute("CustomerId") };
+    set CustomerId(value: string) { this.setAttribute("CustomerId", value) };
+
+    get CompanyName(): string { return this.getAttribute("CompanyName") };
+    set CompanyName(value: string) { this.setAttribute("CompanyName", value) };
+
+    get ContactName(): string { return this.getAttribute("ContactName") };
+    set ContactName(value: string) { this.setAttribute("ContactName", value) };
+
+    get ContactTitle(): string { return this.getAttribute("ContactTitle") };
+    set ContactTitle(value: string) { this.setAttribute("ContactTitle", value) };
+
+    get Address(): string { return this.getAttribute("Address") };
+    set Address(value: string) { this.setAttribute("Address", value) };
+
+    get City(): string { return this.getAttribute("City") };
+    set City(value: string) { this.setAttribute("City", value) };
+
+    get Region(): string { return this.getAttribute("Region") };
+    set Region(value: string) { this.setAttribute("Region", value) };
+
+    get PostalCode(): string { return this.getAttribute("PostalCode") };
+    set PostalCode(value: string) { this.setAttribute("PostalCode", value) };
+
+    get Country(): string { return this.getAttribute("Country") };
+    set Country(value: string) { this.setAttribute("Country", value) };
+
+    get Phone(): string { return this.getAttribute("Phone") };
+    set Phone(value: string) { this.setAttribute("Phone", value) };
+
+    get Fax(): string { return this.getAttribute("Fax") };
+    set Fax(value: string) { this.setAttribute("Fax", value) };
+
+    get Order(): zeidon.EntityArray<Customer_Order> {
+        return this.getChildEntityArray("Order") as zeidon.EntityArray<Customer_Order>;
+    }
+
+    get Order$(): Customer_Order {
+        return this.getChildEntityArray("Order").selected() as Customer_Order;
+    }
+}
+
+export class Customer_Order extends zeidon.EntityInstance {
+    public get entityName(): string { return "Order" };
+
+    get OrderId(): string { return this.getAttribute("OrderId") };
+    set OrderId(value: string) { this.setAttribute("OrderId", value) };
+
+    get OrderDate(): string { return this.getAttribute("OrderDate") };
+    set OrderDate(value: string) { this.setAttribute("OrderDate", value) };
+
+    get ShippedDate(): string { return this.getAttribute("ShippedDate") };
+    set ShippedDate(value: string) { this.setAttribute("ShippedDate", value) };
+
+    get RequiredDate(): string { return this.getAttribute("RequiredDate") };
+    set RequiredDate(value: string) { this.setAttribute("RequiredDate", value) };
+
+    get Freight(): string { return this.getAttribute("Freight") };
+    set Freight(value: string) { this.setAttribute("Freight", value) };
+
+    get ShipName(): string { return this.getAttribute("ShipName") };
+    set ShipName(value: string) { this.setAttribute("ShipName", value) };
+
+    get ShipAddress(): string { return this.getAttribute("ShipAddress") };
+    set ShipAddress(value: string) { this.setAttribute("ShipAddress", value) };
+
+    get ShipCity(): string { return this.getAttribute("ShipCity") };
+    set ShipCity(value: string) { this.setAttribute("ShipCity", value) };
+
+    get ShipRegion(): string { return this.getAttribute("ShipRegion") };
+    set ShipRegion(value: string) { this.setAttribute("ShipRegion", value) };
+
+    get ShipPostalCode(): string { return this.getAttribute("ShipPostalCode") };
+    set ShipPostalCode(value: string) { this.setAttribute("ShipPostalCode", value) };
+
+    get ShipCountry(): string { return this.getAttribute("ShipCountry") };
+    set ShipCountry(value: string) { this.setAttribute("ShipCountry", value) };
+
+    get OrderDetail(): zeidon.EntityArray<Customer_OrderDetail> {
+        return this.getChildEntityArray("OrderDetail") as zeidon.EntityArray<Customer_OrderDetail>;
+    }
+
+    get OrderDetail$(): Customer_OrderDetail {
+        return this.getChildEntityArray("OrderDetail").selected() as Customer_OrderDetail;
+    }
+}
+
+export class Customer_OrderDetail extends zeidon.EntityInstance {
+    public get entityName(): string { return "OrderDetail" };
+
+    get UnitPrice(): string { return this.getAttribute("UnitPrice") };
+    set UnitPrice(value: string) { this.setAttribute("UnitPrice", value) };
+
+    get Quantity(): string { return this.getAttribute("Quantity") };
+    set Quantity(value: string) { this.setAttribute("Quantity", value) };
+
+    get Discount(): string { return this.getAttribute("Discount") };
+    set Discount(value: string) { this.setAttribute("Discount", value) };
+}
+
+const CustomerEntityPrototypes = {
+    Customer: Customer_Customer.prototype, 
+    Order: Customer_Order.prototype, 
+    OrderDetail: Customer_OrderDetail.prototype, 
+}
+
+export const Customer_LodDef = {
+    name: "Customer",
+    entities: {
+        Customer: {
+            name:       "Customer",
+            erToken:    "110000238",
+            create:     true,
+            cardMax:    0,
+            hasInit:    false,
+            creatable:  true,
+            includable: false,
+            deletable:  true,
+            excludable: false,
+            updatable:  true,
+            parentDelete: true,
+            childEntities: {
+                Order: {},
+            },
+            attributes: {
+                CustomerId: {
+                    name:         "CustomerId",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          true,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                CompanyName: {
+                    name:         "CompanyName",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ContactName: {
+                    name:         "ContactName",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ContactTitle: {
+                    name:         "ContactTitle",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Address: {
+                    name:         "Address",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                City: {
+                    name:         "City",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Region: {
+                    name:         "Region",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                PostalCode: {
+                    name:         "PostalCode",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Country: {
+                    name:         "Country",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Phone: {
+                    name:         "Phone",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Fax: {
+                    name:         "Fax",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+            }
+        },
+
+        Order: {
+            name:       "Order",
+            erToken:    "110000286",
+            create:     false,
+            cardMax:    999999,
+            hasInit:    false,
+            creatable:  false,
+            includable: false,
+            deletable:  false,
+            excludable: false,
+            updatable:  false,
+            parentDelete: false,
+            childEntities: {
+                OrderDetail: {},
+            },
+            attributes: {
+                OrderId: {
+                    name:         "OrderId",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "GeneratedKey",
+                    persistent:   true,
+                    key:          true,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                OrderDate: {
+                    name:         "OrderDate",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "DateTime",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShippedDate: {
+                    name:         "ShippedDate",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "DateTime",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                RequiredDate: {
+                    name:         "RequiredDate",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "DateTime",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Freight: {
+                    name:         "Freight",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Double",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShipName: {
+                    name:         "ShipName",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShipAddress: {
+                    name:         "ShipAddress",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShipCity: {
+                    name:         "ShipCity",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShipRegion: {
+                    name:         "ShipRegion",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShipPostalCode: {
+                    name:         "ShipPostalCode",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                ShipCountry: {
+                    name:         "ShipCountry",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                EMPLOYEEID: {
+                    name:         "EMPLOYEEID",
+                    hidden:       true,
+                    required:     true,
+                    domainName:   "GeneratedKey",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   true,
+                },
+                CUSTOMERID: {
+                    name:         "CUSTOMERID",
+                    hidden:       true,
+                    required:     true,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   true,
+                },
+                SHIPPERID: {
+                    name:         "SHIPPERID",
+                    hidden:       true,
+                    required:     true,
+                    domainName:   "GeneratedKey",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   true,
+                },
+            }
+        },
+
+        OrderDetail: {
+            name:       "OrderDetail",
+            erToken:    "110000399",
+            create:     false,
+            cardMax:    999999,
+            hasInit:    false,
+            creatable:  false,
+            includable: false,
+            deletable:  false,
+            excludable: false,
+            updatable:  false,
+            parentDelete: false,
+            childEntities: {
+            },
+            attributes: {
+                UnitPrice: {
+                    name:         "UnitPrice",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "Double",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Quantity: {
+                    name:         "Quantity",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "Integer",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Discount: {
+                    name:         "Discount",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "Double",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                PRODUCTID: {
+                    name:         "PRODUCTID",
+                    hidden:       true,
+                    required:     true,
+                    domainName:   "GeneratedKey",
+                    persistent:   true,
+                    key:          true,
+                    update:       true,
+                    foreignKey:   true,
+                },
+                ORDERID: {
+                    name:         "ORDERID",
+                    hidden:       true,
+                    required:     true,
+                    domainName:   "GeneratedKey",
+                    persistent:   true,
+                    key:          true,
+                    update:       true,
+                    foreignKey:   true,
+                },
+            }
+        },
+
+    }
+}
