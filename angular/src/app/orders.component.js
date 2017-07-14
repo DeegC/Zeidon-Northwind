@@ -19,7 +19,6 @@ var OrdersComponent = (function () {
         this._router = _router;
         this._northwindService = _northwindService;
         this.pagination = new pagination_1.Pagination(this);
-        console.log("here");
     }
     OrdersComponent.prototype.getOrders = function () {
         var _this = this;
@@ -36,7 +35,7 @@ var OrdersComponent = (function () {
     };
     OrdersComponent.prototype.gotoDetail = function (order) {
         this.selectedOrder = order;
-        this._router.navigate(['OrderDetail', { id: this.selectedOrder.OrderId }]);
+        this._router.navigate(['/order', this.selectedOrder.OrderId]);
     };
     OrdersComponent.prototype.searchOrders = function () {
         this.pagination.reset();

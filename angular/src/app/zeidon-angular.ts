@@ -28,7 +28,6 @@ export class ErrorElementDirective implements Validator, OnInit, OnChanges {
     constructor( private el: ElementRef,
                  private renderer: Renderer,
                  private viewContainer: ViewContainerRef ) {
-        console.log("constructor")
         this.attributeName = el.nativeElement.attributes.formControlName;
     }
 

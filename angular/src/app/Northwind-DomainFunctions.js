@@ -22,6 +22,9 @@ var BaseDomainFunctions = (function () {
         this.checkForRequiredValue(value, attributeDef);
         return value;
     };
+    BaseDomainFunctions.prototype.convertToJsType = function (value, attributeDef) {
+        return value;
+    };
     return BaseDomainFunctions;
 }());
 exports.BaseDomainFunctions = BaseDomainFunctions;
@@ -129,6 +132,21 @@ var DoubleDomainFunctions = (function (_super) {
     return DoubleDomainFunctions;
 }(BaseDomainFunctions));
 exports.DoubleDomainFunctions = DoubleDomainFunctions;
+var DateTimeDomainFunctions = (function (_super) {
+    __extends(DateTimeDomainFunctions, _super);
+    function DateTimeDomainFunctions() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    DateTimeDomainFunctions.prototype.convertExternalValue = function (value, attributeDef, context) {
+        this.checkForRequiredValue(value, attributeDef);
+        return Date.parse(value);
+    };
+    DateTimeDomainFunctions.prototype.convertToJsType = function (value, attributeDef) {
+        return new Date(value);
+    };
+    return DateTimeDomainFunctions;
+}(BaseDomainFunctions));
+exports.DateTimeDomainFunctions = DateTimeDomainFunctions;
 var xxxDomainFunctions = (function (_super) {
     __extends(xxxDomainFunctions, _super);
     function xxxDomainFunctions() {
@@ -136,6 +154,9 @@ var xxxDomainFunctions = (function (_super) {
     }
     xxxDomainFunctions.prototype.convertExternalValue = function (value, attributeDef, context) {
         this.checkForRequiredValue(value, attributeDef);
+        return value;
+    };
+    xxxDomainFunctions.prototype.convertToJsType = function (value, attributeDef) {
         return value;
     };
     return xxxDomainFunctions;

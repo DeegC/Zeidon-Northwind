@@ -7,10 +7,12 @@
   <ul class="orders">
       <li *ngFor="let order of orders.Order"
         [class.selected]="order === selectedOrder"
-        (click)="gotoDetail(order)">
-        <span class="badge">{{order.OrderId}}</span>
-        <span class="shipdate">{{order.OrderDate}}</span>
-        <span> {{order.ShipName}} </span>
+        >
+        <a [routerLink]="['/order', order.OrderId]"  class="col-1-4">
+          <span class="badge">{{order.OrderId}}</span>
+          <span class="shipdate">{{order.OrderDate}}</span>
+          <span> {{order.ShipName}} </span>
+        </a>
       </li>
   </ul>
 </div>

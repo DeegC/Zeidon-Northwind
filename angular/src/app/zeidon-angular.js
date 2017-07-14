@@ -26,7 +26,6 @@ var ErrorElementDirective = ErrorElementDirective_1 = (function () {
         this.el = el;
         this.renderer = renderer;
         this.viewContainer = viewContainer;
-        console.log("constructor");
         this.attributeName = el.nativeElement.attributes.formControlName;
     }
     ErrorElementDirective.prototype.ngOnInit = function () {
