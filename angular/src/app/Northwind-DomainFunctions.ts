@@ -128,8 +128,11 @@ export class DateTimeDomainFunctions extends BaseDomainFunctions {
 
     convertToJsType( value: any, attributeDef: any ): any {
         return new Date( value );
-    }}
+    }
+}
 
+export class DateDomainFunctions extends DateTimeDomainFunctions {
+}
 
 export class xxxDomainFunctions extends BaseDomainFunctions {
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
@@ -146,4 +149,6 @@ export const Northwind_DomainFunctions = {
     "com.quinsoft.zeidon.domains.IntegerDomain": new IntegerDomainFunctions(),
     "com.quinsoft.zeidon.domains.StringDomain": new StringDomainFunctions(),
     "com.quinsoft.zeidon.domains.DoubleDomain": new DoubleDomainFunctions(),
+    "com.quinsoft.zeidon.domains.DateTimeDomain": new DateTimeDomainFunctions(),
+    "com.quinsoft.zeidon.domains.DateDomain": new DateDomainFunctions(),
 }

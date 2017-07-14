@@ -66,11 +66,11 @@ export class Employee_Employee extends zeidon.EntityInstance {
     get TitleOfCourtesy(): string { return this.getAttribute("TitleOfCourtesy") };
     set TitleOfCourtesy(value: string) { this.setAttribute("TitleOfCourtesy", value) };
 
-    get BirthDate(): string { return this.getAttribute("BirthDate") };
-    set BirthDate(value: string) { this.setAttribute("BirthDate", value) };
+    get BirthDate(): Date { return this.getAttribute("BirthDate") };
+    set BirthDate(value: Date) { this.setAttribute("BirthDate", value) };
 
-    get HireDate(): string { return this.getAttribute("HireDate") };
-    set HireDate(value: string) { this.setAttribute("HireDate", value) };
+    get HireDate(): Date { return this.getAttribute("HireDate") };
+    set HireDate(value: Date) { this.setAttribute("HireDate", value) };
 
     get HomePhone(): string { return this.getAttribute("HomePhone") };
     set HomePhone(value: string) { this.setAttribute("HomePhone", value) };
@@ -102,8 +102,8 @@ export class Employee_Employee extends zeidon.EntityInstance {
     get PhotoPath(): string { return this.getAttribute("PhotoPath") };
     set PhotoPath(value: string) { this.setAttribute("PhotoPath", value) };
 
-    get Salary(): string { return this.getAttribute("Salary") };
-    set Salary(value: string) { this.setAttribute("Salary", value) };
+    get Salary(): number { return this.getAttribute("Salary") };
+    set Salary(value: number) { this.setAttribute("Salary", value) };
 
     get DirectReport(): zeidon.EntityArray<Employee_DirectReport> {
         return this.getChildEntityArray("DirectReport") as zeidon.EntityArray<Employee_DirectReport>;
@@ -148,11 +148,11 @@ export class Employee_DirectReport extends zeidon.EntityInstance {
     get TitleOfCourtesy(): string { return this.getAttribute("TitleOfCourtesy") };
     set TitleOfCourtesy(value: string) { this.setAttribute("TitleOfCourtesy", value) };
 
-    get BirthDate(): string { return this.getAttribute("BirthDate") };
-    set BirthDate(value: string) { this.setAttribute("BirthDate", value) };
+    get BirthDate(): Date { return this.getAttribute("BirthDate") };
+    set BirthDate(value: Date) { this.setAttribute("BirthDate", value) };
 
-    get HireDate(): string { return this.getAttribute("HireDate") };
-    set HireDate(value: string) { this.setAttribute("HireDate", value) };
+    get HireDate(): Date { return this.getAttribute("HireDate") };
+    set HireDate(value: Date) { this.setAttribute("HireDate", value) };
 
     get HomePhone(): string { return this.getAttribute("HomePhone") };
     set HomePhone(value: string) { this.setAttribute("HomePhone", value) };
@@ -184,8 +184,8 @@ export class Employee_DirectReport extends zeidon.EntityInstance {
     get PhotoPath(): string { return this.getAttribute("PhotoPath") };
     set PhotoPath(value: string) { this.setAttribute("PhotoPath", value) };
 
-    get Salary(): string { return this.getAttribute("Salary") };
-    set Salary(value: string) { this.setAttribute("Salary", value) };
+    get Salary(): number { return this.getAttribute("Salary") };
+    set Salary(value: number) { this.setAttribute("Salary", value) };
 }
 
 export class Employee_Supervisor extends zeidon.EntityInstance {
@@ -206,11 +206,11 @@ export class Employee_Supervisor extends zeidon.EntityInstance {
     get TitleOfCourtesy(): string { return this.getAttribute("TitleOfCourtesy") };
     set TitleOfCourtesy(value: string) { this.setAttribute("TitleOfCourtesy", value) };
 
-    get BirthDate(): string { return this.getAttribute("BirthDate") };
-    set BirthDate(value: string) { this.setAttribute("BirthDate", value) };
+    get BirthDate(): Date { return this.getAttribute("BirthDate") };
+    set BirthDate(value: Date) { this.setAttribute("BirthDate", value) };
 
-    get HireDate(): string { return this.getAttribute("HireDate") };
-    set HireDate(value: string) { this.setAttribute("HireDate", value) };
+    get HireDate(): Date { return this.getAttribute("HireDate") };
+    set HireDate(value: Date) { this.setAttribute("HireDate", value) };
 
     get HomePhone(): string { return this.getAttribute("HomePhone") };
     set HomePhone(value: string) { this.setAttribute("HomePhone", value) };
@@ -242,8 +242,8 @@ export class Employee_Supervisor extends zeidon.EntityInstance {
     get PhotoPath(): string { return this.getAttribute("PhotoPath") };
     set PhotoPath(value: string) { this.setAttribute("PhotoPath", value) };
 
-    get Salary(): string { return this.getAttribute("Salary") };
-    set Salary(value: string) { this.setAttribute("Salary", value) };
+    get Salary(): number { return this.getAttribute("Salary") };
+    set Salary(value: number) { this.setAttribute("Salary", value) };
 }
 
 export class Employee_Territory extends zeidon.EntityInstance {

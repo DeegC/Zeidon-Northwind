@@ -99,17 +99,17 @@ export class Customer_Order extends zeidon.EntityInstance {
     get OrderId(): string { return this.getAttribute("OrderId") };
     set OrderId(value: string) { this.setAttribute("OrderId", value) };
 
-    get OrderDate(): string { return this.getAttribute("OrderDate") };
-    set OrderDate(value: string) { this.setAttribute("OrderDate", value) };
+    get OrderDate(): Date { return this.getAttribute("OrderDate") };
+    set OrderDate(value: Date) { this.setAttribute("OrderDate", value) };
 
-    get ShippedDate(): string { return this.getAttribute("ShippedDate") };
-    set ShippedDate(value: string) { this.setAttribute("ShippedDate", value) };
+    get ShippedDate(): Date { return this.getAttribute("ShippedDate") };
+    set ShippedDate(value: Date) { this.setAttribute("ShippedDate", value) };
 
-    get RequiredDate(): string { return this.getAttribute("RequiredDate") };
-    set RequiredDate(value: string) { this.setAttribute("RequiredDate", value) };
+    get RequiredDate(): Date { return this.getAttribute("RequiredDate") };
+    set RequiredDate(value: Date) { this.setAttribute("RequiredDate", value) };
 
-    get Freight(): string { return this.getAttribute("Freight") };
-    set Freight(value: string) { this.setAttribute("Freight", value) };
+    get Freight(): number { return this.getAttribute("Freight") };
+    set Freight(value: number) { this.setAttribute("Freight", value) };
 
     get ShipName(): string { return this.getAttribute("ShipName") };
     set ShipName(value: string) { this.setAttribute("ShipName", value) };
@@ -141,14 +141,14 @@ export class Customer_Order extends zeidon.EntityInstance {
 export class Customer_OrderDetail extends zeidon.EntityInstance {
     public get entityName(): string { return "OrderDetail" };
 
-    get UnitPrice(): string { return this.getAttribute("UnitPrice") };
-    set UnitPrice(value: string) { this.setAttribute("UnitPrice", value) };
+    get UnitPrice(): number { return this.getAttribute("UnitPrice") };
+    set UnitPrice(value: number) { this.setAttribute("UnitPrice", value) };
 
-    get Quantity(): string { return this.getAttribute("Quantity") };
-    set Quantity(value: string) { this.setAttribute("Quantity", value) };
+    get Quantity(): number { return this.getAttribute("Quantity") };
+    set Quantity(value: number) { this.setAttribute("Quantity", value) };
 
-    get Discount(): string { return this.getAttribute("Discount") };
-    set Discount(value: string) { this.setAttribute("Discount", value) };
+    get Discount(): number { return this.getAttribute("Discount") };
+    set Discount(value: number) { this.setAttribute("Discount", value) };
 }
 
 const CustomerEntityPrototypes = {

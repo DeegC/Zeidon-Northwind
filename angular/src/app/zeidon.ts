@@ -257,7 +257,7 @@ export class EntityInstance {
                     domain.domainFunctions = this.oi.getDomainFunctions( domain.class );
             }
             else {
-                console.log( `Couldn't find domain '${attributeDef.domain}'` );
+                console.log( `Couldn't find domain '${attributeDef.domain}' for attribute ${this.entityDef.name}.${attributeDef.name}` );
             }
 
         }
@@ -368,8 +368,8 @@ export class EntityInstance {
                 error( `Can't set attribute for hidden EntityInstance: ${this.entityDef.name}.${attr}` );
         }
 
-        if ( attributeDef.domain.domainFunctions ) {
-            value = attributeDef.domain.domainFunctions.convertExternalValue( value, attributeDef );
+        if ( attributeDef.domain && attributeDef.domain && attributeDef.domain.domainFunctions ) {
+            value = attributeDef.domain && attributeDef.domain.domainFunctions.convertExternalValue( value, attributeDef );
         }
 
         let attribs = this.getAttribHash( attr );
@@ -396,7 +396,14 @@ export class EntityInstance {
 
     public getAttribute( attr: string ): any {
         let attribs = this.getAttribHash( attr );
-        return attribs[attr];
+        let value = attribs[attr];
+
+        let attributeDef = this.getAttributeDef( attr );
+        if ( attributeDef.domain && attributeDef.domain.domainFunctions ) {
+            value = attributeDef.domain.domainFunctions.convertToJsType( value, attributeDef );
+        }
+
+        return value;
     }
 
     public isAttributeUpdated( attr: string ): boolean {

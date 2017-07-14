@@ -54,17 +54,17 @@ export class Order_Order extends zeidon.EntityInstance {
     get OrderId(): string { return this.getAttribute("OrderId") };
     set OrderId(value: string) { this.setAttribute("OrderId", value) };
 
-    get OrderDate(): string { return this.getAttribute("OrderDate") };
-    set OrderDate(value: string) { this.setAttribute("OrderDate", value) };
+    get OrderDate(): Date { return this.getAttribute("OrderDate") };
+    set OrderDate(value: Date) { this.setAttribute("OrderDate", value) };
 
-    get ShippedDate(): string { return this.getAttribute("ShippedDate") };
-    set ShippedDate(value: string) { this.setAttribute("ShippedDate", value) };
+    get ShippedDate(): Date { return this.getAttribute("ShippedDate") };
+    set ShippedDate(value: Date) { this.setAttribute("ShippedDate", value) };
 
-    get RequiredDate(): string { return this.getAttribute("RequiredDate") };
-    set RequiredDate(value: string) { this.setAttribute("RequiredDate", value) };
+    get RequiredDate(): Date { return this.getAttribute("RequiredDate") };
+    set RequiredDate(value: Date) { this.setAttribute("RequiredDate", value) };
 
-    get Freight(): string { return this.getAttribute("Freight") };
-    set Freight(value: string) { this.setAttribute("Freight", value) };
+    get Freight(): number { return this.getAttribute("Freight") };
+    set Freight(value: number) { this.setAttribute("Freight", value) };
 
     get ShipName(): string { return this.getAttribute("ShipName") };
     set ShipName(value: string) { this.setAttribute("ShipName", value) };
@@ -120,14 +120,14 @@ export class Order_Order extends zeidon.EntityInstance {
 export class Order_OrderDetail extends zeidon.EntityInstance {
     public get entityName(): string { return "OrderDetail" };
 
-    get UnitPrice(): string { return this.getAttribute("UnitPrice") };
-    set UnitPrice(value: string) { this.setAttribute("UnitPrice", value) };
+    get UnitPrice(): number { return this.getAttribute("UnitPrice") };
+    set UnitPrice(value: number) { this.setAttribute("UnitPrice", value) };
 
-    get Quantity(): string { return this.getAttribute("Quantity") };
-    set Quantity(value: string) { this.setAttribute("Quantity", value) };
+    get Quantity(): number { return this.getAttribute("Quantity") };
+    set Quantity(value: number) { this.setAttribute("Quantity", value) };
 
-    get Discount(): string { return this.getAttribute("Discount") };
-    set Discount(value: string) { this.setAttribute("Discount", value) };
+    get Discount(): number { return this.getAttribute("Discount") };
+    set Discount(value: number) { this.setAttribute("Discount", value) };
 
     get Product(): zeidon.EntityArray<Order_Product> {
         return this.getChildEntityArray("Product") as zeidon.EntityArray<Order_Product>;
@@ -147,23 +147,23 @@ export class Order_Product extends zeidon.EntityInstance {
     get ProductName(): string { return this.getAttribute("ProductName") };
     set ProductName(value: string) { this.setAttribute("ProductName", value) };
 
-    get ReorderLevel(): string { return this.getAttribute("ReorderLevel") };
-    set ReorderLevel(value: string) { this.setAttribute("ReorderLevel", value) };
+    get ReorderLevel(): number { return this.getAttribute("ReorderLevel") };
+    set ReorderLevel(value: number) { this.setAttribute("ReorderLevel", value) };
 
     get QuantityPerUnit(): string { return this.getAttribute("QuantityPerUnit") };
     set QuantityPerUnit(value: string) { this.setAttribute("QuantityPerUnit", value) };
 
-    get Discontinued(): string { return this.getAttribute("Discontinued") };
-    set Discontinued(value: string) { this.setAttribute("Discontinued", value) };
+    get Discontinued(): boolean { return this.getAttribute("Discontinued") };
+    set Discontinued(value: boolean) { this.setAttribute("Discontinued", value) };
 
-    get UnitPrice(): string { return this.getAttribute("UnitPrice") };
-    set UnitPrice(value: string) { this.setAttribute("UnitPrice", value) };
+    get UnitPrice(): number { return this.getAttribute("UnitPrice") };
+    set UnitPrice(value: number) { this.setAttribute("UnitPrice", value) };
 
-    get UnitsInStock(): string { return this.getAttribute("UnitsInStock") };
-    set UnitsInStock(value: string) { this.setAttribute("UnitsInStock", value) };
+    get UnitsInStock(): number { return this.getAttribute("UnitsInStock") };
+    set UnitsInStock(value: number) { this.setAttribute("UnitsInStock", value) };
 
-    get UnitsOnOrder(): string { return this.getAttribute("UnitsOnOrder") };
-    set UnitsOnOrder(value: string) { this.setAttribute("UnitsOnOrder", value) };
+    get UnitsOnOrder(): number { return this.getAttribute("UnitsOnOrder") };
+    set UnitsOnOrder(value: number) { this.setAttribute("UnitsOnOrder", value) };
 }
 
 export class Order_Customer extends zeidon.EntityInstance {
@@ -221,11 +221,11 @@ export class Order_Employee extends zeidon.EntityInstance {
     get TitleOfCourtesy(): string { return this.getAttribute("TitleOfCourtesy") };
     set TitleOfCourtesy(value: string) { this.setAttribute("TitleOfCourtesy", value) };
 
-    get BirthDate(): string { return this.getAttribute("BirthDate") };
-    set BirthDate(value: string) { this.setAttribute("BirthDate", value) };
+    get BirthDate(): Date { return this.getAttribute("BirthDate") };
+    set BirthDate(value: Date) { this.setAttribute("BirthDate", value) };
 
-    get HireDate(): string { return this.getAttribute("HireDate") };
-    set HireDate(value: string) { this.setAttribute("HireDate", value) };
+    get HireDate(): Date { return this.getAttribute("HireDate") };
+    set HireDate(value: Date) { this.setAttribute("HireDate", value) };
 
     get HomePhone(): string { return this.getAttribute("HomePhone") };
     set HomePhone(value: string) { this.setAttribute("HomePhone", value) };
@@ -257,8 +257,8 @@ export class Order_Employee extends zeidon.EntityInstance {
     get PhotoPath(): string { return this.getAttribute("PhotoPath") };
     set PhotoPath(value: string) { this.setAttribute("PhotoPath", value) };
 
-    get Salary(): string { return this.getAttribute("Salary") };
-    set Salary(value: string) { this.setAttribute("Salary", value) };
+    get Salary(): number { return this.getAttribute("Salary") };
+    set Salary(value: number) { this.setAttribute("Salary", value) };
 }
 
 export class Order_Shipper extends zeidon.EntityInstance {

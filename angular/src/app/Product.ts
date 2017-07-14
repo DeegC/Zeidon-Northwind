@@ -57,23 +57,23 @@ export class Product_Product extends zeidon.EntityInstance {
     get ProductName(): string { return this.getAttribute("ProductName") };
     set ProductName(value: string) { this.setAttribute("ProductName", value) };
 
-    get ReorderLevel(): string { return this.getAttribute("ReorderLevel") };
-    set ReorderLevel(value: string) { this.setAttribute("ReorderLevel", value) };
+    get ReorderLevel(): number { return this.getAttribute("ReorderLevel") };
+    set ReorderLevel(value: number) { this.setAttribute("ReorderLevel", value) };
 
     get QuantityPerUnit(): string { return this.getAttribute("QuantityPerUnit") };
     set QuantityPerUnit(value: string) { this.setAttribute("QuantityPerUnit", value) };
 
-    get Discontinued(): string { return this.getAttribute("Discontinued") };
-    set Discontinued(value: string) { this.setAttribute("Discontinued", value) };
+    get Discontinued(): boolean { return this.getAttribute("Discontinued") };
+    set Discontinued(value: boolean) { this.setAttribute("Discontinued", value) };
 
-    get UnitPrice(): string { return this.getAttribute("UnitPrice") };
-    set UnitPrice(value: string) { this.setAttribute("UnitPrice", value) };
+    get UnitPrice(): number { return this.getAttribute("UnitPrice") };
+    set UnitPrice(value: number) { this.setAttribute("UnitPrice", value) };
 
-    get UnitsInStock(): string { return this.getAttribute("UnitsInStock") };
-    set UnitsInStock(value: string) { this.setAttribute("UnitsInStock", value) };
+    get UnitsInStock(): number { return this.getAttribute("UnitsInStock") };
+    set UnitsInStock(value: number) { this.setAttribute("UnitsInStock", value) };
 
-    get UnitsOnOrder(): string { return this.getAttribute("UnitsOnOrder") };
-    set UnitsOnOrder(value: string) { this.setAttribute("UnitsOnOrder", value) };
+    get UnitsOnOrder(): number { return this.getAttribute("UnitsOnOrder") };
+    set UnitsOnOrder(value: number) { this.setAttribute("UnitsOnOrder", value) };
 
     get Supplier(): zeidon.EntityArray<Product_Supplier> {
         return this.getChildEntityArray("Supplier") as zeidon.EntityArray<Product_Supplier>;

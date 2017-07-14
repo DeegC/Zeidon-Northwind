@@ -38,7 +38,7 @@ var OrderDetailComponent = (function () {
         var _this = this;
         var id = +this._route.snapshot.params['id'];
         console.log("OrderDetail init");
-        Order_1.Order.activate().subscribe(function (order) {
+        Order_1.Order.activate({ OrderId: id }).subscribe(function (order) {
             _this.order = order;
             _this.buildForm();
             console.log("Loaded order");

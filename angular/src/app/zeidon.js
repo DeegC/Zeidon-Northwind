@@ -326,7 +326,7 @@ var EntityInstance = (function () {
                     domain.domainFunctions = this.oi.getDomainFunctions(domain.class);
             }
             else {
-                console.log("Couldn't find domain '" + attributeDef.domain + "'");
+                console.log("Couldn't find domain '" + attributeDef.domain + "' for attribute " + this.entityDef.name + "." + attributeDef.name);
             }
         }
         return attributeDef;
@@ -386,8 +386,8 @@ var EntityInstance = (function () {
             if (this.deleted || this.excluded)
                 error("Can't set attribute for hidden EntityInstance: " + this.entityDef.name + "." + attr);
         }
-        if (attributeDef.domain.domainFunctions) {
-            value = attributeDef.domain.domainFunctions.convertExternalValue(value, attributeDef);
+        if (attributeDef.domain && attributeDef.domain && attributeDef.domain.domainFunctions) {
+            value = attributeDef.domain && attributeDef.domain.domainFunctions.convertExternalValue(value, attributeDef);
         }
         var attribs = this.getAttribHash(attr);
         if (attribs[attr] == value)
@@ -406,7 +406,12 @@ var EntityInstance = (function () {
     };
     EntityInstance.prototype.getAttribute = function (attr) {
         var attribs = this.getAttribHash(attr);
-        return attribs[attr];
+        var value = attribs[attr];
+        var attributeDef = this.getAttributeDef(attr);
+        if (attributeDef.domain && attributeDef.domain.domainFunctions) {
+            value = attributeDef.domain.domainFunctions.convertToJsType(value, attributeDef);
+        }
+        return value;
     };
     EntityInstance.prototype.isAttributeUpdated = function (attr) {
         var attribs = this.getAttribHash(attr);

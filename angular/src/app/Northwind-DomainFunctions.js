@@ -147,6 +147,14 @@ var DateTimeDomainFunctions = (function (_super) {
     return DateTimeDomainFunctions;
 }(BaseDomainFunctions));
 exports.DateTimeDomainFunctions = DateTimeDomainFunctions;
+var DateDomainFunctions = (function (_super) {
+    __extends(DateDomainFunctions, _super);
+    function DateDomainFunctions() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return DateDomainFunctions;
+}(DateTimeDomainFunctions));
+exports.DateDomainFunctions = DateDomainFunctions;
 var xxxDomainFunctions = (function (_super) {
     __extends(xxxDomainFunctions, _super);
     function xxxDomainFunctions() {
@@ -167,5 +175,7 @@ exports.Northwind_DomainFunctions = {
     "com.quinsoft.zeidon.domains.IntegerDomain": new IntegerDomainFunctions(),
     "com.quinsoft.zeidon.domains.StringDomain": new StringDomainFunctions(),
     "com.quinsoft.zeidon.domains.DoubleDomain": new DoubleDomainFunctions(),
+    "com.quinsoft.zeidon.domains.DateTimeDomain": new DateTimeDomainFunctions(),
+    "com.quinsoft.zeidon.domains.DateDomain": new DateDomainFunctions(),
 };
 //# sourceMappingURL=Northwind-DomainFunctions.js.map

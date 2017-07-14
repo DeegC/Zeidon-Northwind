@@ -39,11 +39,6 @@ export class OrdersComponent implements OnInit {
         this.getOrders();
     }
 
-    gotoDetail( order: Order ) {
-        this.selectedOrder = order;
-        this._router.navigate( ['/order', this.selectedOrder.OrderId ] );
-    }
-
     searchOrders() {
         this.pagination.reset();
         this.getOrders();

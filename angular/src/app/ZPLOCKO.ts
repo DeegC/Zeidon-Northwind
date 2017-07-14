@@ -60,14 +60,14 @@ export class ZPLOCKO_ZeidonLock extends zeidon.EntityInstance {
     get UserName(): string { return this.getAttribute("UserName") };
     set UserName(value: string) { this.setAttribute("UserName", value) };
 
-    get AllowRead(): string { return this.getAttribute("AllowRead") };
-    set AllowRead(value: string) { this.setAttribute("AllowRead", value) };
+    get AllowRead(): boolean { return this.getAttribute("AllowRead") };
+    set AllowRead(value: boolean) { this.setAttribute("AllowRead", value) };
 
-    get Timestamp(): string { return this.getAttribute("Timestamp") };
-    set Timestamp(value: string) { this.setAttribute("Timestamp", value) };
+    get Timestamp(): Date { return this.getAttribute("Timestamp") };
+    set Timestamp(value: Date) { this.setAttribute("Timestamp", value) };
 
-    get ID(): string { return this.getAttribute("ID") };
-    set ID(value: string) { this.setAttribute("ID", value) };
+    get ID(): number { return this.getAttribute("ID") };
+    set ID(value: number) { this.setAttribute("ID", value) };
 }
 
 const ZPLOCKOEntityPrototypes = {
