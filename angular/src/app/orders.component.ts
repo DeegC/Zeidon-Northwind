@@ -16,13 +16,12 @@ export class OrdersComponent implements OnInit {
     errorMessage: string;
     orders: Order;
     searchText: string;
-    selectedOrder: any;
+    selectedOrder: Order;
     pagination: Pagination = new Pagination( this );
 
   constructor(
     private _router: Router,
     private _northwindService: NorthwindService) {
-        console.log("here");
     }
 
     getOrders() {
@@ -40,7 +39,7 @@ export class OrdersComponent implements OnInit {
         this.getOrders();
     }
 
-    gotoDetail( order: any ) {
+    gotoDetail( order: Order ) {
         this.selectedOrder = order;
         this._router.navigate( ['/order', this.selectedOrder.OrderId ] );
     }

@@ -6,6 +6,7 @@ import { AttributeValueError } from "./zeidon"
  */
 export interface DomainFunctions {
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any;
+    convertToJsType( value: any, attributeDef: any ): any;
 }
 
 export class BaseDomainFunctions implements DomainFunctions {
@@ -16,6 +17,10 @@ export class BaseDomainFunctions implements DomainFunctions {
 
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
         this.checkForRequiredValue( value, attributeDef );
+        return value;
+    }
+
+    convertToJsType( value: any, attributeDef: any ): any {
         return value;
     }
 }
@@ -115,13 +120,27 @@ export class DoubleDomainFunctions extends BaseDomainFunctions {
     }
 }
 
+export class DateTimeDomainFunctions extends BaseDomainFunctions {
+    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
+        this.checkForRequiredValue( value, attributeDef );
+        return Date.parse( value );
+    }
+
+    convertToJsType( value: any, attributeDef: any ): any {
+        return new Date( value );
+    }}
+
+
 export class xxxDomainFunctions extends BaseDomainFunctions {
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
         this.checkForRequiredValue( value, attributeDef );
         return value;
     }
-}
 
+    convertToJsType( value: any, attributeDef: any ): any {
+        return value;
+    }
+}
 export const Northwind_DomainFunctions = {
     "com.quinsoft.zeidon.domains.BooleanDomain": new BooleanDomainFunctions(),
     "com.quinsoft.zeidon.domains.IntegerDomain": new IntegerDomainFunctions(),

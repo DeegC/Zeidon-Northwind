@@ -19,7 +19,6 @@ var OrdersComponent = (function () {
         this._router = _router;
         this._northwindService = _northwindService;
         this.pagination = new pagination_1.Pagination(this);
-        console.log("here");
     }
     OrdersComponent.prototype.getOrders = function () {
         var _this = this;
