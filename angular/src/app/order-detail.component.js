@@ -50,8 +50,7 @@ var OrderDetailComponent = (function () {
         this.submitted = true;
     };
     OrderDetailComponent.prototype.cancel = function () {
-        // Reload the order
-        this.ngOnInit();
+        window.history.back();
     };
     OrderDetailComponent.prototype.goBack = function () {
         window.history.back();

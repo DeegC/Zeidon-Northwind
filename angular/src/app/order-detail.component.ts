@@ -56,8 +56,7 @@ export class OrderDetailComponent implements OnInit, OnChanges {
     }
 
     cancel(): void {
-        // Reload the order
-        this.ngOnInit();
+        window.history.back();
     }
 
     goBack() {

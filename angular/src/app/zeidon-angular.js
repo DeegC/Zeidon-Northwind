@@ -120,10 +120,10 @@ var ZeidonFormBuilder = (function () {
                 continue;
             }
             var entities = ei.getChildEntityArray(entityName);
-            if (entities.length == 0)
+            if (entities.length === 0)
                 continue;
-            var entityInfo = entityDef.childEntities[entityName];
-            if (entityInfo.cardMax == 1) {
+            var childEntityDef = ei.oi.getLodDef().entities[entityName];
+            if (childEntityDef.cardMax === 1) {
                 var formGroup = this.group(entities[0], options);
                 form.addControl(entityName, formGroup);
             }

@@ -10,7 +10,7 @@
         >
         <a [routerLink]="['/order', order.OrderId]"  class="col-1-4">
           <span class="badge">{{order.OrderId}}</span>
-          <span class="shipdate">{{order.OrderDate}}</span>
+          <span class="shipdate">{{order.OrderDate | date: 'yyyy-MM-dd'}}</span>
           <span> {{order.ShipName}} </span>
         </a>
       </li>

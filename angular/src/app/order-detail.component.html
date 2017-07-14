@@ -2,7 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="saveOrder($event)">
     <h2>Order Details for {{order.OrderId}}</h2>
   	  <div>
-	      <label>Id: </label>{{order.OrderId}}
+	      <label>Id: </label>{{order.Order$.OrderId}}
       </div>
 
       <div>
@@ -20,7 +20,42 @@
                formControlName="ShippedDate"
                [readonly]="true"
         />
+        <p>{{order.Order$.ShippedDate}}</p>
       </div>
+
+      <h3>Shipped To</h3>
+
+      <div formGroupName="Customer">
+        <label>Contact Name: </label>
+        <input type="text"
+               formControlName="ContactName"
+               [readonly]="true"
+        />
+      </div>
+
+      <div>
+        <label>Address </label>
+        <p>{{order.Order$.Customer$.Address}}</p>
+      </div>
+
+      <h3>Products</h3>
+
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                      <td>Product Name</td>
+                      <td>Quantity</td>
+                      <td>Unit Price</td>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let detail of order.Order$.OrderDetail">
+                  <td>{{detail.Product$.ProductName}}</td>
+                  <td>{{detail.Quantity}}</td>
+                  <td>{{detail.UnitPrice}}</td>
+              </tr>
+          </tbody>
+      </table>
 
       <div>
         <button type="submit" class="btn btn-default" [disabled]="false">
