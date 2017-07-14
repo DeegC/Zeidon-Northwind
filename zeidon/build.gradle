@@ -6,12 +6,25 @@ Project name: ${project.name}
 
 configurations {
     repl
+    jirb // irb based on jruby
     generateTypescriptFiles
 }
 
+buildscript {
+    repositories { jcenter() }
+
+    dependencies {
+        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.3.3'
+    }
+}
+
+apply plugin: "com.github.jruby-gradle.base"
+import com.github.jrubygradle.JRubyExec
+
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile( 'com.quinsoft.zeidon:zeidon-scala:1.4.1-SNAPSHOT') {
+    compile( 'com.quinsoft.zeidon:zeidon-scala:1.5.0-SNAPSHOT') {
         // Exclude some projects to keep the final .war size down.
         exclude module: 'scala-reflect'
         exclude module: 'httpclient'
@@ -28,7 +41,9 @@ dependencies {
     repl 'org.scala-lang:scala-compiler:2.11.8'
     repl 'jline:jline:2.13'
 
-    generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.4.1-SNAPSHOT'
+    jrubyExec "rubygems:colorize:0.7.7+"
+
+    generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.5.0-SNAPSHOT'
     generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
 }
 
@@ -36,7 +51,7 @@ task generateTypescriptFiles( type: JavaExec ) {
     description 'Generates Typescript files for each LOD.'
     
     def xodDir = file("src/main/resources/northwind/bin")
-    def typescriptDir = file("../angular2/app")
+    def typescriptDir = file("../angular/src/app")
 
     // Set up properties so this only gets executed if an XOD has changed.
     outputs.upToDateSpec = new org.gradle.api.specs.AndSpec()
@@ -77,4 +92,23 @@ Call with: gradle repl --no-daemon --console plain
   standardInput System.in
   args( '-i', initFile, '-usejavacp' )
   jvmArgs( '-DSQLITE_ROOT=../sqlite', '-Djline.inputrc=~/.jline.inputrc', '-Xdebug', '-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' )
+}
+
+task jirb(type:JRubyExec) {
+  description "Run Zeidon under jRuby"
+
+
+  def initFile = ''
+
+  File.createTempFile("temp",".tmp").with {
+    deleteOnExit()
+    write '''
+require "irb"
+
+    IRB.start(__FILE__)
+    '''
+    initFile = absolutePath
+  }
+
+  script "${initFile}"
 }
