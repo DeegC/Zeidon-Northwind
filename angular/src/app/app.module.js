@@ -16,6 +16,7 @@ var forms_2 = require("@angular/forms");
 var router_1 = require("@angular/router");
 var http_1 = require("@angular/http");
 require("./rxjs-extensions");
+var angular_date_value_accessor_1 = require("angular-date-value-accessor");
 var app_component_1 = require("./app.component");
 var zeidon_1 = require("./zeidon");
 var zeidon_rest_client_1 = require("./zeidon-rest-client");
@@ -47,6 +48,7 @@ AppModule = __decorate([
             forms_1.FormsModule,
             forms_2.ReactiveFormsModule,
             http_1.HttpModule,
+            angular_date_value_accessor_1.DateValueAccessorModule,
             router_1.RouterModule.forRoot([
                 {
                     path: '',

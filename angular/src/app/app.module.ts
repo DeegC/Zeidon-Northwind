@@ -5,6 +5,7 @@ import { ReactiveFormsModule }   from '@angular/forms';
 import { RouterModule }   from '@angular/router';
 import { HttpModule }    from '@angular/http';
 import './rxjs-extensions';
+import { DateValueAccessorModule } from 'angular-date-value-accessor';
 
 import { AppComponent }   from './app.component';
 import { ZeidonConfiguration } from './zeidon';
@@ -33,6 +34,7 @@ const REST_VALUES: ZeidonRestValues = {
                   FormsModule,
                   ReactiveFormsModule,
                   HttpModule,
+                  DateValueAccessorModule,
                   RouterModule.forRoot([
                     {
                       path: '',

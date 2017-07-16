@@ -16,11 +16,10 @@
 
       <div>
         <label>Ship date: </label>
-        <input type="text"
+        <input type="date"
                formControlName="ShippedDate"
-               [readonly]="true"
+               useValueAsDate
         />
-        <p>{{order.Order$.ShippedDate}}</p>
       </div>
 
       <h3>Shipped To</h3>
@@ -56,6 +55,20 @@
               </tr>
           </tbody>
       </table>
+
+      <h3>Employee</h3>
+
+      <div formGroupName="Employee">
+        <label>Employee </label>
+        <input type="text"
+               formControlName="FirstName"
+               [readonly]="true"
+        />
+        <input type="text"
+               formControlName="LastName"
+               [readonly]="true"
+        />
+      </div>
 
       <div>
         <button type="submit" class="btn btn-default" [disabled]="false">
