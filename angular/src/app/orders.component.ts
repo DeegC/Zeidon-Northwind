@@ -4,7 +4,6 @@ import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {Pagination} from './pagination';
 import {Order} from './Order';
-import {PaginationComponent} from './pagination.component';
 
 @Component({
     selector: 'orders',

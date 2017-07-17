@@ -25,6 +25,7 @@ var zeidon_angular_1 = require("./zeidon-angular");
 var orders_component_1 = require("./orders.component");
 var order_detail_component_1 = require("./order-detail.component");
 var northwind_service_1 = require("./northwind.service");
+var pagination_component_1 = require("./pagination.component");
 // If we are running under browserSync then we'll set the port number to be 8080.
 // This makes it easier to switch back and forth between dev mode and running under Jetty.
 var zeidonRestPort = window.location.port;
@@ -67,6 +68,7 @@ AppModule = __decorate([
         ],
         declarations: [app_component_1.AppComponent,
             orders_component_1.OrdersComponent,
+            pagination_component_1.PaginationComponent,
             order_detail_component_1.OrderDetailComponent,
             zeidon_angular_1.ErrorElementDirective],
         providers: [northwind_service_1.NorthwindService,

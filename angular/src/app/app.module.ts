@@ -16,6 +16,7 @@ import { ErrorElementDirective }   from './zeidon-angular';
 import { OrdersComponent } from './orders.component';
 import { OrderDetailComponent } from './order-detail.component';
 import { NorthwindService } from './northwind.service';
+import {PaginationComponent} from './pagination.component';
 
 // If we are running under browserSync then we'll set the port number to be 8080.
 // This makes it easier to switch back and forth between dev mode and running under Jetty.
@@ -53,6 +54,7 @@ const REST_VALUES: ZeidonRestValues = {
    ],
   declarations: [ AppComponent,
                   OrdersComponent,
+                  PaginationComponent,
                   OrderDetailComponent,
                   ErrorElementDirective ],
   providers: [ NorthwindService,

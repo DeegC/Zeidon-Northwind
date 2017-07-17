@@ -1,0 +1,22 @@
+<h2>Products</h2>
+
+ <div>
+  <label>Search: </label> <input [(ngModel)]="searchText" placeholder="search" />
+ </div>
+<button (click)="searchProducts()">Search</button>
+<pagination [pagination]='pagination'></pagination>
+
+<ul class="products">
+    <li *ngFor="let product of products" 
+      [class.selected]="product === selectedProduct"
+      (click)="gotoDetail(product)">
+      <span class="badge">{{product.ProductId}}</span> {{product.ProductName}}
+    </li>
+</ul>
+
+New Product:
+<input #newProduct />
+<button (click)="addProduct(newProduct.value); newProduct.value=''">
+    Add Product
+</button>
+<div class="error" *ngIf="errorMessage">{{errorMessage}}</div>
