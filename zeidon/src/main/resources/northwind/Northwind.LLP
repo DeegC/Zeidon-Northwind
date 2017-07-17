@@ -1,4 +1,4 @@
-z1000-Zeidon    NORTHWINDTZCMLPLO 07/13/17   14:41:18 1.0a2    
+z1000-Zeidon    NORTHWINDTZCMLPLO 07/15/17   00:46:28 1.0a2    
 eLPLR      1
 aName      Northwind
 aDesc      Zeidon application using Northwind DB
@@ -548,13 +548,13 @@ aJavaClassName com.quinsoft.zeidon.domains.Base64BlobDomain
 
 i71        25
 i74        28
-i76        30
-i77        31
-i78        32
-i79        33
+i76        33
+i77        32
+i78        31
+i79        36
 i80        34
 i81        35
-i82        36
+i82        30
 i85        42
 i86        45
 i87        43
