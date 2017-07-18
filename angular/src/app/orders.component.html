@@ -3,7 +3,7 @@
   <label>Search: </label> <input [(ngModel)]="searchText" placeholder="search" />
  </div>
 <button (click)="searchOrders()">Search</button>
-<pagination [pagination]='pagination'></pagination>
+<pagination [pagination]='pagination' (reloadPage)="loadPage()"></pagination>
 <div *ngIf="orders && orders.isEmpty == false">
   <ul class="orders">
       <li *ngFor="let order of orders.Order"

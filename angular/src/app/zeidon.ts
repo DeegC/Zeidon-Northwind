@@ -39,7 +39,7 @@ export class ObjectInstance {
     }
 
     // Saves the options used to activate this OI.
-    private activateOptions: any;
+    private activateQual: any;
 
     public toJSON( options : ZeidonToJsonOptions = {} ): Object {
         let jarray = [];
@@ -91,13 +91,13 @@ export class ObjectInstance {
         return wrapper;
     }
 
-    public static activateOi<T extends ObjectInstance>( oi: T, options?: any ): Observable<T> {
+    public static activateOi<T extends ObjectInstance>( oi: T, qual?: any ): Observable<T> {
         let config = configurationInstance;
         if ( ! config )
             error( "ZeidonConfiguration not properly initiated.")
 
-        oi.activateOptions = options;
-        return config.getActivator().activateOi( oi, options );
+        oi.activateQual = qual;
+        return config.getActivator().activateOi( oi, qual );
     }
 
     public commit( options?: CommitOptions ): Observable<this> {
@@ -118,13 +118,33 @@ export class ObjectInstance {
 
     public reload(): Observable<this> {
         this.reset();
-        let obs = ObjectInstance.activateOi( this, this.activateOptions );
+        let obs = ObjectInstance.activateOi( this, this.activateQual );
         obs.toPromise();
         return obs;
     }
 
     public get isEmpty(): boolean {
         return this.roots.length === 0;
+    }
+
+    private loadOiMetaFromJson( oimeta, options: CreateOptions ) {
+        // If incrementals are set then set the constructor option to
+        // not set the update flag when the attribute value is set.  The
+        // flags will be set by the incrementals.
+        if ( oimeta.incremental ) {
+            if ( options.incrementalsSpecified === undefined ) {
+                // We're going to change the options so create a new one so we
+                // don't override the original one.
+                options = Object.assign( {}, options );
+                options.incrementalsSpecified = true;
+            }
+        }
+
+        if ( oimeta.pagination && oimeta.pagination.totalCount ) {
+            let p = this.activateQual.pagination;
+            p.totalCount = oimeta.pagination.totalCount;
+            p.totalPages = oimeta.pagination.totalPages;
+        }
     }
 
     createFromJson( initialize, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): this {
@@ -141,18 +161,9 @@ export class ObjectInstance {
             // TODO: Someday we should handle multiple return OIs for for now
             // we'll assume just one and hardcode '[0]'.
              let oimeta = initialize.OIs[0][ ".oimeta" ];
+             if ( oimeta )
+                this.loadOiMetaFromJson( oimeta, options );
 
-             // If incrementals are set then set the constructor option to
-             // not set the update flag when the attribute value is set.  The
-             // flags will be set by the incrementals.
-             if ( oimeta && oimeta.incremental ) {
-                 if ( options.incrementalsSpecified === undefined ) {
-                     // We're going to change the options so create a new one so we
-                     // don't override the original one.
-                     options = Object.assign( {}, options );
-                     options.incrementalsSpecified = true;
-                 }
-             }
 
             let root = initialize.OIs[0][ this.rootEntityName() ];
             if ( root ) {
@@ -928,6 +939,61 @@ export class ZeidonConfiguration {
 
     getActivator() : Activator { return this.activator; }
     getCommitter() : Committer { return this.committer; }
+}
+
+export class Pagination {
+    currentPage: number = 1;
+    totalPages: number = null;
+    totalCount: number = null;
+    pageSize: number = 20;
+
+  constructor( ) { }
+
+    incrementPage() {
+        let currentPage = Math.min( this.currentPage + 1, this.totalPages || 9999 );
+        if ( currentPage == this.currentPage )
+            return false;
+
+        this.currentPage = currentPage;
+        return true;
+    }
+
+    decrementPage() {
+        let currentPage = Math.max( this.currentPage - 1, 1 );
+        if ( currentPage == this.currentPage )
+            return false;
+
+        this.currentPage = currentPage;
+        return true;
+    }
+
+    getQueryParam() {
+        let pageParam = "?page=" + this.currentPage + "&perPage=" + this.pageSize;
+        if ( this.totalCount == null )
+            pageParam += "&getTotal=true";
+
+        return pageParam;
+    }
+
+    setFromResuts( json: any ) {
+        if ( json.totalRootCount ) {
+            this.totalCount = json.totalRootCount;
+            this.totalPages = Math.floor( this.totalCount / 20 ) + 1;
+        }
+    }
+
+    reset() {
+        this.currentPage = 1;
+        this.totalCount = null;  // Indicate that we need to retrieve the total count.
+    }
+
+    firstPage() {
+        return this.currentPage == 1;
+    }
+
+    lastPage() {
+        return this.currentPage == this.totalPages;
+    }
 }
 
 export interface ZeidonToJsonOptions {

@@ -12,17 +12,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var router_1 = require("@angular/router");
 var northwind_service_1 = require("./northwind.service");
-var pagination_1 = require("./pagination");
+var zeidon_1 = require("./zeidon");
 var Order_1 = require("./Order");
 var OrdersComponent = (function () {
     function OrdersComponent(_router, _northwindService) {
         this._router = _router;
         this._northwindService = _northwindService;
-        this.pagination = new pagination_1.Pagination(this);
+        this.pagination = new zeidon_1.Pagination();
     }
     OrdersComponent.prototype.getOrders = function () {
         var _this = this;
-        Order_1.Order.activate().subscribe(function (orders) {
+        Order_1.Order.activate({
+            pagination: this.pagination,
+            rootOnly: true
+        }).subscribe(function (orders) {
             _this.orders = orders;
         });
     };
@@ -31,6 +34,7 @@ var OrdersComponent = (function () {
     };
     // Called from Pagination to load page.
     OrdersComponent.prototype.loadPage = function () {
+        console.log("loadPage " + this.pagination.getQueryParam());
         this.getOrders();
     };
     OrdersComponent.prototype.searchOrders = function () {

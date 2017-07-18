@@ -102,12 +102,12 @@ var ObjectInstance = (function () {
         wrapper.OIs[0][this.getLodDef().name] = root;
         return wrapper;
     };
-    ObjectInstance.activateOi = function (oi, options) {
+    ObjectInstance.activateOi = function (oi, qual) {
         var config = configurationInstance;
         if (!config)
             error("ZeidonConfiguration not properly initiated.");
-        oi.activateOptions = options;
-        return config.getActivator().activateOi(oi, options);
+        oi.activateQual = qual;
+        return config.getActivator().activateOi(oi, qual);
     };
     ObjectInstance.prototype.commit = function (options) {
         var config = configurationInstance;
@@ -124,7 +124,7 @@ var ObjectInstance = (function () {
     };
     ObjectInstance.prototype.reload = function () {
         this.reset();
-        var obs = ObjectInstance.activateOi(this, this.activateOptions);
+        var obs = ObjectInstance.activateOi(this, this.activateQual);
         obs.toPromise();
         return obs;
     };
@@ -135,6 +135,24 @@ var ObjectInstance = (function () {
         enumerable: true,
         configurable: true
     });
+    ObjectInstance.prototype.loadOiMetaFromJson = function (oimeta, options) {
+        // If incrementals are set then set the constructor option to
+        // not set the update flag when the attribute value is set.  The
+        // flags will be set by the incrementals.
+        if (oimeta.incremental) {
+            if (options.incrementalsSpecified === undefined) {
+                // We're going to change the options so create a new one so we
+                // don't override the original one.
+                options = Object.assign({}, options);
+                options.incrementalsSpecified = true;
+            }
+        }
+        if (oimeta.pagination && oimeta.pagination.totalCount) {
+            var p = this.activateQual.pagination;
+            p.totalCount = oimeta.pagination.totalCount;
+            p.totalPages = oimeta.pagination.totalPages;
+        }
+    };
     ObjectInstance.prototype.createFromJson = function (initialize, options) {
         if (options === void 0) { options = DEFAULT_CREATE_OPTIONS; }
         if (typeof initialize == "string") {
@@ -148,17 +166,8 @@ var ObjectInstance = (function () {
             // TODO: Someday we should handle multiple return OIs for for now
             // we'll assume just one and hardcode '[0]'.
             var oimeta = initialize.OIs[0][".oimeta"];
-            // If incrementals are set then set the constructor option to
-            // not set the update flag when the attribute value is set.  The
-            // flags will be set by the incrementals.
-            if (oimeta && oimeta.incremental) {
-                if (options.incrementalsSpecified === undefined) {
-                    // We're going to change the options so create a new one so we
-                    // don't override the original one.
-                    options = Object.assign({}, options);
-                    options.incrementalsSpecified = true;
-                }
-            }
+            if (oimeta)
+                this.loadOiMetaFromJson(oimeta, options);
             var root = initialize.OIs[0][this.rootEntityName()];
             if (root) {
                 for (var _i = 0, _a = initialize.OIs[0][this.rootEntityName()]; _i < _a.length; _i++) {
@@ -880,6 +889,52 @@ ZeidonConfiguration = __decorate([
     __metadata("design:paramtypes", [Activator, Committer])
 ], ZeidonConfiguration);
 exports.ZeidonConfiguration = ZeidonConfiguration;
+var Pagination = (function () {
+    function Pagination() {
+        this.currentPage = 1;
+        this.totalPages = null;
+        this.totalCount = null;
+        this.pageSize = 20;
+    }
+    Pagination.prototype.incrementPage = function () {
+        var currentPage = Math.min(this.currentPage + 1, this.totalPages || 9999);
+        if (currentPage == this.currentPage)
+            return false;
+        this.currentPage = currentPage;
+        return true;
+    };
+    Pagination.prototype.decrementPage = function () {
+        var currentPage = Math.max(this.currentPage - 1, 1);
+        if (currentPage == this.currentPage)
+            return false;
+        this.currentPage = currentPage;
+        return true;
+    };
+    Pagination.prototype.getQueryParam = function () {
+        var pageParam = "?page=" + this.currentPage + "&perPage=" + this.pageSize;
+        if (this.totalCount == null)
+            pageParam += "&getTotal=true";
+        return pageParam;
+    };
+    Pagination.prototype.setFromResuts = function (json) {
+        if (json.totalRootCount) {
+            this.totalCount = json.totalRootCount;
+            this.totalPages = Math.floor(this.totalCount / 20) + 1;
+        }
+    };
+    Pagination.prototype.reset = function () {
+        this.currentPage = 1;
+        this.totalCount = null; // Indicate that we need to retrieve the total count.
+    };
+    Pagination.prototype.firstPage = function () {
+        return this.currentPage == 1;
+    };
+    Pagination.prototype.lastPage = function () {
+        return this.currentPage == this.totalPages;
+    };
+    return Pagination;
+}());
+exports.Pagination = Pagination;
 var AttributeValueError = (function (_super) {
     __extends(AttributeValueError, _super);
     function AttributeValueError(message, attributeDef) {

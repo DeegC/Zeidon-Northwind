@@ -1,15 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Pagination = (function () {
-    function Pagination(_parentComponent) {
-        this._parentComponent = _parentComponent;
+    function Pagination() {
         this.currentPage = 1;
         this.totalPages = null;
         this.totalCount = null;
         this.pageSize = 20;
     }
     Pagination.prototype.incrementPage = function () {
-        var currentPage = Math.min(this.currentPage + 1, this.totalPages);
+        var currentPage = Math.min(this.currentPage + 1, this.totalPages || 9999);
         if (currentPage == this.currentPage)
             return false;
         this.currentPage = currentPage;
@@ -37,14 +36,6 @@ var Pagination = (function () {
     Pagination.prototype.reset = function () {
         this.currentPage = 1;
         this.totalCount = null; // Indicate that we need to retrieve the total count.
-    };
-    Pagination.prototype.nextPage = function () {
-        if (this.incrementPage())
-            this._parentComponent.loadPage();
-    };
-    Pagination.prototype.prevPage = function () {
-        if (this.decrementPage())
-            this._parentComponent.loadPage();
     };
     Pagination.prototype.firstPage = function () {
         return this.currentPage == 1;

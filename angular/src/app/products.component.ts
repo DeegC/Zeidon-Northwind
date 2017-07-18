@@ -16,7 +16,7 @@ export class ProductsComponent implements OnInit {
     searchText: string;
     products: any[];
     selectedProduct: any;
-    pagination: Pagination = new Pagination( this );
+    pagination: Pagination = new Pagination();
 
   constructor(
     private _router: Router,

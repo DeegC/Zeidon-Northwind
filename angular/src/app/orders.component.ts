@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
-import {Pagination} from './pagination';
+import {Pagination} from './zeidon';
 import {Order} from './Order';
 
 @Component({
@@ -16,7 +16,7 @@ export class OrdersComponent implements OnInit {
     orders: Order;
     searchText: string;
     selectedOrder: Order;
-    pagination: Pagination = new Pagination( this );
+    pagination: Pagination = new Pagination();
 
   constructor(
     private _router: Router,
@@ -24,9 +24,14 @@ export class OrdersComponent implements OnInit {
     }
 
     getOrders() {
-        Order.activate().subscribe( orders => {
-            this.orders = orders;
-        } );
+        Order.activate(
+            {
+                pagination: this.pagination,
+                rootOnly: true
+            } ).subscribe( orders =>
+            {
+               this.orders = orders;
+            } );
     }
 
     ngOnInit(): void {
@@ -35,6 +40,7 @@ export class OrdersComponent implements OnInit {
 
     // Called from Pagination to load page.
     loadPage() {
+        console.log("loadPage " + this.pagination.getQueryParam() );
         this.getOrders();
     }
 
