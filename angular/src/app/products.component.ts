@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
-import {Output} from '@angular/core';
 import { Router } from '@angular/router';
 import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
-import {Pagination} from './pagination';
+import {Pagination} from './zeidon';
+import {Product} from './Product';
 
 @Component({
     selector: 'products',
@@ -14,8 +14,8 @@ export class ProductsComponent implements OnInit {
 
     errorMessage: string;
     searchText: string;
-    products: any[];
-    selectedProduct: any;
+    products: Product;
+    selectedProduct: Product;
     pagination: Pagination = new Pagination();
 
   constructor(
@@ -23,10 +23,16 @@ export class ProductsComponent implements OnInit {
     private _northwindService: NorthwindService) { }
 
     getProducts() {
-        this._northwindService.getProducts( this.pagination, this.searchText )
-                     .then( json => {
-                              this.products = json.Product;
-                            } );
+        Product.activate(
+            {
+                pagination: this.pagination,
+                rootOnly: true,
+                readOnly: true
+            } ).subscribe( products =>
+            {
+                console.log( "Got products" );
+                this.products = products;
+            } );
     }
 
     searchProducts() {
@@ -35,10 +41,14 @@ export class ProductsComponent implements OnInit {
     }
 
     addProduct( name: string ) {
-        if ( !name ) { return; }
-        this._northwindService.addProduct( name )
-            .then( product => this.products.push( product ),
-                   error => this.errorMessage = <any>error );
+        if ( !name ) {
+            return;
+        }
+
+        let newProduct = new Product;
+        newProduct.Product.create();
+        newProduct.Product$.ProductName = name;
+        newProduct.commit();
     }
 
     // Called from Pagination to load page.
@@ -52,7 +62,7 @@ export class ProductsComponent implements OnInit {
 
     gotoDetail( product: any ) {
         this.selectedProduct = product;
-        this._router.navigate(['ProductDetail', { id: this.selectedProduct.ProductId }]);
+        this._router.navigate(['ProductDetail', { id: this.selectedProduct.Product$.ProductId }]);
     }
 }
 

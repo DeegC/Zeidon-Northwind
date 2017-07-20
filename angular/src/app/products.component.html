@@ -4,15 +4,18 @@
   <label>Search: </label> <input [(ngModel)]="searchText" placeholder="search" />
  </div>
 <button (click)="searchProducts()">Search</button>
-<pagination [pagination]='pagination'></pagination>
+<pagination [pagination]='pagination' (reloadPage)="loadPage()"></pagination>
 
-<ul class="products">
-    <li *ngFor="let product of products" 
-      [class.selected]="product === selectedProduct"
-      (click)="gotoDetail(product)">
-      <span class="badge">{{product.ProductId}}</span> {{product.ProductName}}
-    </li>
-</ul>
+<div *ngIf="products && products.isEmpty == false">
+    <ul class="products">
+        <li *ngFor="let product of products.Product"
+        [class.selected]="product === selectedProduct" >
+        <a [routerLink]="['/product', product.ProductId]"  class="col-1-4">
+            <span class="badge">{{product.ProductId}}</span> {{product.ProductName}}
+        </a>
+        </li>
+    </ul>
+</div>
 
 New Product:
 <input #newProduct />

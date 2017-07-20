@@ -1,5 +1,5 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {Pagination} from './pagination';
+import {Pagination} from './zeidon';
 
 @Component({
     selector: 'pagination',

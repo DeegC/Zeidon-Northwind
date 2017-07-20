@@ -14,6 +14,7 @@ import { ZeidonRestConfiguration } from './zeidon-rest-client';
 import { ErrorElementDirective }   from './zeidon-angular';
 
 import { OrdersComponent } from './orders.component';
+import { ProductsComponent } from './products.component';
 import { OrderDetailComponent } from './order-detail.component';
 import { NorthwindService } from './northwind.service';
 import {PaginationComponent} from './pagination.component';
@@ -49,11 +50,16 @@ const REST_VALUES: ZeidonRestValues = {
                     {
                         path: 'order/:id',
                         component: OrderDetailComponent
-                    }
+                    },
+                    {
+                        path: 'products',
+                        component: ProductsComponent
+                    },
                   ])
    ],
   declarations: [ AppComponent,
                   OrdersComponent,
+                  ProductsComponent,
                   PaginationComponent,
                   OrderDetailComponent,
                   ErrorElementDirective ],

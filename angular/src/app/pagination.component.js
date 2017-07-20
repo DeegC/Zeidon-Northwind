@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var pagination_1 = require("./pagination");
+var zeidon_1 = require("./zeidon");
 var PaginationComponent = (function () {
     function PaginationComponent() {
         this.reloadPage = new core_1.EventEmitter();
@@ -27,7 +27,7 @@ var PaginationComponent = (function () {
 }());
 __decorate([
     core_1.Input(),
-    __metadata("design:type", typeof (_a = typeof pagination_1.Pagination !== "undefined" && pagination_1.Pagination) === "function" && _a || Object)
+    __metadata("design:type", zeidon_1.Pagination)
 ], PaginationComponent.prototype, "pagination", void 0);
 __decorate([
     core_1.Output(),
@@ -41,5 +41,4 @@ PaginationComponent = __decorate([
     })
 ], PaginationComponent);
 exports.PaginationComponent = PaginationComponent;
-var _a;
 //# sourceMappingURL=pagination.component.js.map
