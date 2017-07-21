@@ -24,6 +24,7 @@ var zeidon_rest_client_2 = require("./zeidon-rest-client");
 var zeidon_angular_1 = require("./zeidon-angular");
 var orders_component_1 = require("./orders.component");
 var products_component_1 = require("./products.component");
+var product_detail_component_1 = require("./product-detail.component");
 var order_detail_component_1 = require("./order-detail.component");
 var northwind_service_1 = require("./northwind.service");
 var pagination_component_1 = require("./pagination.component");
@@ -69,6 +70,10 @@ AppModule = __decorate([
                     path: 'products',
                     component: products_component_1.ProductsComponent
                 },
+                {
+                    path: 'product/:id',
+                    component: product_detail_component_1.ProductDetailComponent
+                },
             ])
         ],
         declarations: [app_component_1.AppComponent,
@@ -76,6 +81,7 @@ AppModule = __decorate([
             products_component_1.ProductsComponent,
             pagination_component_1.PaginationComponent,
             order_detail_component_1.OrderDetailComponent,
+            product_detail_component_1.ProductDetailComponent,
             zeidon_angular_1.ErrorElementDirective],
         providers: [northwind_service_1.NorthwindService,
             { provide: zeidon_rest_client_1.ZeidonRestValues, useValue: REST_VALUES },

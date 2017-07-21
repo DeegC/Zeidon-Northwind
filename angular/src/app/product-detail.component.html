@@ -1,61 +1,103 @@
 <div *ngIf="product">
- <h2>Product {{product.ProductId}} details</h2>
- <form (ngSubmit)="onSubmit()" #productForm="ngForm">
-  <div>
-   <label>id: </label>{{product.ProductId}}
-  </div>
-  <div>
-   <label>category: </label> 
-   {{product.Category.CategoryName}}
-  </div>
-  <div>
-   <label>name: </label> <input [(ngModel)]="product.ProductName"
-    placeholder="name" />
-  </div>
-  
-  <div>
-   <label>unit price: </label>
-   <input [(ngModel)]="product.UnitPrice" placeholder="price" />
-  </div>
+  <form [formGroup]="form" (ngSubmit)="saveOrder($event)">
+    <h2>Product {{product.Product$.ProductId}} details</h2>
+      <div>
+        <label>id: </label>{{product.Product$.ProductId}}
+      </div>
 
-  <div>
-   <label>units in stock: </label>
-   <input [(ngModel)]="product.UnitsInStock" placeholder="in stock" />
-  </div>
+      <div>
+        <label>Category: </label>
+        {{product.Product$.Category$.CategoryName}}
+      </div>
 
-  <div>
-   <label>quantity per unit: </label>
-   <input [(ngModel)]="product.QuantityPerUnit" placeholder="quantity/unit" />
-  </div>
+      <div>
+        <label>Name: </label>
+        <input type="text"
+               formControlName="ProductName" [zeidonErrorElement]="productNameError"
+               placeholder="product name"
+        />
+      </div>
+      <div #productNameError class="alert alert-danger" style="display:none"></div>
 
-  <div>
-   <label>reorder level: </label>
-   <input [(ngModel)]="product.ReorderLevel" placeholder="reorder level" />
-  </div>
+      <div>
+        <label>Unit Price: </label>
+        <input type="text"
+               formControlName="UnitPrice" [zeidonErrorElement]="unitPriceError"
+               placeholder="price"
+        />
+      </div>
+      <div #unitPriceError class="alert alert-danger" style="display:none"></div>
 
-  <div>
-   <label>units on order: </label>
-   <input [(ngModel)]="product.UnitsOnOrder" placeholder="in stock" />
-  </div>
+      <div>
+        <label>Units in Stock: </label>
+        <input type="text"
+               formControlName="UnitsInStock" [zeidonErrorElement]="unitsError"
+               placeholder="units"
+        />
+      </div>
+      <div #unitsError class="alert alert-danger" style="display:none"></div>
 
-  <div>
-   <label>discontinued? </label>
-   <input [(ngModel)]="product.Discontinued" type="checkbox" />
-  </div>
-  
-  <h2>Supplier</h2>
-  
-  <div>
-   <label>company name: </label> 
-   <input [(ngModel)]="product.Supplier.CompanyName" [readonly]="true" />
-  </div>
-  <div>
-   <label>contact name: </label> 
-   <input [(ngModel)]="product.Supplier.ContactName" [readonly]="true" />
-  </div>
+      <div>
+        <label>Quantity Per Unit: </label>
+        <input type="text"
+               formControlName="QuantityPerUnit" [zeidonErrorElement]="quantityError"
+               placeholder="quantity"
+        />
+      </div>
+      <div #quantityError class="alert alert-danger" style="display:none"></div>
 
-  <button type="submit" class="btn btn-default">Save</button>
-  <button (click)="goBack()">Back</button>
- </form>
+      <div>
+        <label>Reorder Level: </label>
+        <input type="text"
+               formControlName="ReorderLevel" [zeidonErrorElement]="reorderError"
+               placeholder="level"
+        />
+      </div>
+      <div #reorderError class="alert alert-danger" style="display:none"></div>
+
+      <div>
+        <label>Units on Order: </label>
+        <input type="text"
+               formControlName="UnitsOnOrder" [zeidonErrorElement]="orderError"
+               placeholder="units"
+        />
+      </div>
+      <div #unitsError class="alert alert-danger" style="display:none"></div>
+
+      <div>
+        <label>Discontinued: </label>
+        <input type="text"
+               formControlName="Discontinued" [zeidonErrorElement]="discontinuedError"
+               placeholder="discontinued?"
+        />
+      </div>
+      <div #discontinuedError class="alert alert-danger" style="display:none"></div>
+
+      <h2>Supplier</h2>
+
+      <div formGroupName="Supplier">
+
+        <label>Company Name </label>
+        <input type="text"
+               formControlName="CompanyName"
+               [readonly]="true"
+        />
+
+        <label>Contact Name </label>
+        <input type="text"
+               formControlName="ContactName"
+               [readonly]="true"
+        />
+
+    </div>
+
+      <div>
+        <button type="submit" class="btn btn-default" [disabled]="false">
+            Save Order
+        </button>
+        <button type="button" class="btn btn-default" (click)="cancel()" >
+            Cancel
+        </button>
+      </div>
+  </form>
 </div>
-

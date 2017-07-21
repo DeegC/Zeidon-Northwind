@@ -15,6 +15,7 @@ import { ErrorElementDirective }   from './zeidon-angular';
 
 import { OrdersComponent } from './orders.component';
 import { ProductsComponent } from './products.component';
+import { ProductDetailComponent } from './product-detail.component';
 import { OrderDetailComponent } from './order-detail.component';
 import { NorthwindService } from './northwind.service';
 import {PaginationComponent} from './pagination.component';
@@ -55,6 +56,10 @@ const REST_VALUES: ZeidonRestValues = {
                         path: 'products',
                         component: ProductsComponent
                     },
+                    {
+                        path: 'product/:id',
+                        component: ProductDetailComponent
+                    },
                   ])
    ],
   declarations: [ AppComponent,
@@ -62,6 +67,7 @@ const REST_VALUES: ZeidonRestValues = {
                   ProductsComponent,
                   PaginationComponent,
                   OrderDetailComponent,
+                  ProductDetailComponent,
                   ErrorElementDirective ],
   providers: [ NorthwindService,
                { provide: ZeidonRestValues, useValue: REST_VALUES },
