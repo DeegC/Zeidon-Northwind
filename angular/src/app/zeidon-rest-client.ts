@@ -69,8 +69,28 @@ export class RestCommitter implements Committer {
             .map(response => this.parseCommitResponse( oi, response ) );
     }
 
+    dropOi( oi: ObjectInstance, options?: CommitOptions ) {
+        let lodName = oi.getLodDef().name;
+        if ( oi.root.length != 1 )
+            throw "The only currently supported option for dropOi is a single root OI."
+
+        let root = oi.root[0];
+        let keyDef = root.keyAttributeDef;
+        let qual = { };
+        qual[ keyDef.name ] = root.getAttribute( keyDef.name )
+        let body = "qual=" + JSON.stringify( qual );
+        let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+        let reqOptions = new RequestOptions({ headers: headers });
+        let errorHandler = oi.handleActivateError ;
+        let url = `${this.values.restUrl}/${lodName}/dropLock`;
+
+        return this.http.post( url, body, reqOptions )
+            .map(response => response.text() )
+            .subscribe( response => console.log( "DropOi response = " + response ) );
+    }
+
     parseCommitResponse( oi: ObjectInstance, response ): ObjectInstance {
-        if ( response.text() == "{}" )
+        if ( response.text() === "{}" )
             return oi.createFromJson( undefined );
 
         let data = response.json();

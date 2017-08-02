@@ -9,6 +9,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -38,6 +46,7 @@ var ObjectInstance = (function () {
         if (initialize === void 0) { initialize = undefined; }
         if (options === void 0) { options = DEFAULT_CREATE_OPTIONS; }
         this.isUpdated = false;
+        this.isLocked = false;
         this.createFromJson(initialize, options);
     }
     ObjectInstance.prototype.rootEntityName = function () { throw "rootEntityName must be overridden"; };
@@ -92,6 +101,7 @@ var ObjectInstance = (function () {
                         application: this.getApplicationName(),
                         odName: this.getLodDef().name,
                         incremental: true,
+                        isLocked: this.isLocked,
                         readOnlyOi: false
                     }
                 }]
@@ -135,6 +145,14 @@ var ObjectInstance = (function () {
         enumerable: true,
         configurable: true
     });
+    ObjectInstance.prototype.drop = function () {
+        if (this.isLocked) {
+            var config = configurationInstance;
+            if (!config)
+                error("ZeidonConfiguration not properly initiated.");
+            config.getCommitter().dropOi(this);
+        }
+    };
     ObjectInstance.prototype.loadOiMetaFromJson = function (oimeta, options) {
         // If incrementals are set then set the constructor option to
         // not set the update flag when the attribute value is set.  The
@@ -152,6 +170,8 @@ var ObjectInstance = (function () {
             p.totalCount = oimeta.pagination.totalCount;
             p.totalPages = oimeta.pagination.totalPages;
         }
+        if (oimeta.locked)
+            this.isLocked = true;
     };
     ObjectInstance.prototype.createFromJson = function (initialize, options) {
         if (options === void 0) { options = DEFAULT_CREATE_OPTIONS; }
@@ -626,12 +646,12 @@ exports.EntityInstance = EntityInstance;
  * Include logic can get pretty hairy.  This class tries to perform it.
  */
 var Includer = (function () {
-    function Includer(target, source) {
-        this.target = target;
+    function Includer(array, source, options) {
+        this.array = array;
         this.source = source;
+        this.options = options;
     }
     Includer.prototype.include = function () {
-        this.target;
     };
     return Includer;
 }());
@@ -663,7 +683,7 @@ var ArrayDelegate = (function () {
         ei.constructor.apply(ei, [initialize, this.oi, this.array, options]);
         // Figure out where to insert the new ei.
         var position = options.position;
-        if (position == undefined) {
+        if (position === undefined) {
             // Default is to insert at the end.
             this.array.push(ei);
         }
@@ -671,29 +691,39 @@ var ArrayDelegate = (function () {
             this.array.splice(position, 0, ei);
         }
         else {
-            if (position === Position.Last)
-                this.array.push(ei);
-            else if (position === Position.First)
-                this.array.unshift(ei);
-            else if (position === Position.Next)
-                this.array.splice(this.currentlySelected, 0, ei);
-            else {
-                // Must be Position.Prev.  If currentlySelected is 0, then put
-                // at the beginning.
-                if (this.currentlySelected == 0)
+            switch (position) {
+                case Position.Last:
+                    this.array.push(ei);
+                    break;
+                case Position.First:
                     this.array.unshift(ei);
-                else
-                    this.array.splice(this.currentlySelected - 1, 0, ei);
+                    break;
+                case Position.Next:
+                    this.array.splice(this.currentlySelected, 0, ei);
+                    break;
+                case Position.Prev:
+                    // If currentlySelected is 0, then put at the beginning.
+                    if (this.currentlySelected == 0)
+                        this.array.unshift(ei);
+                    else
+                        this.array.splice(this.currentlySelected - 1, 0, ei);
+                    break;
+                default:
+                    error("Unknown position option: " + position);
             }
         }
         this.setSelected(ei);
         return ei;
     };
-    ArrayDelegate.prototype.include = function (sourceEi, index, options) {
-        if (index === void 0) { index = -1; }
+    ArrayDelegate.prototype.include = function (sourceEi, options) {
         if (options === void 0) { options = {}; }
         if (!this.entityDef.includable)
             error("Entity " + this.entityDef.name + " does not have include authority.");
+        options = __assign({}, options); // Clone the options so we can change the values.
+        if (options.index === undefined)
+            options.index = this.currentlySelected;
+        var includer = new Includer(this, sourceEi, options);
+        return null;
     };
     ArrayDelegate.prototype.validateExclude = function (index) {
         if (!this.entityDef.excludable)
@@ -738,7 +768,7 @@ var ArrayDelegate = (function () {
         this.array.length = 0;
     };
     ArrayDelegate.prototype.delete = function (index) {
-        if (index == undefined)
+        if (index === undefined)
             index = this.currentlySelected;
         this.validateDelete(index);
         var ei = this.array.splice(index, 1)[0];
@@ -824,6 +854,9 @@ var EntityArray = (function (_super) {
             if (options === void 0) { options = DEFAULT_CREATE_OPTIONS; }
             return this.delegate.create(initialize, options);
         };
+        _arr.include = function (sourceEi, options) {
+            return this.delegate.include(sourceEi, options);
+        };
         _arr.excludeAll = function () { this.delegate.excludeAll(); };
         _arr.deleteAll = function (filter) { this.delegate.deleteAll(filter); };
         _arr.delete = function (index) { this.delegate.delete(index); };
@@ -866,6 +899,9 @@ var Committer = (function () {
     }
     Committer.prototype.commitOi = function (oi, options) {
         throw "commitOi has not been implemented";
+    };
+    Committer.prototype.dropOi = function (oi, options) {
+        throw "dropOi has not been implemented";
     };
     return Committer;
 }());

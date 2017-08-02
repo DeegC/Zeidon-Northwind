@@ -22,6 +22,7 @@ export class Application {
 export class ObjectInstance {
     protected roots : EntityArray<EntityInstance>;
     public isUpdated = false;
+    public isLocked = false;
 
     constructor( initialize = undefined, options: CreateOptions = DEFAULT_CREATE_OPTIONS ) {
         this.createFromJson( initialize, options );
@@ -77,6 +78,7 @@ export class ObjectInstance {
                     application: this.getApplicationName(),
                     odName: this.getLodDef().name,
                     incremental: true,
+                    isLocked: this.isLocked,
                     readOnlyOi: false
                 }
             }]
@@ -127,6 +129,17 @@ export class ObjectInstance {
         return this.roots.length === 0;
     }
 
+    public drop() {
+        if ( this.isLocked ) {
+            let config = configurationInstance;
+            if ( ! config )
+                error( "ZeidonConfiguration not properly initiated.")
+
+            config.getCommitter().dropOi( this );
+
+        }
+    }
+
     private loadOiMetaFromJson( oimeta, options: CreateOptions ) {
         // If incrementals are set then set the constructor option to
         // not set the update flag when the attribute value is set.  The
@@ -145,6 +158,9 @@ export class ObjectInstance {
             p.totalCount = oimeta.pagination.totalCount;
             p.totalPages = oimeta.pagination.totalPages;
         }
+
+        if ( oimeta.locked )
+            this.isLocked = true;
     }
 
     createFromJson( initialize, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): this {
@@ -643,14 +659,20 @@ export interface UpdateOptions {
     ignoreUnknownAttributeErrors? : boolean
 }
 
+export interface IncludeOptions {
+    index? : number
+}
+
 /**
  * Include logic can get pretty hairy.  This class tries to perform it.
  */
 class Includer {
-    constructor( private target: EntityInstance, private source: EntityInstance ) {}
+    constructor( private array: ArrayDelegate<EntityInstance>,
+                 private source: EntityInstance,
+                 private options: IncludeOptions )
+    {}
 
     include() {
-        this.target;
     }
 
 }
@@ -682,29 +704,37 @@ class ArrayDelegate<T extends EntityInstance> {
 
         // Figure out where to insert the new ei.
         let position = options.position;
-        if ( position == undefined ) {
+        if ( position === undefined ) {
             // Default is to insert at the end.
             this.array.push( ei );
-        } else
-        if ( typeof position === "number" ) {
+        }
+        else if ( typeof position === "number" ) {
             this.array.splice( position, 0, ei );
         }
         else {
-            if ( position === Position.Last )
-                this.array.push( ei );
-            else
-            if ( position === Position.First )
-                this.array.unshift( ei );
-            else
-            if ( position === Position.Next )
-                this.array.splice( this.currentlySelected, 0, ei );
-            else {
-                // Must be Position.Prev.  If currentlySelected is 0, then put
-                // at the beginning.
-                if ( this.currentlySelected == 0 )
+            switch ( position ) {
+                case Position.Last:
+                    this.array.push( ei );
+                    break;
+
+                case Position.First:
                     this.array.unshift( ei );
-                else
-                    this.array.splice( this.currentlySelected - 1, 0, ei );
+                    break;
+
+                case Position.Next:
+                    this.array.splice( this.currentlySelected, 0, ei );
+                    break;
+
+                case Position.Prev:
+                    // If currentlySelected is 0, then put at the beginning.
+                    if ( this.currentlySelected == 0 )
+                        this.array.unshift( ei );
+                    else
+                        this.array.splice( this.currentlySelected - 1, 0, ei );
+                    break;
+
+                default:
+                    error( `Unknown position option: ${position}` );
             }
         }
 
@@ -712,9 +742,16 @@ class ArrayDelegate<T extends EntityInstance> {
         return ei;
     }
 
-    include( sourceEi: EntityInstance, index: number = -1, options: any = {} ) {
+    include( sourceEi: EntityInstance, options: IncludeOptions = {} ): EntityInstance {
         if ( ! this.entityDef.includable )
             error( `Entity ${this.entityDef.name} does not have include authority.` );
+
+        options = {...options}; // Clone the options so we can change the values.
+        if ( options.index === undefined )
+            options.index = this.currentlySelected;
+
+        let includer = new Includer( this, sourceEi, options );
+        return null;
     }
 
     private validateExclude( index? : number ) {
@@ -767,7 +804,7 @@ class ArrayDelegate<T extends EntityInstance> {
     }
 
     delete( index? : number ) {
-        if ( index == undefined )
+        if ( index === undefined )
             index = this.currentlySelected;
 
         this.validateDelete( index );
@@ -864,6 +901,9 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         _arr.create = function( initialize : Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
             return this.delegate.create( initialize, options );
         }
+        _arr.include = function( sourceEi: EntityInstance, options?: IncludeOptions ): EntityInstance {
+            return this.delegate.include( sourceEi, options );
+        };
         _arr.excludeAll = function() { this.delegate.excludeAll(); };
         _arr.deleteAll = function( filter?: ( EntityInstance ) => boolean ) { this.delegate.deleteAll(filter); };
         _arr.delete = function( index?: number) { this.delegate.delete( index ); };
@@ -885,6 +925,7 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     delete: ( index? : number ) => void;
     drop: ( index? : number ) => void;
     exclude: ( index? : number ) => void;
+    include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => EntityInstance;
     selected: () => EntityInstance;
     setSelected: (value: number | EntityInstance ) => EntityInstance;
 
@@ -924,6 +965,10 @@ export class Activator {
 export class Committer {
     commitOi( oi: ObjectInstance, options?: CommitOptions ): Observable<ObjectInstance>{
         throw "commitOi has not been implemented"
+    }
+
+    dropOi( oi: ObjectInstance, options?: CommitOptions ) {
+        throw "dropOi has not been implemented"
     }
 
     // Error handler called if there is an error.

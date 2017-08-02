@@ -98,8 +98,25 @@ var RestCommitter = (function () {
         return this.http.post(url, body, reqOptions)
             .map(function (response) { return _this.parseCommitResponse(oi, response); });
     };
+    RestCommitter.prototype.dropOi = function (oi, options) {
+        var lodName = oi.getLodDef().name;
+        if (oi.root.length != 1)
+            throw "The only currently supported option for dropOi is a single root OI.";
+        var root = oi.root[0];
+        var keyDef = root.keyAttributeDef;
+        var qual = {};
+        qual[keyDef.name] = root.getAttribute(keyDef.name);
+        var body = "qual=" + JSON.stringify(qual);
+        var headers = new http_1.Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+        var reqOptions = new http_1.RequestOptions({ headers: headers });
+        var errorHandler = oi.handleActivateError;
+        var url = this.values.restUrl + "/" + lodName + "/dropLock";
+        return this.http.post(url, body, reqOptions)
+            .map(function (response) { return response.text(); })
+            .subscribe(function (response) { return console.log("DropOi response = " + response); });
+    };
     RestCommitter.prototype.parseCommitResponse = function (oi, response) {
-        if (response.text() == "{}")
+        if (response.text() === "{}")
             return oi.createFromJson(undefined);
         var data = response.json();
         return oi.createFromJson(data, { incrementalsSpecified: true });

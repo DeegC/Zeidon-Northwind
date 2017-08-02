@@ -26,7 +26,7 @@ var ProductDetailComponent = (function () {
         var _this = this;
         var id = +this._route.snapshot.params['id'];
         console.log("ProductDetail init");
-        Product_1.Product.activate({ ProductId: id, readOnly: true }).subscribe(function (product) {
+        Product_1.Product.activate({ ProductId: id }).subscribe(function (product) {
             _this.product = product;
             _this.buildForm();
             console.log("Loaded product");
@@ -37,7 +37,8 @@ var ProductDetailComponent = (function () {
         this._northwindService.commitProduct(this.product)
             .then(function (product) { });
     };
-    ProductDetailComponent.prototype.goBack = function () {
+    ProductDetailComponent.prototype.cancel = function () {
+        this.product.drop();
         window.history.back();
     };
     return ProductDetailComponent;

@@ -28,7 +28,7 @@ export class ProductDetailComponent implements OnInit {
     ngOnInit() {
         let id = +this._route.snapshot.params['id'];
         console.log( "ProductDetail init" );
-        Product.activate( { ProductId: id, readOnly: true } ).subscribe( product => {
+        Product.activate( { ProductId: id } ).subscribe( product => {
             this.product = product;
             this.buildForm();
             console.log( "Loaded product" );
@@ -41,7 +41,8 @@ export class ProductDetailComponent implements OnInit {
             .then( product => {} );
     }
 
-    goBack() {
+    cancel() {
+        this.product.drop();
         window.history.back();
     }
 }
