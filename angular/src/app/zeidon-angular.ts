@@ -1,14 +1,15 @@
 /**
  * Classes for dealing specifically with Angular 2+ apps.
  */
-
 import { OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { Input } from '@angular/core';
 import { ElementRef, Renderer, ViewContainerRef } from '@angular/core';
 import { Directive } from '@angular/core';
 import { AbstractControl, NG_VALIDATORS, Validator } from '@angular/forms';
-import { EntityInstance, Domain } from './zeidon';
+import { ObjectInstance, EntityInstance, Domain } from './zeidon';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
+import { CanDeactivate } from '@angular/router';
+import { Injectable } from '@angular/core';
 
 /**
  * When added to an input element, this will automatically set the value of
@@ -141,5 +142,30 @@ export class ZeidonFormBuilder {
         }
 
         return form;
+    }
+}
+
+/**
+ * Components with OIs that need to be dropped (e.g. locked OIs that need to have
+ * their locks removed) implement this interface.  The deactivator will use the method
+ * to find views to drop.
+ */
+export interface ZeidonComponentWithOis {
+    getOis: () => ObjectInstance[];
+}
+
+/**
+ * This will drop OIs when a component is deactivated.
+ */
+export class DropViewsOnDeactivate implements CanDeactivate<ZeidonComponentWithOis> {
+
+    canDeactivate(target: ZeidonComponentWithOis) {
+        let ois = target.getOis();
+        if ( ois ) {
+            for ( let oi of ois ) {
+                oi.drop();
+            }
+        }
+        return true;
     }
 }

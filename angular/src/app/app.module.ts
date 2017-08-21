@@ -11,7 +11,7 @@ import { AppComponent }   from './app.component';
 import { ZeidonConfiguration } from './zeidon';
 import { ZeidonRestValues } from './zeidon-rest-client';
 import { ZeidonRestConfiguration } from './zeidon-rest-client';
-import { ErrorElementDirective }   from './zeidon-angular';
+import { ErrorElementDirective, DropViewsOnDeactivate }   from './zeidon-angular';
 
 import { OrdersComponent } from './orders.component';
 import { ProductsComponent } from './products.component';
@@ -58,7 +58,10 @@ const REST_VALUES: ZeidonRestValues = {
                     },
                     {
                         path: 'product/:id',
-                        component: ProductDetailComponent
+                        component: ProductDetailComponent,
+                        canDeactivate: [
+                          DropViewsOnDeactivate
+                        ]
                     },
                   ])
    ],
@@ -70,6 +73,7 @@ const REST_VALUES: ZeidonRestValues = {
                   ProductDetailComponent,
                   ErrorElementDirective ],
   providers: [ NorthwindService,
+               DropViewsOnDeactivate,
                { provide: ZeidonRestValues, useValue: REST_VALUES },
                { provide: ZeidonConfiguration, useClass: ZeidonRestConfiguration },
              ],

@@ -1,6 +1,3 @@
-/**
- * Classes for dealing specifically with Angular 2+ apps.
- */
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -142,5 +139,24 @@ var ZeidonFormBuilder = (function () {
     return ZeidonFormBuilder;
 }());
 exports.ZeidonFormBuilder = ZeidonFormBuilder;
+/**
+ * This will drop OIs when a component is deactivated.
+ */
+var DropViewsOnDeactivate = (function () {
+    function DropViewsOnDeactivate() {
+    }
+    DropViewsOnDeactivate.prototype.canDeactivate = function (target) {
+        var ois = target.getOis();
+        if (ois) {
+            for (var _i = 0, ois_1 = ois; _i < ois_1.length; _i++) {
+                var oi = ois_1[_i];
+                oi.drop();
+            }
+        }
+        return true;
+    };
+    return DropViewsOnDeactivate;
+}());
+exports.DropViewsOnDeactivate = DropViewsOnDeactivate;
 var ErrorElementDirective_1;
 //# sourceMappingURL=zeidon-angular.js.map

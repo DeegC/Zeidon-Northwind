@@ -72,7 +72,10 @@ AppModule = __decorate([
                 },
                 {
                     path: 'product/:id',
-                    component: product_detail_component_1.ProductDetailComponent
+                    component: product_detail_component_1.ProductDetailComponent,
+                    canDeactivate: [
+                        zeidon_angular_1.DropViewsOnDeactivate
+                    ]
                 },
             ])
         ],
@@ -84,6 +87,7 @@ AppModule = __decorate([
             product_detail_component_1.ProductDetailComponent,
             zeidon_angular_1.ErrorElementDirective],
         providers: [northwind_service_1.NorthwindService,
+            zeidon_angular_1.DropViewsOnDeactivate,
             { provide: zeidon_rest_client_1.ZeidonRestValues, useValue: REST_VALUES },
             { provide: zeidon_1.ZeidonConfiguration, useClass: zeidon_rest_client_2.ZeidonRestConfiguration },
         ],
