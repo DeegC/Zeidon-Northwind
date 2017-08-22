@@ -1,5 +1,5 @@
 <div *ngIf="product">
-  <form [formGroup]="form" (ngSubmit)="saveOrder($event)">
+  <form [formGroup]="form" (ngSubmit)="saveProduct($event)">
     <h2>Product {{product.Product$.ProductId}} details</h2>
       <div>
         <label>id: </label>{{product.Product$.ProductId}}
@@ -93,7 +93,7 @@
 
       <div>
         <button type="submit" class="btn btn-default" [disabled]="false">
-            Save Order
+            Save Product
         </button>
         <button type="button" class="btn btn-default" (click)="cancel()" >
             Cancel

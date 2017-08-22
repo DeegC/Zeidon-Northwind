@@ -43,10 +43,14 @@ export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWit
         } );
     }
 
-    onSubmit() {
+    saveProduct( event ) {
+        this.product.Product$.update( this.form.value );
         console.log( JSON.stringify( this.product, null, 2 ) );
-        this._northwindService.commitProduct( this.product )
-            .then( product => {} );
+        this.product.commit().subscribe(product => {
+            this.product = product;
+            this.buildForm();
+            window.history.back();
+        });
     }
 
     cancel() {

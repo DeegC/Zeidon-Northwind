@@ -78,7 +78,7 @@ export class ObjectInstance {
                     application: this.getApplicationName(),
                     odName: this.getLodDef().name,
                     incremental: true,
-                    isLocked: this.isLocked,
+                    locked: this.isLocked,
                     readOnlyOi: false
                 }
             }]

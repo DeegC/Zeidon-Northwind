@@ -40,10 +40,15 @@ var ProductDetailComponent = (function () {
             console.log("Loaded product");
         });
     };
-    ProductDetailComponent.prototype.onSubmit = function () {
+    ProductDetailComponent.prototype.saveProduct = function (event) {
+        var _this = this;
+        this.product.Product$.update(this.form.value);
         console.log(JSON.stringify(this.product, null, 2));
-        this._northwindService.commitProduct(this.product)
-            .then(function (product) { });
+        this.product.commit().subscribe(function (product) {
+            _this.product = product;
+            _this.buildForm();
+            window.history.back();
+        });
     };
     ProductDetailComponent.prototype.cancel = function () {
         this.product.drop();
