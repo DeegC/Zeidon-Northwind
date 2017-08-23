@@ -33,9 +33,11 @@ export class OrderDetailComponent implements OnInit, OnChanges {
     }
 
     saveOrder( event ): void {
+        this.order.Order$.update( this.form.value );
         this.order.commit().subscribe(order => {
             this.order = order;
             this.buildForm();
+            window.history.back();
         });
     }
 
@@ -47,12 +49,6 @@ export class OrderDetailComponent implements OnInit, OnChanges {
             this.buildForm();
             console.log( "Loaded order" );
         } );
-    }
-
-    onSubmit() {
-        console.log( "Submitted" );
-        console.log( JSON.stringify( this.order, null, 2 ) );
-        this.submitted = true;
     }
 
     cancel(): void {

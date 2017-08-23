@@ -1,7 +1,6 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import { NorthwindService } from './northwind.service';
+import {ActivatedRoute} from '@angular/router';
 import {Product} from "./Product";
 import * as zeidon from './zeidon-angular';
 
@@ -13,19 +12,12 @@ import * as zeidon from './zeidon-angular';
 export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWithOis {
 
     product: Product;
-    errorMessage: string;
     form: FormGroup;
 
-    constructor( private _northwindService: NorthwindService,
-                 private _route: ActivatedRoute,
-                 private _router: Router ) {
-        this._router.events.subscribe( event => {
-            console.log( "router event = " + event.constructor.name );
-        } );
+    constructor( private _route: ActivatedRoute ) {
     }
 
     getOis() {
-        console.log( "Product getOis" );
         return this.product ? [ this.product ] : undefined;
     }
 
@@ -57,11 +49,5 @@ export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWit
         this.product.drop();
         window.history.back();
     }
-
-    @HostListener('window:beforeunload', ['$event'])
-    unloadHandler(event) {
-        console.log("unloadHandler");
-    }
-
 }
 

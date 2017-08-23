@@ -29,9 +29,11 @@ var OrderDetailComponent = (function () {
     };
     OrderDetailComponent.prototype.saveOrder = function (event) {
         var _this = this;
+        this.order.Order$.update(this.form.value);
         this.order.commit().subscribe(function (order) {
             _this.order = order;
             _this.buildForm();
+            window.history.back();
         });
     };
     OrderDetailComponent.prototype.ngOnInit = function () {
@@ -43,11 +45,6 @@ var OrderDetailComponent = (function () {
             _this.buildForm();
             console.log("Loaded order");
         });
-    };
-    OrderDetailComponent.prototype.onSubmit = function () {
-        console.log("Submitted");
-        console.log(JSON.stringify(this.order, null, 2));
-        this.submitted = true;
     };
     OrderDetailComponent.prototype.cancel = function () {
         window.history.back();
