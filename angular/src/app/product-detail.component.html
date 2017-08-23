@@ -1,103 +1,104 @@
 <div *ngIf="product">
   <form [formGroup]="form" (ngSubmit)="saveProduct($event)">
     <h2>Product {{product.Product$.ProductId}} details</h2>
-      <div>
-        <label>id: </label>{{product.Product$.ProductId}}
-      </div>
 
-      <div>
-        <label>Category: </label>
-        {{product.Product$.Category$.CategoryName}}
-      </div>
-
-      <div>
-        <label>Name: </label>
-        <input type="text"
-               formControlName="ProductName" [zeidonErrorElement]="productNameError"
-               placeholder="product name"
-        />
-      </div>
-      <div #productNameError class="alert alert-danger" style="display:none"></div>
-
-      <div>
-        <label>Unit Price: </label>
-        <input type="text"
-               formControlName="UnitPrice" [zeidonErrorElement]="unitPriceError"
-               placeholder="price"
-        />
-      </div>
-      <div #unitPriceError class="alert alert-danger" style="display:none"></div>
-
-      <div>
-        <label>Units in Stock: </label>
-        <input type="text"
-               formControlName="UnitsInStock" [zeidonErrorElement]="unitsError"
-               placeholder="units"
-        />
-      </div>
-      <div #unitsError class="alert alert-danger" style="display:none"></div>
-
-      <div>
-        <label>Quantity Per Unit: </label>
-        <input type="text"
-               formControlName="QuantityPerUnit" [zeidonErrorElement]="quantityError"
-               placeholder="quantity"
-        />
-      </div>
-      <div #quantityError class="alert alert-danger" style="display:none"></div>
-
-      <div>
-        <label>Reorder Level: </label>
-        <input type="text"
-               formControlName="ReorderLevel" [zeidonErrorElement]="reorderError"
-               placeholder="level"
-        />
-      </div>
-      <div #reorderError class="alert alert-danger" style="display:none"></div>
-
-      <div>
-        <label>Units on Order: </label>
-        <input type="text"
-               formControlName="UnitsOnOrder" [zeidonErrorElement]="orderError"
-               placeholder="units"
-        />
-      </div>
-      <div #unitsError class="alert alert-danger" style="display:none"></div>
-
-      <div>
-        <label>Discontinued: </label>
-        <input type="text"
-               formControlName="Discontinued" [zeidonErrorElement]="discontinuedError"
-               placeholder="discontinued?"
-        />
-      </div>
-      <div #discontinuedError class="alert alert-danger" style="display:none"></div>
-
-      <h2>Supplier</h2>
-
-      <div formGroupName="Supplier">
-
-        <label>Company Name </label>
-        <input type="text"
-               formControlName="CompanyName"
-               [readonly]="true"
-        />
-
-        <label>Contact Name </label>
-        <input type="text"
-               formControlName="ContactName"
-               [readonly]="true"
-        />
-
+    <div>
+      <label>id: </label>{{product.Product$.ProductId}}
     </div>
 
-      <div>
-        <button type="submit" class="btn btn-default" [disabled]="false">
-            Save Product
-        </button>
-        <button type="button" class="btn btn-default" (click)="cancel()" >
-            Cancel
-        </button>
-      </div>
+    <div>
+      <label>Category: </label>
+      {{product.Product$.Category$.CategoryName}}
+    </div>
+
+    <div>
+      <label>Name: </label>
+      <input type="text"
+              formControlName="ProductName" [zeidonErrorElement]="productNameError"
+              placeholder="product name"
+      />
+    </div>
+    <div #productNameError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Unit Price: </label>
+      <input type="text"
+              formControlName="UnitPrice" [zeidonErrorElement]="unitPriceError"
+              placeholder="price"
+      />
+    </div>
+    <div #unitPriceError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Units in Stock: </label>
+      <input type="text"
+              formControlName="UnitsInStock" [zeidonErrorElement]="unitsError"
+              placeholder="units"
+      />
+    </div>
+    <div #unitsError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Quantity Per Unit: </label>
+      <input type="text"
+              formControlName="QuantityPerUnit" [zeidonErrorElement]="quantityError"
+              placeholder="quantity"
+      />
+    </div>
+    <div #quantityError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Reorder Level: </label>
+      <input type="text"
+              formControlName="ReorderLevel" [zeidonErrorElement]="reorderError"
+              placeholder="level"
+      />
+    </div>
+    <div #reorderError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Units on Order: </label>
+      <input type="text"
+              formControlName="UnitsOnOrder" [zeidonErrorElement]="orderError"
+              placeholder="units"
+      />
+    </div>
+    <div #unitsError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Discontinued: </label>
+      <input type="text"
+              formControlName="Discontinued" [zeidonErrorElement]="discontinuedError"
+              placeholder="discontinued?"
+      />
+    </div>
+    <div #discontinuedError class="alert alert-danger" style="display:none"></div>
+
+    <h2>Supplier</h2>
+
+    <div formGroupName="Supplier">
+
+      <label>Company Name </label>
+      <input type="text"
+              formControlName="CompanyName"
+              [readonly]="true"
+      />
+
+      <label>Contact Name </label>
+      <input type="text"
+              formControlName="ContactName"
+              [readonly]="true"
+      />
+
+  </div>
+
+    <div>
+      <button type="submit" class="btn btn-default" [disabled]="false">
+          Save Product
+      </button>
+      <button type="button" class="btn btn-default" (click)="cancel()" >
+          Cancel
+      </button>
+    </div>
   </form>
 </div>

@@ -12,8 +12,6 @@ import {Product} from './Product';
 })
 export class ProductsComponent implements OnInit {
 
-    errorMessage: string;
-    searchText: string;
     products: Product;
     selectedProduct: Product;
     pagination: Pagination = new Pagination();

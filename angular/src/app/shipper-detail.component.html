@@ -1,0 +1,33 @@
+<div *ngIf="shipper">
+  <form [formGroup]="form" (ngSubmit)="saveShipper($event)">
+    <h2>{{shipper.ShipperId}} details!</h2>
+    <div>
+      <label>id: </label>{{shipper.Shipper$.ShipperId}}
+    </div>
+
+    <div>
+      <label>Name: </label>
+      <input type="text"
+          formControlName="CompanyName" [zeidonErrorElement]="companyNameError"
+          placeholder="shipper company name"
+      />
+    </div>
+    <div #companyNameError class="alert alert-danger" style="display:none"></div>
+
+    <div>
+      <label>Phone: </label>
+      <input type="text"
+        formControlName="Phone" [zeidonErrorElement]="phoneError"
+        placeholder="phone"
+      />
+    </div>
+    <div #phoneError class="alert alert-danger" style="display:none"></div>
+
+    <button type="submit" class="btn btn-default" [disabled]="false">
+        Save Shipper
+    </button>
+    <button type="button" class="btn btn-default" (click)="cancel()" >
+        Cancel
+    </button>
+  </form>
+</div>

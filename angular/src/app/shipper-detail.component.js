@@ -11,50 +11,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var router_1 = require("@angular/router");
-var Product_1 = require("./Product");
+var Shipper_1 = require("./Shipper");
 var zeidon = require("./zeidon-angular");
-var ProductDetailComponent = (function () {
-    function ProductDetailComponent(_route) {
+var ShipperDetailComponent = (function () {
+    function ShipperDetailComponent(_route) {
         this._route = _route;
     }
-    ProductDetailComponent.prototype.getOis = function () {
-        return this.product ? [this.product] : undefined;
-    };
-    ProductDetailComponent.prototype.buildForm = function () {
-        this.form = new zeidon.ZeidonFormBuilder().group(this.product.Product$);
-    };
-    ProductDetailComponent.prototype.ngOnInit = function () {
+    ShipperDetailComponent.prototype.ngOnInit = function () {
         var _this = this;
         var id = +this._route.snapshot.params['id'];
-        console.log("ProductDetail init");
-        Product_1.Product.activate({ ProductId: id }).subscribe(function (product) {
-            _this.product = product;
+        Shipper_1.Shipper.activate({ ShipperId: id }).subscribe(function (shipper) {
+            _this.shipper = shipper;
             _this.buildForm();
+            console.log("Loaded shipper");
         });
     };
-    ProductDetailComponent.prototype.saveProduct = function (event) {
+    ShipperDetailComponent.prototype.buildForm = function () {
+        this.form = new zeidon.ZeidonFormBuilder().group(this.shipper.Shipper$);
+    };
+    ShipperDetailComponent.prototype.saveShipper = function (event) {
         var _this = this;
-        this.product.Product$.update(this.form.value);
-        console.log(JSON.stringify(this.product, null, 2));
-        this.product.commit().subscribe(function (product) {
-            _this.product = product;
+        this.shipper.Shipper$.update(this.form.value);
+        this.shipper.commit().subscribe(function (shipper) {
+            _this.shipper = shipper;
             _this.buildForm();
             window.history.back();
         });
     };
-    ProductDetailComponent.prototype.cancel = function () {
-        this.product.drop();
+    ShipperDetailComponent.prototype.cancel = function () {
         window.history.back();
     };
-    return ProductDetailComponent;
+    return ShipperDetailComponent;
 }());
-ProductDetailComponent = __decorate([
+ShipperDetailComponent = __decorate([
     core_1.Component({
-        selector: 'product-detail',
-        templateUrl: 'app/product-detail.component.html',
-        styleUrls: ['app/product-detail.component.css']
+        selector: 'shipper-detail',
+        templateUrl: 'app/shipper-detail.component.html',
+        styleUrls: ['app/shipper-detail.component.css']
     }),
     __metadata("design:paramtypes", [router_1.ActivatedRoute])
-], ProductDetailComponent);
-exports.ProductDetailComponent = ProductDetailComponent;
-//# sourceMappingURL=product-detail.component.js.map
+], ShipperDetailComponent);
+exports.ShipperDetailComponent = ShipperDetailComponent;
+//# sourceMappingURL=shipper-detail.component.js.map

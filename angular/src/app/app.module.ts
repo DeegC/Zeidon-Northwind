@@ -15,8 +15,10 @@ import { ErrorElementDirective, DropViewsOnDeactivate }   from './zeidon-angular
 
 import { OrdersComponent } from './orders.component';
 import { ProductsComponent } from './products.component';
+import { ShippersComponent } from './shippers.component';
 import { ProductDetailComponent } from './product-detail.component';
 import { OrderDetailComponent } from './order-detail.component';
+import { ShipperDetailComponent } from './shipper-detail.component';
 import { NorthwindService } from './northwind.service';
 import {PaginationComponent} from './pagination.component';
 
@@ -63,13 +65,23 @@ const REST_VALUES: ZeidonRestValues = {
                           DropViewsOnDeactivate
                         ]
                     },
-                  ])
+                    {
+                      path: 'shippers',
+                      component: ShippersComponent
+                  },
+                  {
+                      path: 'shipper/:id',
+                      component: ShipperDetailComponent
+                  },
+                ])
    ],
   declarations: [ AppComponent,
                   OrdersComponent,
                   ProductsComponent,
+                  ShippersComponent,
                   PaginationComponent,
                   OrderDetailComponent,
+                  ShipperDetailComponent,
                   ProductDetailComponent,
                   ErrorElementDirective ],
   providers: [ NorthwindService,

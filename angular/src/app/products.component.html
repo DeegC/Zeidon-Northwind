@@ -9,10 +9,10 @@
 <div *ngIf="products && products.isEmpty == false">
     <ul class="products">
         <li *ngFor="let product of products.Product"
-        [class.selected]="product === selectedProduct" >
-        <a [routerLink]="['/product', product.ProductId]"  class="col-1-4">
-            <span class="badge">{{product.ProductId}}</span> {{product.ProductName}}
-        </a>
+            [class.selected]="product === selectedProduct" >
+            <a [routerLink]="['/product', product.ProductId]"  class="col-1-4">
+                <span class="badge">{{product.ProductId}}</span> {{product.ProductName}}
+            </a>
         </li>
     </ul>
 </div>

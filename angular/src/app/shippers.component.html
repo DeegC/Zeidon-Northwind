@@ -1,0 +1,20 @@
+<h2>Shippers</h2>
+<pagination [pagination]='pagination' (reloadPage)="loadPage()"></pagination>
+
+<div *ngIf="shippers && shippers.isEmpty == false">
+    <ul class="shippers">
+        <li *ngFor="let shipper of shippers.Shipper"
+            [class.selected]="shipper === selectedShipper" >
+            <a [routerLink]="['/shipper', shipper.ShipperId]"  class="col-1-4">
+                <span class="badge">{{shipper.ShipperId}}</span> {{shipper.CompanyName}}
+            </a>
+        </li>
+    </ul>
+</div>
+
+New Shipper:
+<input #newShipper />
+<button (click)="addShipper(newShipper.value); newShipper.value=''">
+    Add Shipper
+</button>
+<div class="error" *ngIf="errorMessage">{{errorMessage}}</div>

@@ -24,8 +24,10 @@ var zeidon_rest_client_2 = require("./zeidon-rest-client");
 var zeidon_angular_1 = require("./zeidon-angular");
 var orders_component_1 = require("./orders.component");
 var products_component_1 = require("./products.component");
+var shippers_component_1 = require("./shippers.component");
 var product_detail_component_1 = require("./product-detail.component");
 var order_detail_component_1 = require("./order-detail.component");
+var shipper_detail_component_1 = require("./shipper-detail.component");
 var northwind_service_1 = require("./northwind.service");
 var pagination_component_1 = require("./pagination.component");
 // If we are running under browserSync then we'll set the port number to be 8080.
@@ -77,13 +79,23 @@ AppModule = __decorate([
                         zeidon_angular_1.DropViewsOnDeactivate
                     ]
                 },
+                {
+                    path: 'shippers',
+                    component: shippers_component_1.ShippersComponent
+                },
+                {
+                    path: 'shipper/:id',
+                    component: shipper_detail_component_1.ShipperDetailComponent
+                },
             ])
         ],
         declarations: [app_component_1.AppComponent,
             orders_component_1.OrdersComponent,
             products_component_1.ProductsComponent,
+            shippers_component_1.ShippersComponent,
             pagination_component_1.PaginationComponent,
             order_detail_component_1.OrderDetailComponent,
+            shipper_detail_component_1.ShipperDetailComponent,
             product_detail_component_1.ProductDetailComponent,
             zeidon_angular_1.ErrorElementDirective],
         providers: [northwind_service_1.NorthwindService,

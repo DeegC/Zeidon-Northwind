@@ -31,7 +31,6 @@ export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWit
         Product.activate( { ProductId: id } ).subscribe( product => {
             this.product = product;
             this.buildForm();
-            console.log( "Loaded product" );
         } );
     }
 
