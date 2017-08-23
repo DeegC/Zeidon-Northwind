@@ -10,3 +10,5 @@ npm-debug.log
 build/
 .cache-main
 .cache-tests
+
+angular/dist
