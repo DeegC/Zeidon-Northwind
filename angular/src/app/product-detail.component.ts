@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
-import {Product} from "./Product";
+import {Product} from "./lod/Product";
 import * as zeidon from './zeidon-angular';
 
 @Component({

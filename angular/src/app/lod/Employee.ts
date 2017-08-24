@@ -4,7 +4,7 @@
 
 */
 
-import * as zeidon from './zeidon';
+import * as zeidon from '../zeidon';
 import { Observable } from 'rxjs';
 import { Northwind_DomainList } from './Northwind-DomainList';
 import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';

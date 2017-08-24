@@ -2,7 +2,7 @@ import { Component, Input, Output, OnInit, EventEmitter, SimpleChanges, OnChange
 import { FormGroup, Validators } from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import { NorthwindService } from './northwind.service';
-import {Order} from './Order';
+import {Order} from './lod/Order';
 import * as zeidon from './zeidon-angular';
 
 @Component({

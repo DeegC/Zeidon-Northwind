@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Shipper} from './Shipper';
+import {Shipper} from './lod/Shipper';
 import { FormGroup, Validators } from '@angular/forms';
 import * as zeidon from './zeidon-angular';
 

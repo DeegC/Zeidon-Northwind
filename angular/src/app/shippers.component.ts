@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import { Router } from '@angular/router';
 import {OnInit} from '@angular/core';
 import {ShipperDetailComponent} from './shipper-detail.component';
-import {Shipper} from './Shipper';
+import {Shipper} from './lod/Shipper';
 import {Pagination} from './zeidon';
 
 @Component({

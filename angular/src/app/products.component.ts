@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {Pagination} from './zeidon';
-import {Product} from './Product';
+import {Product} from './lod/Product';
 
 @Component({
     selector: 'products',

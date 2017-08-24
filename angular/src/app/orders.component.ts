@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {OnInit} from '@angular/core';
 import {NorthwindService} from './northwind.service';
 import {Pagination} from './zeidon';
-import {Order} from './Order';
+import {Order} from './lod/Order';
 
 @Component({
     selector: 'orders',
