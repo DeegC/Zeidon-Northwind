@@ -1,4 +1,4 @@
-﻿# ---------------------------------------------------------------------- #
+# ---------------------------------------------------------------------- #
 # Target DBMS:           MySQL 5                                         #
 # Project name:          Northwind                                       #
 # Author:                Valon Hoti                                      #
@@ -15,7 +15,7 @@ USE northwind;
 # ---------------------------------------------------------------------- #
 
 # Table used by Zeidon for pessimistic locking.
-CREATE TABLE ZEIDONLOCKING (
+CREATE TABLE `ZEIDONLOCKING` (
            LOD_NAME                         varchar( 35 )      NOT NULL,
            KEYVALUE                         varchar( 200 )     NOT NULL,
            USERNAME                         varchar( 32 )      NULL    ,
