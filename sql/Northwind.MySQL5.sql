@@ -13,6 +13,19 @@ USE northwind;
 # ---------------------------------------------------------------------- #
 # Tables                                                                 #
 # ---------------------------------------------------------------------- #
+
+# Table used by Zeidon for pessimistic locking.
+CREATE TABLE ZEIDONLOCKING (
+           LOD_NAME                         varchar( 35 )      NOT NULL,
+           KEYVALUE                         varchar( 200 )     NOT NULL,
+           USERNAME                         varchar( 32 )      NULL    ,
+           ALLOWREAD                        integer            NULL    ,
+           z_TIMESTAMP                      datetime           NOT NULL,
+           ID                               INTEGER NOT NULL AUTO_INCREMENT,
+           CONSTRAINT `PK_ID`               PRIMARY KEY (`ID`) );
+
+CREATE UNIQUE INDEX `ZeidonLockingIdx` ON `ZEIDONLOCKING`(`LOD_NAME`, `KEYVALUE` ASC);
+
 # ---------------------------------------------------------------------- #
 # Add table "Categories"                                                 #
 # ---------------------------------------------------------------------- #

@@ -103,7 +103,7 @@ class ZeidonUnitTests {
         empl2.activateWhere( _.Employee.EmployeeId = 1 )
 
         assertEquals( empl.Employee.Photo, empl2.Employee.Photo )
-        Files.write(Paths.get("target/picture.jpg"), empl2.Employee.Photo.getBlob.getBytes )
-        FileUtils.write( new File( "target/picture.txt"), empl2.Employee.Photo.getString() )
+        Files.write(Paths.get("build/picture.jpg"), empl2.Employee.Photo.getBlob.getBytes )
+        FileUtils.write( new File( "build/picture.txt"), empl2.Employee.Photo.getString() )
     }
 }
