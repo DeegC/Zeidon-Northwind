@@ -996,7 +996,7 @@ export class Pagination {
 
     incrementPage() {
         let currentPage = Math.min( this.currentPage + 1, this.totalPages || 9999 );
-        if ( currentPage == this.currentPage )
+        if ( currentPage === this.currentPage )
             return false;
 
         this.currentPage = currentPage;
@@ -1005,7 +1005,7 @@ export class Pagination {
 
     decrementPage() {
         let currentPage = Math.max( this.currentPage - 1, 1 );
-        if ( currentPage == this.currentPage )
+        if ( currentPage === this.currentPage )
             return false;
 
         this.currentPage = currentPage;
@@ -1014,7 +1014,7 @@ export class Pagination {
 
     getQueryParam() {
         let pageParam = "?page=" + this.currentPage + "&perPage=" + this.pageSize;
-        if ( this.totalCount == null )
+        if ( this.totalCount === undefined )
             pageParam += "&getTotal=true";
 
         return pageParam;
@@ -1033,11 +1033,11 @@ export class Pagination {
     }
 
     firstPage() {
-        return this.currentPage == 1;
+        return this.currentPage === 1;
     }
 
     lastPage() {
-        return this.currentPage == this.totalPages;
+        return this.currentPage === this.totalPages;
     }
 }
 

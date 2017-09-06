@@ -15,6 +15,7 @@ USE northwind;
 # ---------------------------------------------------------------------- #
 
 # Table used by Zeidon for pessimistic locking.
+DROP TABLE IF EXISTS `ZEIDONLOCKING`;
 CREATE TABLE `ZEIDONLOCKING` (
            LOD_NAME                         varchar( 35 )      NOT NULL,
            KEYVALUE                         varchar( 200 )     NOT NULL,
@@ -30,6 +31,7 @@ CREATE UNIQUE INDEX `ZeidonLockingIdx` ON `ZEIDONLOCKING`(`LOD_NAME`, `KEYVALUE`
 # Add table "Categories"                                                 #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Categories`;
 CREATE TABLE `Categories` (
     `CategoryID` INTEGER NOT NULL AUTO_INCREMENT,
     `CategoryName` VARCHAR(15) NOT NULL,
@@ -44,6 +46,7 @@ CREATE INDEX `CategoryName` ON `Categories` (`CategoryName`);
 # Add table "CustomerCustomerDemo"                                       #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `CustomerCustomerDemo`;
 CREATE TABLE `CustomerCustomerDemo` (
     `CustomerID` VARCHAR(5) NOT NULL,
     `CustomerTypeID` VARCHAR(10) NOT NULL,
@@ -54,6 +57,7 @@ CREATE TABLE `CustomerCustomerDemo` (
 # Add table "CustomerDemographics"                                       #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `CustomerDemographics`;
 CREATE TABLE `CustomerDemographics` (
     `CustomerTypeID` VARCHAR(10) NOT NULL,
     `CustomerDesc` MEDIUMTEXT,
@@ -64,6 +68,7 @@ CREATE TABLE `CustomerDemographics` (
 # Add table "Customers"                                                  #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Customers`;
 CREATE TABLE `Customers` (
     `CustomerID` VARCHAR(5) NOT NULL,
     `CompanyName` VARCHAR(40) NOT NULL,
@@ -91,6 +96,7 @@ CREATE INDEX `Region` ON `Customers` (`Region`);
 # Add table "Employees"                                                  #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Employees`;
 CREATE TABLE `Employees` (
     `EmployeeID` INTEGER NOT NULL AUTO_INCREMENT,
     `LastName` VARCHAR(20) NOT NULL,
@@ -122,6 +128,7 @@ CREATE INDEX `PostalCode` ON `Employees` (`PostalCode`);
 # Add table "EmployeeTerritories"                                        #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `EmployeeTerritories`;
 CREATE TABLE `EmployeeTerritories` (
     `EmployeeID` INTEGER NOT NULL,
     `TerritoryID` VARCHAR(20) NOT NULL,
@@ -145,6 +152,7 @@ CREATE TABLE `Order Details` (
 # Add table "Orders"                                                     #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Orders`;
 CREATE TABLE `Orders` (
     `OrderID` INTEGER NOT NULL AUTO_INCREMENT,
     `CustomerID` VARCHAR(5),
@@ -173,6 +181,7 @@ CREATE INDEX `ShipPostalCode` ON `Orders` (`ShipPostalCode`);
 # Add table "Products"                                                   #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Products`;
 CREATE TABLE `Products` (
     `ProductID` INTEGER NOT NULL AUTO_INCREMENT,
     `ProductName` VARCHAR(40) NOT NULL,
@@ -193,6 +202,7 @@ CREATE INDEX `ProductName` ON `Products` (`ProductName`);
 # Add table "Region"                                                     #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Region`;
 CREATE TABLE `Region` (
     `RegionID` INTEGER NOT NULL,
     `RegionDescription` VARCHAR(50) NOT NULL,
@@ -203,6 +213,7 @@ CREATE TABLE `Region` (
 # Add table "Shippers"                                                   #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Shippers`;
 CREATE TABLE `Shippers` (
     `ShipperID` INTEGER NOT NULL AUTO_INCREMENT,
     `CompanyName` VARCHAR(40) NOT NULL,
@@ -214,6 +225,7 @@ CREATE TABLE `Shippers` (
 # Add table "Suppliers"                                                  #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Suppliers`;
 CREATE TABLE `Suppliers` (
     `SupplierID` INTEGER NOT NULL AUTO_INCREMENT,
     `CompanyName` VARCHAR(40) NOT NULL,
@@ -238,6 +250,7 @@ CREATE INDEX `PostalCode` ON `Suppliers` (`PostalCode`);
 # Add table "Territories"                                                #
 # ---------------------------------------------------------------------- #
 
+DROP TABLE IF EXISTS `Territories`;
 CREATE TABLE `Territories` (
     `TerritoryID` VARCHAR(20) NOT NULL,
     `TerritoryDescription` VARCHAR(50) NOT NULL,
