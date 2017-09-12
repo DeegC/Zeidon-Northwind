@@ -1,6 +1,7 @@
 /**
  * Classes for dealing specifically with Angular 2+ apps.
  */
+import { Headers, Http, RequestOptions } from '@angular/http';
 import { OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { Input } from '@angular/core';
 import { ElementRef, Renderer, ViewContainerRef } from '@angular/core';
@@ -10,6 +11,21 @@ import { ObjectInstance, EntityInstance, Domain } from './zeidon';
 import { FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { CanDeactivate } from '@angular/router';
 import { Injectable } from '@angular/core';
+
+import { Observable } from 'rxjs/Observable';
+// Observable class extensions
+import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/throw';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
+
+import { ZeidonConfiguration } from './zeidon';
+import { ZeidonRestValues, RestActivator, RestCommitter } from './zeidon-rest-client';
 
 /**
  * When added to an input element, this will automatically set the value of
@@ -167,5 +183,31 @@ export class DropViewsOnDeactivate implements CanDeactivate<ZeidonComponentWithO
             }
         }
         return true;
+    }
+}
+
+/**
+ * Converts calls from Angular HTTP to Zeidon's HttpClient.
+ */
+class HttpWrapper {
+    constructor( private http: Http ) {}
+
+    get( url: string ) : Observable<any> {
+        return this.http.get( url ).map( response => { return { "body": response.text() } } );
+    }
+
+    post( url: string, body: string, headers: Object ) : Observable<any> {
+        let rheaders = new Headers( headers );
+        let reqOptions = new RequestOptions({ headers: rheaders });
+        return this.http.post( url, body, reqOptions).map( response => { return { "body": response.text() } } );
+    }
+}
+
+@Injectable()
+export class ZeidonAngularConfiguration extends ZeidonConfiguration {
+    constructor( private values: ZeidonRestValues, private http: Http ) {
+        super( new RestActivator( values, new HttpWrapper( http ) ),
+               new RestCommitter( values, new HttpWrapper( http ) ) );
+        console.log("--- ZeidonRestConfiguration --- " + values.restUrl );
     }
 }

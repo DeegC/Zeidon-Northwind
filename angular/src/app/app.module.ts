@@ -10,7 +10,7 @@ import { DateValueAccessorModule } from 'angular-date-value-accessor';
 import { AppComponent }   from './app.component';
 import { ZeidonConfiguration } from './zeidon';
 import { ZeidonRestValues } from './zeidon-rest-client';
-import { ZeidonRestConfiguration } from './zeidon-rest-client';
+import { ZeidonAngularConfiguration } from './zeidon-angular';
 import { ErrorElementDirective, DropViewsOnDeactivate }   from './zeidon-angular';
 
 import { OrdersComponent } from './orders.component';
@@ -87,7 +87,7 @@ const REST_VALUES: ZeidonRestValues = {
   providers: [ NorthwindService,
                DropViewsOnDeactivate,
                { provide: ZeidonRestValues, useValue: REST_VALUES },
-               { provide: ZeidonConfiguration, useClass: ZeidonRestConfiguration },
+               { provide: ZeidonConfiguration, useClass: ZeidonAngularConfiguration },
              ],
   bootstrap: [ AppComponent ]
 })

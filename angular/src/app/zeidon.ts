@@ -1,6 +1,3 @@
-import { Headers, Http, RequestOptions } from '@angular/http';
-import { OpaqueToken } from '@angular/core';
-import { Injectable, Inject }    from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 let configurationInstance: ZeidonConfiguration = undefined;
@@ -951,7 +948,6 @@ const DEFAULT_CREATE_OPTIONS = {
     position: Position.Last
  };
 
-@Injectable()
 export class Activator {
     activateOi<T extends ObjectInstance>( oi: T, options?: any ): Observable<T> {
         throw "activateOi has not been implemented"
@@ -961,7 +957,6 @@ export class Activator {
     errorHandler?: (error:any) => void;
 }
 
-@Injectable()
 export class Committer {
     commitOi( oi: ObjectInstance, options?: CommitOptions ): Observable<ObjectInstance>{
         throw "commitOi has not been implemented"
@@ -975,7 +970,6 @@ export class Committer {
     errorHandler?: (error:any) => void;
 }
 
-@Injectable()
 export class ZeidonConfiguration {
     constructor( private activator: Activator, private committer: Committer ) {
         // Set the private global variable to this configuration.
@@ -1079,6 +1073,6 @@ let error = function ( message: string ) {
     console.log(stack.join("\n"));
 
     console.log( message );
-    alert( message );
+    //alert( message );
     throw message;
 }

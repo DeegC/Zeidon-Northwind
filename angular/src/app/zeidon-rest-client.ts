@@ -1,6 +1,3 @@
-import { Headers, Http, RequestOptions } from '@angular/http';
-import { OpaqueToken } from '@angular/core';
-import { Injectable, Inject }    from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 // Observable class extensions
@@ -20,52 +17,46 @@ import { ObjectInstance } from './zeidon';
 import { ZeidonConfiguration } from './zeidon';
 import { Committer, CommitOptions } from './zeidon';
 
-@Injectable()
+export interface HttpClient {
+    get( url: string ) : Observable<Response>;
+    post( url: string, body: string, headers: Object ) : Observable<Response>;
+}
+
 export class RestActivator {
-    constructor( private values: ZeidonRestValues, private http: Http ) {}
+    constructor( private values: ZeidonRestValues, private http: HttpClient ) {}
 
     activateOi<T extends ObjectInstance>( oi: T, qual?: any ): Observable<T> {
         if ( qual == undefined )
             qual = { rootOnly: true };
 
+        function fresponse( response ): T {
+            return oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T;
+        }
+
         let lodName = oi.getLodDef().name;
-        let errorHandler = oi.handleActivateError;
         let url = `${this.values.restUrl}/${lodName}?qual=${encodeURIComponent(JSON.stringify(qual))}`;
         return this.http.get( url )
-                .map( response => oi.createFromJson( response.json(), { incrementalsSpecified: true } ) as T );
+                .map( fresponse );
+                // .map( response => oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T );
     }
 }
 
 /**
  * These are the values for configuring Zeidon to use a REST server for activate/commits.
  */
-@Injectable()
 export class ZeidonRestValues {
     restUrl: string;
 }
 
-@Injectable()
-export class ZeidonRestConfiguration extends ZeidonConfiguration {
-    constructor( private values: ZeidonRestValues, private http: Http ) {
-        super( new RestActivator( values, http ),
-               new RestCommitter( values, http ) );
-        console.log("--- ZeidonRestConfiguration --- " + values.restUrl );
-    }
-}
-
-@Injectable()
 export class RestCommitter implements Committer {
-    constructor( private values: ZeidonRestValues, private http: Http ) {}
+    constructor( private values: ZeidonRestValues, private http: HttpClient ) {}
 
     commitOi( oi: ObjectInstance, options?: CommitOptions ): Observable<ObjectInstance> {
         let lodName = oi.getLodDef().name;
         let body = JSON.stringify( oi.toZeidonMeta() );
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let reqOptions = new RequestOptions({ headers: headers });
-        let errorHandler = oi.handleActivateError ;
         let url = `${this.values.restUrl}/${lodName}`;
 
-        return this.http.post( url, body, reqOptions)
+        return this.http.post( url, body, { 'Content-Type': 'application/json' })
             .map(response => this.parseCommitResponse( oi, response ) );
     }
 
@@ -79,22 +70,16 @@ export class RestCommitter implements Committer {
         let qual = { };
         qual[ keyDef.name ] = root.getAttribute( keyDef.name )
         let body = "qual=" + JSON.stringify( qual );
-        let headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
-        let reqOptions = new RequestOptions({ headers: headers });
-        let errorHandler = oi.handleActivateError ;
         let url = `${this.values.restUrl}/${lodName}/dropLock`;
 
-        return this.http.post( url, body, reqOptions )
-            .map(response => response.text() )
-            .subscribe( response => console.log( "DropOi response = " + response ) );
+        return this.http.post( url, body, { 'Content-Type': 'application/x-www-form-urlencoded' } )
+            .subscribe( response => console.log( "DropOi response = " + response.body ) );
     }
 
     parseCommitResponse( oi: ObjectInstance, response ): ObjectInstance {
-        if ( response.text() === "{}" )
+        if ( response.body === "{}" )
             return oi.createFromJson( undefined );
 
-        let data = response.json();
-        return oi.createFromJson( data, { incrementalsSpecified: true} );
+        return oi.createFromJson( response.body, { incrementalsSpecified: true} );
     }
-
 }
