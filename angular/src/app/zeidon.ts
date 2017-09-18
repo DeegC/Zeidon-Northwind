@@ -970,6 +970,10 @@ export class Committer {
     errorHandler?: (error:any) => void;
 }
 
+/**
+ * Initialization of the Zeidon environment is done by instantiating this
+ * object.
+ */
 export class ZeidonConfiguration {
     constructor( private activator: Activator, private committer: Committer ) {
         // Set the private global variable to this configuration.

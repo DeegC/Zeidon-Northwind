@@ -17,6 +17,13 @@ import { ObjectInstance } from './zeidon';
 import { ZeidonConfiguration } from './zeidon';
 import { Committer, CommitOptions } from './zeidon';
 
+/**
+ * Interface for wrapping different HTTP clients into a form that can be used by Zeidon.
+ * Response is expected to have the following shape:
+ * {
+ *      body: "<body returned by HTTP call>"
+ * }
+ */
 export interface HttpClient {
     get( url: string ) : Observable<Response>;
     post( url: string, body: string, headers: Object ) : Observable<Response>;
@@ -29,15 +36,10 @@ export class RestActivator {
         if ( qual == undefined )
             qual = { rootOnly: true };
 
-        function fresponse( response ): T {
-            return oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T;
-        }
-
         let lodName = oi.getLodDef().name;
         let url = `${this.values.restUrl}/${lodName}?qual=${encodeURIComponent(JSON.stringify(qual))}`;
         return this.http.get( url )
-                .map( fresponse );
-                // .map( response => oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T );
+                .map( response => oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T );
     }
 }
 
