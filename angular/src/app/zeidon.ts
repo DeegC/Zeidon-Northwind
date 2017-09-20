@@ -246,8 +246,11 @@ export class EntityInstance {
     public set excluded( v: boolean ) { this.setIncremental( v, "excluded" ) }
     public set updated( v: boolean ) { this.setIncremental( v, "updated" ) }
 
+    // The persistent attribute values stored as a hash (aka Object).  They key is
+    // the attribute name, the value is the attribute value.  The flag indicating
+    // that an attribute has been updated is stored with a key of ".attrname".
     public attributes: any = {};
-    public workAttributes: any = {};
+    public workAttributes: any = {};  // Work attribute stored same as 'attributes'.
 
     public validateErrors: any = {};
 
@@ -670,8 +673,20 @@ class Includer {
     {}
 
     include() {
+        this.validateInclude();
+        console.log( `Attempting to include ${this.source.entityDef.name} into ${this.array.entityDef.name}`)
     }
 
+    private validateInclude() {
+        let entityDef = this.array.entityDef;
+        if ( this.array.length >= entityDef.cardMax )
+            throw `Including a new instance for ${entityDef.name} voilates max cardinality`;
+
+        if ( ! entityDef.includable )
+            throw `Entity ${entityDef.name} is not includable`;
+
+        // TODO: check to see if oi is updatable.
+    }
 }
 
 /**
@@ -692,10 +707,13 @@ class ArrayDelegate<T extends EntityInstance> {
         this.currentlySelected = 0;
     }
 
-    private get entityDef() { return this.oi.getLodDef().entities[ this.entityName ]; }
+    get entityDef() { return this.oi.getLodDef().entities[ this.entityName ]; }
+    get length() { return this.array.length }
 
     create( initialize : Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
-    //    console.log("Creating entity " + this.entityName );
+        if ( ! this.entityDef.create && ! options.incrementalsSpecified )
+            throw `Entity ${this.entityDef.name} does not have create authority`;
+
         let ei = Object.create( this.oi.getPrototype( this.entityName ) );
         ei.constructor.apply(ei, [ initialize, this.oi, this.array, options ] );
 
@@ -748,6 +766,7 @@ class ArrayDelegate<T extends EntityInstance> {
             options.index = this.currentlySelected;
 
         let includer = new Includer( this, sourceEi, options );
+        includer.include();
         return null;
     }
 
@@ -932,14 +951,17 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     allEntities: () => Array<EntityInstance>;
 }
 
-export enum Position {
-    First, Prev, Next, Last
+export const Position = {
+    First: 'first',
+    Last:  'last',
+    Next:  'next',
+    Prev:  'prev'
 }
 
 export interface CreateOptions {
     incrementalsSpecified? : boolean;
     readOnlyOi? : boolean;
-    position? : Position | number;
+    position? : string | number;
 }
 
 const DEFAULT_CREATE_OPTIONS = {
