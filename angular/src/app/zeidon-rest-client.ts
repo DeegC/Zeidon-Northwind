@@ -15,7 +15,7 @@ import 'rxjs/add/operator/switchMap';
 
 import { ObjectInstance } from './zeidon';
 import { ZeidonConfiguration } from './zeidon';
-import { Committer, CommitOptions } from './zeidon';
+import { Committer, CommitOptions, ActivateLockError } from './zeidon';
 
 /**
  * Interface for wrapping different HTTP clients into a form that can be used by Zeidon.
@@ -37,9 +37,17 @@ export class RestActivator {
             qual = { rootOnly: true };
 
         let lodName = oi.getLodDef().name;
+
+        let mapResponse = ( response ) : T => {
+            if ( response.statusCode === 423 )
+                throw new ActivateLockError( lodName );
+
+            return oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T;
+        }
+
         let url = `${this.values.restUrl}/${lodName}?qual=${encodeURIComponent(JSON.stringify(qual))}`;
         return this.http.get( url )
-                .map( response => oi.createFromJson( response.body, { incrementalsSpecified: true } ) as T );
+                .map( response =>  mapResponse( response ) );
     }
 }
 

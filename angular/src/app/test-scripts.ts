@@ -1,4 +1,4 @@
-import { ZeidonConfiguration, Position } from './zeidon';
+import { ZeidonConfiguration, Position, ActivateLockError } from './zeidon';
 import { ZeidonRestValues, RestActivator, RestCommitter } from './zeidon-rest-client';
 import {Product} from "./lod/Product";
 import {Order} from "./lod/Order";
@@ -15,7 +15,10 @@ class RxHttpWrapper {
         return RxHttpRequest.get(url)
             .map( response => {
                 console.log("INSIDE MAP" );
-                return { "body" : response.body };
+                return {
+                          "body" : response.body,
+                          "statusCode": response.response.statusCode
+                       };
             } );
     }
 
@@ -26,7 +29,10 @@ class RxHttpWrapper {
 
         return RxHttpRequest.post(url, options)
                             .map( response => {
-                                return { "body" : response.body };
+                                return {
+                                    "body" : response.body,
+                                    "statusCode": response.response.statusCode
+                                 };
                             } );
 
     }
@@ -43,8 +49,15 @@ newOrder.Order$.ShipName = "John Smith";
 newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
 newOrder.logOi();
 
-Product.activate( { ProductId: 77 } ).subscribe( product => {
-    console.log( "Got product" );
-    newOrder.Order$.OrderDetail$.Product.include( product.Product$ );
-} );
+Product.activate( { ProductId: 77 } ).subscribe(
+    product => {
+        console.log( "Got product" );
+        newOrder.Order$.OrderDetail$.Product.include( product.Product$ );
+    },
+    error => {
+        console.log( error );
+        if(error instanceof ActivateLockError){
+            console.log(`LOD ${error.lodName} is locked`);
+         }
+    } );
 

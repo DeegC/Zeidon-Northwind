@@ -970,6 +970,24 @@ const DEFAULT_CREATE_OPTIONS = {
     position: Position.Last
  };
 
+export class ActivateError extends Error {
+    constructor(errorMessage: string, public lodName: string ) {
+        super(errorMessage);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, ActivateError.prototype);
+    }
+}
+
+export class ActivateLockError extends ActivateError {
+    constructor( public lodName: string ) {
+        super("LOD is locked", lodName);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, ActivateLockError.prototype);
+    }
+}
+
 export class Activator {
     activateOi<T extends ObjectInstance>( oi: T, options?: any ): Observable<T> {
         throw "activateOi has not been implemented"
