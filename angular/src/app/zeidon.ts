@@ -222,6 +222,29 @@ export class EntityInstance {
     private incrementals = new Incrementals();
     public childUpdated = false;  // True if this entity or one of its children is updated.
 
+    // The persistent attribute values stored as a hash (aka Object).  They key is
+    // the attribute name, the value is the attribute value.  The flag indicating
+    // that an attribute has been updated is stored with a key of ".attrname".
+    public attributes: any = {};
+    public workAttributes: any = {};  // Work attribute stored same as 'attributes'.
+
+    public validateErrors: any = {};
+
+    // If incomplete = true then this entity did not have all its children
+    // loaded and so cannot be deleted.
+    public incomplete = false;
+
+    // A value that can be used to compare EIs that don't have a key.
+    public readonly fingerprint = String( entityInstanceFingerprintCount++ );
+
+    // Map of child entities and the array associated with each one.
+    // Key: entityName
+    // Value: EntityArray.
+    private childEntityInstances = {};
+
+    // This is the EntityArray of the parent EI that stores 'this'.
+    private parentArray: EntityArray<EntityInstance>;
+
     public get created() { return this.incrementals.created };
     public get deleted() { return this.incrementals.deleted };
     public get included() { return this.incrementals.included };
@@ -245,29 +268,6 @@ export class EntityInstance {
     public set included( v: boolean ) { this.setIncremental( v, "included" ) }
     public set excluded( v: boolean ) { this.setIncremental( v, "excluded" ) }
     public set updated( v: boolean ) { this.setIncremental( v, "updated" ) }
-
-    // The persistent attribute values stored as a hash (aka Object).  They key is
-    // the attribute name, the value is the attribute value.  The flag indicating
-    // that an attribute has been updated is stored with a key of ".attrname".
-    public attributes: any = {};
-    public workAttributes: any = {};  // Work attribute stored same as 'attributes'.
-
-    public validateErrors: any = {};
-
-    // If incomplete = true then this entity did not have all its children
-    // loaded and so cannot be deleted.
-    public incomplete = false;
-
-    // A value that can be used to compare EIs that don't have a key.
-    public readonly fingerprint = String( entityInstanceFingerprintCount++ );
-
-    // Map of child entities and the array associated with each one.
-    // Key: entityName
-    // Value: EntityArray.
-    private childEntityInstances = {};
-
-    // This is the EntityArray of the parent EI that stores 'this'.
-    private parentArray: EntityArray<EntityInstance>;
 
     public get entityName(): string { throw "entityName() but be overridden" };
     public get entityDef(): any { return this.oi.getLodDef().entities[ this.entityName ];}
@@ -660,30 +660,46 @@ export interface UpdateOptions {
 }
 
 export interface IncludeOptions {
-    index? : number
+    position? : string | number;
 }
 
 /**
  * Include logic can get pretty hairy.  This class tries to perform it.
  */
-class Includer {
-    constructor( private array: ArrayDelegate<EntityInstance>,
-                 private source: EntityInstance,
-                 private options: IncludeOptions )
-    {}
+class Relinker {
+    sourceEi: EntityInstance;
 
-    include() {
-        this.validateInclude();
-        console.log( `Attempting to include ${this.source.entityDef.name} into ${this.array.entityDef.name}`)
+    private link( target: EntityInstance ) {
+
     }
 
-    private validateInclude() {
-        let entityDef = this.array.entityDef;
-        if ( this.array.length >= entityDef.cardMax )
-            throw `Including a new instance for ${entityDef.name} voilates max cardinality`;
+    include( targetArr: ArrayDelegate<EntityInstance>,
+             source: EntityInstance,
+             includeOptions : IncludeOptions ) {
+        this.sourceEi = source;
+        this.validateInclude( targetArr );
+        console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.entityDef.name}`)
 
-        if ( ! entityDef.includable )
-            throw `Entity ${entityDef.name} is not includable`;
+        targetArr.create( {}, { position: includeOptions.position, incrementalsSpecified: true } );
+        this.link( targetArr.currentlySelected );
+    }
+
+    private validateLink( targetEntityDef ) {
+        let sourceEntityDef = this.sourceEi.entityDef;
+        if ( sourceEntityDef.erToken !== targetEntityDef.erToken )
+            throw `Entities ${sourceEntityDef.name} and ${sourceEntityDef.name} are not the same ER entity`;
+    }
+
+    private validateInclude( targetArr: ArrayDelegate<EntityInstance> ) {
+        let targetEntityDef = targetArr.entityDef;
+
+        this.validateLink( targetEntityDef );
+
+        if ( targetArr.length >= targetEntityDef.cardMax )
+            throw `Including a new instance for ${targetEntityDef.name} voilates max cardinality`;
+
+        if ( ! targetEntityDef.includable )
+            throw `Entity ${targetEntityDef.name} is not includable`;
 
         // TODO: check to see if oi is updatable.
     }
@@ -762,11 +778,11 @@ class ArrayDelegate<T extends EntityInstance> {
             error( `Entity ${this.entityDef.name} does not have include authority.` );
 
         options = {...options}; // Clone the options so we can change the values.
-        if ( options.index === undefined )
-            options.index = this.currentlySelected;
+        if ( options.position === undefined )
+            options.position = this.currentlySelected;
 
-        let includer = new Includer( this, sourceEi, options );
-        includer.include();
+        let includer = new Relinker();
+        includer.include( this, sourceEi, options );
         return null;
     }
 
