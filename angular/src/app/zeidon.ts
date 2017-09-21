@@ -225,6 +225,7 @@ export class EntityInstance {
     // The persistent attribute values stored as a hash (aka Object).  They key is
     // the attribute name, the value is the attribute value.  The flag indicating
     // that an attribute has been updated is stored with a key of ".attrname".
+    // Linked information is stored under key "_linkInfo".
     public attributes: any = {};
     public workAttributes: any = {};  // Work attribute stored same as 'attributes'.
 
@@ -250,6 +251,12 @@ export class EntityInstance {
     public get included() { return this.incrementals.included };
     public get excluded() { return this.incrementals.excluded };
     public get updated() { return this.incrementals.updated };
+
+    /**
+     * Returns true if this EI is linked with another.
+     */
+    get isLinked() { return !! this.attributes._linkInfo }
+    get linkInfo() : LinkedEntityInfo { return this.attributes._linkInfo || {} }
 
     private setIncremental( v: boolean, flag: string ) {
         if ( v && ! this.incrementals[ flag ] ) {
@@ -663,6 +670,10 @@ export interface IncludeOptions {
     position? : string | number;
 }
 
+class LinkedEntityInfo {
+    protected ownerEntityDef = undefined;
+}
+
 /**
  * Include logic can get pretty hairy.  This class tries to perform it.
  */
@@ -670,7 +681,6 @@ class Relinker {
     sourceEi: EntityInstance;
 
     private link( target: EntityInstance ) {
-
     }
 
     include( targetArr: ArrayDelegate<EntityInstance>,
