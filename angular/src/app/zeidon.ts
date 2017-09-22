@@ -2,6 +2,10 @@ import { Observable } from 'rxjs/Observable';
 
 let configurationInstance: ZeidonConfiguration = undefined;
 
+// Flag used to indicate that any attribute in a entity was updated.
+const ANY_ATTRIBUTE_UPDATED = "_updated";
+const ENTITY_IS_LINKED = "_linked";
+
 /**
  * Keeps track of the current EI fingerprint.  The fingerprint is used to differentiate between
  * EIs that don't (yet) have a key.
@@ -250,13 +254,12 @@ export class EntityInstance {
     public get deleted() { return this.incrementals.deleted };
     public get included() { return this.incrementals.included };
     public get excluded() { return this.incrementals.excluded };
-    public get updated() { return this.incrementals.updated };
+    public get updated() { return this.incrementals.updated || this.attributes[ ANY_ATTRIBUTE_UPDATED ] };
 
     /**
      * Returns true if this EI is linked with another.
      */
-    get isLinked() { return !! this.attributes._linkInfo }
-    get linkInfo() : LinkedEntityInfo { return this.attributes._linkInfo || {} }
+    get isLinked() { return !! this.attributes[ ENTITY_IS_LINKED ] }
 
     private setIncremental( v: boolean, flag: string ) {
         if ( v && ! this.incrementals[ flag ] ) {
@@ -377,7 +380,7 @@ export class EntityInstance {
                 continue;
 
             // If the attribute is already set, skip it.
-            if ( this.getAttribute( attributeName ) != undefined )
+            if ( this.getAttribute( attributeName ) )
                 continue;
 
             this.setAttribute( attributeName, attributeDef.initialValue );
@@ -408,7 +411,7 @@ export class EntityInstance {
 
         let attribs = this.getAttribHash( attr );
 
-        if ( attribs[ attr ] == value )
+        if ( attribs[ attr ] === value )
             return;
 
         attribs[ attr ] = value;
@@ -424,8 +427,8 @@ export class EntityInstance {
         this.oi.isUpdated = true;
         this.updated = true;
 
-        if ( attr == "Name" )
-            this.oi.logOi();
+        // Indicate that some attributes are updated.
+        attribs[ ANY_ATTRIBUTE_UPDATED ] = true;
     }
 
     public getAttribute( attr: string ): any {
@@ -447,11 +450,7 @@ export class EntityInstance {
     }
 
     private getAttribHash( attr: string ): any {
-        // TODO: This should return attributes or workAttributes.
         let attributeDef = this.getAttributeDef( attr );
-        if ( attributeDef == undefined )
-            console.log("here");
-
         if ( attributeDef.persistent )
             return this.attributes;
         else
@@ -460,7 +459,7 @@ export class EntityInstance {
 
     getChildEntityArray( entityName: string): EntityArray<EntityInstance> {
         let entities = this.childEntityInstances[ entityName ];
-        if ( entities == undefined ) {
+        if ( entities === undefined ) {
             entities = new EntityArray<EntityInstance>( entityName, this.oi, this );
             this.childEntityInstances[ entityName ] = entities;
         }
@@ -627,11 +626,12 @@ export class EntityInstance {
         }
 
         for ( let attrName in this.entityDef.attributes ) {
-            if ( this.getAttribute( attrName ) != undefined || this.isAttributeUpdated( attrName ) ) {
-                json[attrName] = this.getAttribute( attrName );
-                if ( options.meta && this.isAttributeUpdated( attrName ) ) {
-                    json["." + attrName] = { updated: true };
-                }
+            let attrValue = this.getAttribute( attrName );
+            if ( attrValue )
+                json[attrName] = attrValue;
+
+            if ( options.meta && this.isAttributeUpdated( attrName ) ) {
+                json["." + attrName] = { updated: true };
             }
         };
 
@@ -641,18 +641,18 @@ export class EntityInstance {
             }
 
             let entities = this.getChildEntityArray( entityName ).allEntities();
-            if ( entities.length == 0 )
+            if ( entities.length === 0 )
                 continue;
 
             let entityInfo = this.entityDef.childEntities[ entityName ];
-            if ( entityInfo.cardMax == 1 ) {
+            if ( entityInfo.cardMax === 1 ) {
                 // TODO: can't use forCommit yet because the OI that comes back doesn't have
                 // the missing entities.  We can't use forCommit until we implement a merge.
                 //if ( ! options.forCommit || entities[0].childUpdated )
                 if ( entities[0].childUpdated )
                     json[ entityName ] =  entities[0].toJSON( options );
             } else {
-                // Filter is used to remove undefined values; these are returned if options.forCommit
+                // Filter is used to remove= undefined values; these are returned if options.forCommit
                 // is true and the ei wasn't updated.
                 json[ entityName ] = entities.map( ei => ei.toJSON( options ) ).filter( ei => ei );
             }
@@ -671,7 +671,6 @@ export interface IncludeOptions {
 }
 
 class LinkedEntityInfo {
-    protected ownerEntityDef = undefined;
 }
 
 /**
@@ -680,18 +679,52 @@ class LinkedEntityInfo {
 class Relinker {
     sourceEi: EntityInstance;
 
-    private link( target: EntityInstance ) {
-    }
-
     include( targetArr: ArrayDelegate<EntityInstance>,
              source: EntityInstance,
              includeOptions : IncludeOptions ) {
+
         this.sourceEi = source;
         this.validateInclude( targetArr );
         console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.entityDef.name}`)
 
         targetArr.create( {}, { position: includeOptions.position, incrementalsSpecified: true } );
-        this.link( targetArr.currentlySelected );
+        this.link( targetArr.selected(), false );
+    }
+
+    private link( target: EntityInstance, isRelink : boolean ) {
+        // If sourceEi is not linked to anything else, then we need to add all non-hidden
+        // attributes to the hash.
+        if ( ! this.sourceEi.isLinked )
+            this.addAllPersistentAttributes();
+
+        target.attributes = this.sourceEi.attributes;
+        target.attributes[ ENTITY_IS_LINKED ] = true;
+    }
+
+    /**
+     * Make sure the attribute hash has all the target non-hidden, persistent attributes.  If
+     * they aren't in the hash we create one and set it to null.  This is how we can determine
+     * if all the attributes in a source entity can cover the attributes in a target.
+     *
+     * @param target
+     */
+    private addAllPersistentAttributes() {
+        const attributes = this.sourceEi.attributes;
+        const sourceEntityDef = this.sourceEi.entityDef;
+
+        for ( let attrName in sourceEntityDef.attributes ) {
+            let attributeDef = this.sourceEi.getAttributeDef( attrName );
+            if ( attributeDef.hidden )
+                continue;
+
+            if ( ! attributeDef.persistent )
+                continue;
+
+            if ( attributes[ attrName ] )  // Already have a value?
+                continue;
+
+            attributes[ attrName ] = null;
+        };
     }
 
     private validateLink( targetEntityDef ) {
@@ -838,7 +871,7 @@ class ArrayDelegate<T extends EntityInstance> {
 
         this.hiddenEntities = this.hiddenEntities.concat( this.array );
         for ( let ei of this.array ) {
-            if ( filter == undefined || filter( ei ) === true )
+            if ( filter === undefined || filter( ei ) === true )
                 this.deleteEntity( ei );
         }
 
