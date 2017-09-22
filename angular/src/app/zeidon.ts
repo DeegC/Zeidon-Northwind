@@ -687,17 +687,17 @@ class Relinker {
         this.validateInclude( targetArr );
         console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.entityDef.name}`)
 
-        targetArr.create( {}, { position: includeOptions.position, incrementalsSpecified: true } );
-        this.link( targetArr.selected(), false );
-    }
-
-    private link( target: EntityInstance, isRelink : boolean ) {
         // If sourceEi is not linked to anything else, then we need to add all non-hidden
         // attributes to the hash.
         if ( ! this.sourceEi.isLinked )
             this.addAllPersistentAttributes();
 
-        target.attributes = this.sourceEi.attributes;
+        targetArr.create( {}, { position: includeOptions.position, incrementalsSpecified: true } );
+        this.link( this.sourceEi, targetArr.selected());
+    }
+
+    private link( source: EntityInstance, target: EntityInstance ) {
+        target.attributes = source.attributes;
         target.attributes[ ENTITY_IS_LINKED ] = true;
     }
 
