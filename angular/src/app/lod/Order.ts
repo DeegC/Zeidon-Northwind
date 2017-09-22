@@ -164,6 +164,30 @@ export class Order_Product extends zeidon.EntityInstance {
 
     get UnitsOnOrder(): number { return this.getAttribute("UnitsOnOrder") };
     set UnitsOnOrder(value: number) { this.setAttribute("UnitsOnOrder", value) };
+
+    get Category(): zeidon.EntityArray<Order_Category> {
+        return this.getChildEntityArray("Category") as zeidon.EntityArray<Order_Category>;
+    }
+
+    get Category$(): Order_Category {
+        return this.getChildEntityArray("Category").selected() as Order_Category;
+    }
+}
+
+export class Order_Category extends zeidon.EntityInstance {
+    public get entityName(): string { return "Category" };
+
+    get CategoryId(): string { return this.getAttribute("CategoryId") };
+    set CategoryId(value: string) { this.setAttribute("CategoryId", value) };
+
+    get CategoryName(): string { return this.getAttribute("CategoryName") };
+    set CategoryName(value: string) { this.setAttribute("CategoryName", value) };
+
+    get Description(): string { return this.getAttribute("Description") };
+    set Description(value: string) { this.setAttribute("Description", value) };
+
+    get Picture(): string { return this.getAttribute("Picture") };
+    set Picture(value: string) { this.setAttribute("Picture", value) };
 }
 
 export class Order_Customer extends zeidon.EntityInstance {
@@ -220,45 +244,6 @@ export class Order_Employee extends zeidon.EntityInstance {
 
     get TitleOfCourtesy(): string { return this.getAttribute("TitleOfCourtesy") };
     set TitleOfCourtesy(value: string) { this.setAttribute("TitleOfCourtesy", value) };
-
-    get BirthDate(): Date { return this.getAttribute("BirthDate") };
-    set BirthDate(value: Date) { this.setAttribute("BirthDate", value) };
-
-    get HireDate(): Date { return this.getAttribute("HireDate") };
-    set HireDate(value: Date) { this.setAttribute("HireDate", value) };
-
-    get HomePhone(): string { return this.getAttribute("HomePhone") };
-    set HomePhone(value: string) { this.setAttribute("HomePhone", value) };
-
-    get Address(): string { return this.getAttribute("Address") };
-    set Address(value: string) { this.setAttribute("Address", value) };
-
-    get City(): string { return this.getAttribute("City") };
-    set City(value: string) { this.setAttribute("City", value) };
-
-    get Region(): string { return this.getAttribute("Region") };
-    set Region(value: string) { this.setAttribute("Region", value) };
-
-    get PostalCode(): string { return this.getAttribute("PostalCode") };
-    set PostalCode(value: string) { this.setAttribute("PostalCode", value) };
-
-    get Country(): string { return this.getAttribute("Country") };
-    set Country(value: string) { this.setAttribute("Country", value) };
-
-    get Extension(): string { return this.getAttribute("Extension") };
-    set Extension(value: string) { this.setAttribute("Extension", value) };
-
-    get Notes(): string { return this.getAttribute("Notes") };
-    set Notes(value: string) { this.setAttribute("Notes", value) };
-
-    get Photo(): string { return this.getAttribute("Photo") };
-    set Photo(value: string) { this.setAttribute("Photo", value) };
-
-    get PhotoPath(): string { return this.getAttribute("PhotoPath") };
-    set PhotoPath(value: string) { this.setAttribute("PhotoPath", value) };
-
-    get Salary(): number { return this.getAttribute("Salary") };
-    set Salary(value: number) { this.setAttribute("Salary", value) };
 }
 
 export class Order_Shipper extends zeidon.EntityInstance {
@@ -278,6 +263,7 @@ const OrderEntityPrototypes = {
     Order: Order_Order.prototype, 
     OrderDetail: Order_OrderDetail.prototype, 
     Product: Order_Product.prototype, 
+    Category: Order_Category.prototype, 
     Customer: Order_Customer.prototype, 
     Employee: Order_Employee.prototype, 
     Shipper: Order_Shipper.prototype, 
@@ -287,16 +273,16 @@ export const Order_LodDef = {
     name: "Order",
     entities: {
         Order: {
-            name:       "Order",
-            erToken:    "110000286",
-            create:     true,
-            cardMax:    0,
-            hasInit:    false,
-            creatable:  true,
-            includable: false,
-            deletable:  true,
-            excludable: false,
-            updatable:  true,
+            name:        "Order",
+            erToken:     "110000286",
+            create:      true,
+            cardMax:     0,
+            hasInit:     false,
+            creatable:   true,
+            includable:  false,
+            deletable:   true,
+            excludable:  false,
+            updatable:   true,
             parentDelete: true,
             childEntities: {
                 OrderDetail: {},
@@ -449,16 +435,18 @@ export const Order_LodDef = {
         },
 
         OrderDetail: {
-            name:       "OrderDetail",
-            erToken:    "110000399",
-            create:     true,
-            cardMax:    999999,
-            hasInit:    false,
-            creatable:  true,
-            includable: false,
-            deletable:  true,
-            excludable: false,
-            updatable:  true,
+            name:        "OrderDetail",
+            erToken:     "110000399",
+            isErRelLink: true,
+            relToken:    "110000418",
+            create:      true,
+            cardMax:     999999,
+            hasInit:     false,
+            creatable:   true,
+            includable:  false,
+            deletable:   true,
+            excludable:  false,
+            updatable:   true,
             parentDelete: true,
             childEntities: {
                 Product: {},
@@ -518,18 +506,21 @@ export const Order_LodDef = {
         },
 
         Product: {
-            name:       "Product",
-            erToken:    "110000054",
-            create:     false,
-            cardMax:    1,
-            hasInit:    false,
-            creatable:  false,
-            includable: true,
-            deletable:  false,
-            excludable: true,
-            updatable:  false,
+            name:        "Product",
+            erToken:     "110000054",
+            isErRelLink: false,
+            relToken:    "110000415",
+            create:      false,
+            cardMax:     1,
+            hasInit:     false,
+            creatable:   false,
+            includable:  true,
+            deletable:   false,
+            excludable:  true,
+            updatable:   false,
             parentDelete: false,
             childEntities: {
+                Category: {},
             },
             attributes: {
                 ProductId: {
@@ -635,17 +626,79 @@ export const Order_LodDef = {
             }
         },
 
+        Category: {
+            name:        "Category",
+            erToken:     "110000364",
+            isErRelLink: false,
+            relToken:    "110000409",
+            create:      false,
+            cardMax:     1,
+            hasInit:     false,
+            creatable:   false,
+            includable:  false,
+            deletable:   false,
+            excludable:  false,
+            updatable:   false,
+            parentDelete: false,
+            childEntities: {
+            },
+            attributes: {
+                CategoryId: {
+                    name:         "CategoryId",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "GeneratedKey",
+                    persistent:   true,
+                    key:          true,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                CategoryName: {
+                    name:         "CategoryName",
+                    hidden:       false,
+                    required:     true,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Description: {
+                    name:         "Description",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Text",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+                Picture: {
+                    name:         "Picture",
+                    hidden:       false,
+                    required:     false,
+                    domainName:   "Blob",
+                    persistent:   true,
+                    key:          false,
+                    update:       true,
+                    foreignKey:   false,
+                },
+            }
+        },
+
         Customer: {
-            name:       "Customer",
-            erToken:    "110000238",
-            create:     false,
-            cardMax:    1,
-            hasInit:    false,
-            creatable:  false,
-            includable: true,
-            deletable:  false,
-            excludable: true,
-            updatable:  false,
+            name:        "Customer",
+            erToken:     "110000238",
+            isErRelLink: false,
+            relToken:    "110000325",
+            create:      false,
+            cardMax:     1,
+            hasInit:     false,
+            creatable:   false,
+            includable:  true,
+            deletable:   false,
+            excludable:  true,
+            updatable:   false,
             parentDelete: false,
             childEntities: {
             },
@@ -764,16 +817,18 @@ export const Order_LodDef = {
         },
 
         Employee: {
-            name:       "Employee",
-            erToken:    "110000216",
-            create:     false,
-            cardMax:    1,
-            hasInit:    false,
-            creatable:  false,
-            includable: true,
-            deletable:  false,
-            excludable: true,
-            updatable:  false,
+            name:        "Employee",
+            erToken:     "110000216",
+            isErRelLink: false,
+            relToken:    "110000306",
+            create:      false,
+            cardMax:     1,
+            hasInit:     false,
+            creatable:   false,
+            includable:  true,
+            deletable:   false,
+            excludable:  true,
+            updatable:   false,
             parentDelete: false,
             childEntities: {
             },
@@ -830,132 +885,132 @@ export const Order_LodDef = {
                 },
                 BirthDate: {
                     name:         "BirthDate",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Date",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 HireDate: {
                     name:         "HireDate",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Date",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 HomePhone: {
                     name:         "HomePhone",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Address: {
                     name:         "Address",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 City: {
                     name:         "City",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Region: {
                     name:         "Region",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 PostalCode: {
                     name:         "PostalCode",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Country: {
                     name:         "Country",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Extension: {
                     name:         "Extension",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Notes: {
                     name:         "Notes",
-                    hidden:       false,
+                    hidden:       true,
                     required:     true,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Photo: {
                     name:         "Photo",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Blob",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 PhotoPath: {
                     name:         "PhotoPath",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Text",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 Salary: {
                     name:         "Salary",
-                    hidden:       false,
+                    hidden:       true,
                     required:     false,
                     domainName:   "Double",
                     persistent:   true,
                     key:          false,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 ReportsTo: {
@@ -972,16 +1027,18 @@ export const Order_LodDef = {
         },
 
         Shipper: {
-            name:       "Shipper",
-            erToken:    "110000337",
-            create:     false,
-            cardMax:    1,
-            hasInit:    false,
-            creatable:  false,
-            includable: true,
-            deletable:  false,
-            excludable: true,
-            updatable:  false,
+            name:        "Shipper",
+            erToken:     "110000337",
+            isErRelLink: false,
+            relToken:    "110000361",
+            create:      false,
+            cardMax:     1,
+            hasInit:     false,
+            creatable:   false,
+            includable:  true,
+            deletable:   false,
+            excludable:  true,
+            updatable:   false,
             parentDelete: false,
             childEntities: {
             },

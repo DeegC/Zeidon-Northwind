@@ -666,11 +666,21 @@ export interface UpdateOptions {
     ignoreUnknownAttributeErrors? : boolean
 }
 
-export interface IncludeOptions {
-    position? : string | number;
+export const Position = {
+    First: 'first',
+    Last:  'last',
+    Next:  'next',
+    Prev:  'prev'
 }
 
-class LinkedEntityInfo {
+/**
+ * When inserting/including entities, this indicates where to do the insert.  Value
+ * may be a number--representing an index--or a string = values in Position (e.g. 'first').
+ */
+export type CursorPosition = string | number;
+
+export interface IncludeOptions {
+    position? : CursorPosition;
 }
 
 /**
@@ -679,21 +689,50 @@ class LinkedEntityInfo {
 class Relinker {
     sourceEi: EntityInstance;
 
-    include( targetArr: ArrayDelegate<EntityInstance>,
+    include( targetArr: EntityArray<EntityInstance>,
              source: EntityInstance,
              includeOptions : IncludeOptions ) {
 
         this.sourceEi = source;
         this.validateInclude( targetArr );
-        console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.entityDef.name}`)
+        console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.delegate.entityDef.name}`)
 
         // If sourceEi is not linked to anything else, then we need to add all non-hidden
         // attributes to the hash.
         if ( ! this.sourceEi.isLinked )
             this.addAllPersistentAttributes();
 
-        targetArr.create( {}, { position: includeOptions.position, incrementalsSpecified: true } );
-        this.link( this.sourceEi, targetArr.selected());
+        this.includeWithChildren( targetArr, source, includeOptions.position );
+    }
+
+    private includeWithChildren( targetArr: EntityArray<EntityInstance>,
+                                 source: EntityInstance,
+                                 position: CursorPosition ) {
+        targetArr.create( {}, { position: position, incrementalsSpecified: true } );
+        this.link( source, targetArr.selected());
+
+        // Now find matching entities under source with the same relationship as target.
+        // We need to include those next.
+
+        for ( let srcChildName in source.entityDef.childEntities ) {
+            let srcChildDef = source.oi.getLodDef().entities[ srcChildName ];
+
+            for ( let tgtChildName in targetArr.delegate.entityDef.childEntities ) {
+                let tgtChildDef = targetArr.delegate.lodDef.entities[ tgtChildName ];
+                if ( tgtChildDef.erToken === srcChildDef.erToken &&
+                     tgtChildDef.relToken === srcChildDef.relToken &&
+                     tgtChildDef.isRelLink === srcChildDef.isRelLink ) {
+                    // Same relationship!  Include all the children.
+                    let srcChildArr = source.getChildEntityArray( srcChildDef.name );
+                    let tgtChildArr = targetArr.selected().getChildEntityArray( srcChildDef.name );
+                    for ( let srcChildEi of srcChildArr ) {
+                        this.includeWithChildren( targetArr, srcChildEi, Position.Last );
+
+                    }
+
+                }
+            }
+        }
     }
 
     private link( source: EntityInstance, target: EntityInstance ) {
@@ -733,8 +772,8 @@ class Relinker {
             throw `Entities ${sourceEntityDef.name} and ${sourceEntityDef.name} are not the same ER entity`;
     }
 
-    private validateInclude( targetArr: ArrayDelegate<EntityInstance> ) {
-        let targetEntityDef = targetArr.entityDef;
+    private validateInclude( targetArr: EntityArray<EntityInstance> ) {
+        let targetEntityDef = targetArr.delegate.entityDef;
 
         this.validateLink( targetEntityDef );
 
@@ -766,6 +805,7 @@ class ArrayDelegate<T extends EntityInstance> {
         this.currentlySelected = 0;
     }
 
+    get lodDef() { return this.oi.getLodDef() }
     get entityDef() { return this.oi.getLodDef().entities[ this.entityName ]; }
     get length() { return this.array.length }
 
@@ -816,7 +856,7 @@ class ArrayDelegate<T extends EntityInstance> {
         return ei;
     }
 
-    include( sourceEi: EntityInstance, options: IncludeOptions = {} ): EntityInstance {
+    include( entityArray: EntityArray<EntityInstance>, sourceEi: EntityInstance, options: IncludeOptions = {} ): EntityInstance {
         if ( ! this.entityDef.includable )
             error( `Entity ${this.entityDef.name} does not have include authority.` );
 
@@ -825,7 +865,7 @@ class ArrayDelegate<T extends EntityInstance> {
             options.position = this.currentlySelected;
 
         let includer = new Relinker();
-        includer.include( this, sourceEi, options );
+        includer.include( entityArray, sourceEi, options );
         return null;
     }
 
@@ -977,7 +1017,7 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
             return this.delegate.create( initialize, options );
         }
         _arr.include = function( sourceEi: EntityInstance, options?: IncludeOptions ): EntityInstance {
-            return this.delegate.include( sourceEi, options );
+            return this.delegate.include( this, sourceEi, options );
         };
         _arr.excludeAll = function() { this.delegate.excludeAll(); };
         _arr.deleteAll = function( filter?: ( EntityInstance ) => boolean ) { this.delegate.deleteAll(filter); };
@@ -991,9 +1031,6 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         return _arr;
     }
 
-    /**
-     * Create an entity at the end of the current entity list.
-     */
     create: ( initialize? : Object, options?: CreateOptions ) => EntityInstance;
     excludeAll: () => void;
     deleteAll: ( filter?: ( EntityInstance ) => boolean ) => void;
@@ -1010,17 +1047,10 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     allEntities: () => Array<EntityInstance>;
 }
 
-export const Position = {
-    First: 'first',
-    Last:  'last',
-    Next:  'next',
-    Prev:  'prev'
-}
-
 export interface CreateOptions {
     incrementalsSpecified? : boolean;
     readOnlyOi? : boolean;
-    position? : string | number;
+    position? : CursorPosition;
 }
 
 const DEFAULT_CREATE_OPTIONS = {

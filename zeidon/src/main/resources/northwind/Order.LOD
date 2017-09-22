@@ -1,6 +1,7 @@
-z1000-Zeidon    ORDER    TZZOLODO 08/27/17   17:12:57 1.0a2    
+z1000-Zeidon    ORDER    TZZOLODO 09/22/17   15:39:34 1.0a2    
 eLOD       1
 aZKey      110000478
+aNextZKeyToAssign 110000557
 aName      Order
 
 eLOD_EntityParent 2
@@ -51,6 +52,111 @@ aDerived   N
 aParentDeleteBehave E
 aRelLinkIndicator H
 
+eLOD_EntityChild 5
+aName      Category
+aIndentName          Category
+aIndentLvl 9
+aZKey      110000553
+aCreate    N
+aDelete    N
+aUpdate    N
+aInclude   N
+aInclSrc   Y
+aExclude   N
+aRecursive N
+aDerived   N
+aParentDeleteBehave R
+aRelLinkIndicator H
+
+eLOD_AttributeRec 6
+aZKey      110000554
+
+eER_AttributeRec 7
+aName      CategoryId
+aZKey      110000365
+aNotNull   Y
+aSAP_Attribute 0
+
+eDomainRec 8
+aZKey      110000021
+aName      GeneratedKey
+aDomainType E
+aDataType  L
+aMaxStringLth 64
+aDesc      Generic DB-generated key
+aContextRestriction N
+
+eLOD_AttributeRec 6
+aZKey      110000555
+
+eER_AttributeRec 7
+aName      CategoryName
+aZKey      110000368
+aLth       15
+aNotNull   Y
+
+eDomainRec 8
+aZKey      110000042
+aName      Text
+aDomainType E
+aDataType  S
+aMaxStringLth 10000
+aDesc      Any Character String
+aContextRestriction N
+
+eLOD_AttributeRec 6
+aZKey      110000556
+
+eER_AttributeRec 7
+aName      Description
+aZKey      110000369
+aLth       1000
+
+eDomainRec 8
+
+eLOD_AttributeRec 6
+aZKey      110000557
+
+eER_AttributeRec 7
+aName      Picture
+aZKey      110000370
+
+eDomainRec 8
+aZKey      110000002
+aName      Blob
+aDomainType E
+aDataType  B
+aDesc      A do nothing domain for blobs
+aContextRestriction N
+
+eER_EntityRec 6
+aName      Category
+aZKey      110000364
+aPurpose   F
+aER_DiagramPosX 19
+aER_DiagramPosY 16
+aTE_TableName categories
+aSAP_Entity 0
+
+eER_RelLinkRec 6
+aName      for
+aAutoSeq   N
+aHangingForeignKeyEntity N
+aZKey      110000411
+aCardMin   1
+aCardMax   1
+aTE_NoForeignKeyPrefix N
+
+eER_RelTypeRec 7
+aZKey      110000409
+aFact      Added thru ER Dialog
+aER_DiagramBendPosX 0
+aER_DiagramBendPosY 0
+aER_DiagramE1PosX 23
+aER_DiagramE1PosY 15
+aER_DiagramE2PosX 23
+aER_DiagramE2PosY 8
+
 eLOD_AttributeRec 5
 aZKey      110000496
 
@@ -61,13 +167,6 @@ aNotNull   Y
 aSAP_Attribute 0
 
 eDomainRec 7
-aZKey      110000021
-aName      GeneratedKey
-aDomainType E
-aDataType  L
-aMaxStringLth 64
-aDesc      Generic DB-generated key
-aContextRestriction N
 
 eLOD_AttributeRec 5
 aZKey      110000497
@@ -79,13 +178,6 @@ aLth       40
 aNotNull   Y
 
 eDomainRec 7
-aZKey      110000042
-aName      Text
-aDomainType E
-aDataType  S
-aMaxStringLth 10000
-aDesc      Any Character String
-aContextRestriction N
 
 eLOD_AttributeRec 5
 aZKey      110000498
@@ -904,6 +996,42 @@ eER_Attribute 4
 
 eDomain    5
 
+eER_Entity 3
+
+eER_RelLink 3
+
+eER_RelType 4
+
+eLOD_Entity 2
+
+eLOD_Attribute 3
+awkSequence 1
+
+eER_Attribute 4
+
+eDomain    5
+
+eLOD_Attribute 3
+awkSequence 2
+
+eER_Attribute 4
+
+eDomain    5
+
+eLOD_Attribute 3
+awkSequence 3
+
+eER_Attribute 4
+
+eDomain    5
+
+eLOD_Attribute 3
+awkSequence 4
+
+eER_Attribute 4
+
+eDomain    5
+
 eLOD_Attribute 3
 awkSequence 5
 
@@ -1052,183 +1180,202 @@ aGenerateExecutable kzhsqlmb
 aExecutable kzhsqloa
 aDisplayOwner N
 
-i15        9
-i24        12
-i27        12
-i33        21
-i36        12
-i39        21
-i46        9
-i49        9
-i52        9
-i55        9
-i58        9
-i61        9
-i64        9
-i67        9
-i70        9
-i73        9
-i76        9
-i83        6
-i86        9
-i89        9
-i92        9
-i95        9
-i102       6
-i105       9
-i108       9
-i114       6
-i120       117
-i123       117
-i126       21
-i129       9
-i132       9
-i135       9
-i138       9
-i141       9
-i144       9
-i146       1
-i147       112
-i148       113
-i149       6
-i150       115
-i151       116
-i152       117
-i153       118
-i154       119
-i155       117
-i156       121
-i157       122
-i158       117
-i159       124
-i160       125
-i161       21
-i162       127
+i13        10
+i22        7
+i25        10
+i31        10
+i40        28
+i43        28
+i49        37
+i52        28
+i55        37
+i62        10
+i65        10
+i68        10
+i71        10
+i74        10
+i77        10
+i80        10
+i83        10
+i86        10
+i89        10
+i92        10
+i99        7
+i102       10
+i105       10
+i108       10
+i111       10
+i118       7
+i121       10
+i124       10
+i130       7
+i136       133
+i139       133
+i142       37
+i145       10
+i148       10
+i151       10
+i154       10
+i157       10
+i160       10
+i162       1
 i163       128
-i164       9
-i165       130
+i164       129
+i165       7
 i166       131
-i167       9
+i167       132
 i168       133
 i169       134
-i170       9
-i171       136
+i170       135
+i171       133
 i172       137
-i173       9
-i174       139
+i173       138
+i174       133
 i175       140
-i176       9
-i177       142
+i176       141
+i177       37
 i178       143
-i179       9
-i180       145
-i181       2
-i182       31
-i183       32
-i184       21
-i185       34
-i186       35
-i187       12
-i188       37
-i189       38
-i190       21
-i191       40
-i192       41
-i193       42
-i194       3
-i195       4
-i196       5
-i197       6
-i198       7
-i199       8
-i200       9
-i201       10
-i202       11
-i203       12
-i204       13
-i205       14
-i206       9
-i207       16
-i208       17
-i209       18
-i210       19
+i179       144
+i180       10
+i181       146
+i182       147
+i183       10
+i184       149
+i185       150
+i186       10
+i187       152
+i188       153
+i189       10
+i190       155
+i191       156
+i192       10
+i193       158
+i194       159
+i195       10
+i196       161
+i197       2
+i198       47
+i199       48
+i200       37
+i201       50
+i202       51
+i203       28
+i204       53
+i205       54
+i206       37
+i207       56
+i208       57
+i209       58
+i210       3
 i211       20
 i212       21
-i213       22
+i213       7
 i214       23
-i215       12
-i216       25
+i215       24
+i216       10
 i217       26
-i218       12
+i218       27
 i219       28
 i220       29
 i221       30
-i222       43
-i223       44
-i224       45
-i225       9
-i226       47
-i227       48
-i228       9
-i229       50
-i230       51
-i231       9
-i232       53
-i233       54
-i234       9
-i235       56
-i236       57
-i237       9
-i238       59
-i239       60
-i240       9
-i241       62
-i242       63
+i222       10
+i223       32
+i224       33
+i225       34
+i226       35
+i227       36
+i228       37
+i229       38
+i230       39
+i231       28
+i232       41
+i233       42
+i234       28
+i235       44
+i236       45
+i237       46
+i238       4
+i239       5
+i240       6
+i241       7
+i242       8
 i243       9
-i244       65
-i245       66
-i246       9
-i247       68
-i248       69
-i249       9
-i250       71
-i251       72
-i252       9
-i253       74
-i254       75
-i255       9
-i256       77
-i257       78
-i258       79
-i259       80
-i260       81
-i261       82
-i262       6
-i263       84
-i264       85
-i265       9
-i266       87
-i267       88
-i268       9
-i269       90
-i270       91
-i271       9
-i272       93
-i273       94
-i274       9
-i275       96
-i276       97
-i277       98
-i278       99
-i279       100
-i280       101
-i281       6
-i282       103
-i283       104
-i284       9
-i285       106
-i286       107
-i287       9
-i288       109
-i289       110
-i290       111
+i244       10
+i245       11
+i246       12
+i247       10
+i248       14
+i249       15
+i250       16
+i251       17
+i252       18
+i253       19
+i254       59
+i255       60
+i256       61
+i257       10
+i258       63
+i259       64
+i260       10
+i261       66
+i262       67
+i263       10
+i264       69
+i265       70
+i266       10
+i267       72
+i268       73
+i269       10
+i270       75
+i271       76
+i272       10
+i273       78
+i274       79
+i275       10
+i276       81
+i277       82
+i278       10
+i279       84
+i280       85
+i281       10
+i282       87
+i283       88
+i284       10
+i285       90
+i286       91
+i287       10
+i288       93
+i289       94
+i290       95
+i291       96
+i292       97
+i293       98
+i294       7
+i295       100
+i296       101
+i297       10
+i298       103
+i299       104
+i300       10
+i301       106
+i302       107
+i303       10
+i304       109
+i305       110
+i306       10
+i307       112
+i308       113
+i309       114
+i310       115
+i311       116
+i312       117
+i313       7
+i314       119
+i315       120
+i316       10
+i317       122
+i318       123
+i319       10
+i320       125
+i321       126
+i322       127
