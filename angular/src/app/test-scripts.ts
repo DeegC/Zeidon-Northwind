@@ -53,7 +53,7 @@ Product.activate( { ProductId: 77 } ).subscribe(
     product => {
         console.log( "Got product" );
         newOrder.Order$.OrderDetail$.Product.include( product.Product$ );
-        newOrder.logOi();
+        newOrder.logOi( true );
     },
     error => {
         console.log( error );

@@ -62,8 +62,11 @@ export class ObjectInstance {
         return this.roots as EntityArray<EntityInstance>;
     }
 
-    public logOi() {
-        console.log( JSON.stringify( this, null, 2) );
+    public logOi( incrementals?: boolean ) {
+        if ( incrementals )
+            console.log( JSON.stringify( this.toZeidonMeta(), null, 2) );
+        else
+            console.log( JSON.stringify( this, null, 2) );
     }
 
     /**
@@ -703,6 +706,7 @@ class Relinker {
             this.addAllPersistentAttributes();
 
         this.includeWithChildren( targetArr, source, includeOptions.position );
+        targetArr.selected().included = true;
     }
 
     private includeWithChildren( targetArr: EntityArray<EntityInstance>,
@@ -722,14 +726,14 @@ class Relinker {
                 if ( tgtChildDef.erToken === srcChildDef.erToken &&
                      tgtChildDef.relToken === srcChildDef.relToken &&
                      tgtChildDef.isRelLink === srcChildDef.isRelLink ) {
+
                     // Same relationship!  Include all the children.
                     let srcChildArr = source.getChildEntityArray( srcChildDef.name );
                     let tgtChildArr = targetArr.selected().getChildEntityArray( srcChildDef.name );
                     for ( let srcChildEi of srcChildArr ) {
-                        this.includeWithChildren( targetArr, srcChildEi, Position.Last );
-
+                        this.includeWithChildren( targetArr.selected().getChildEntityArray( tgtChildName ),
+                                                  srcChildEi, Position.Last );
                     }
-
                 }
             }
         }
