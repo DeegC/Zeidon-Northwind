@@ -4,6 +4,7 @@ let configurationInstance: ZeidonConfiguration = undefined;
 
 // Flag used to indicate that any attribute in a entity was updated.
 const ANY_ATTRIBUTE_UPDATED = "_updated";
+// Flag to indicate that an EI is linked with another EI.
 const ENTITY_IS_LINKED = "_linked";
 
 /**
@@ -1175,7 +1176,7 @@ export class Pagination {
 export interface ZeidonToJsonOptions {
     childEntities? : string[];  // If a non-empty array, only write childEntities listed in the array.
     meta? :          boolean;   // Write OI/entity meta (e.g. incrementals).
-    forCommit? :     boolean;   // Only write entities need for update.
+    forCommit? :     boolean;   // Only write entities needed for update.
 }
 
 export interface CommitOptions {
