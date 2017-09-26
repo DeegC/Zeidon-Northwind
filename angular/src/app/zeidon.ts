@@ -428,11 +428,11 @@ export class EntityInstance {
             attribs[ metaAttr ] = {} as any;
 
         attribs[ metaAttr ].updated = true;
-        this.oi.isUpdated = true;
-        this.updated = true;
 
-        // Indicate that some attributes are updated.
-        attribs[ ANY_ATTRIBUTE_UPDATED ] = true;
+        if ( attributeDef.persistent ) {
+            this.updated = true;
+            this.attributes[ ANY_ATTRIBUTE_UPDATED ] = true;
+        }
     }
 
     public getAttribute( attr: string ): any {

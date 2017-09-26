@@ -1,57 +1,28 @@
 import { ZeidonConfiguration, Position, ActivateLockError } from '../app/zeidon';
-import { ZeidonRestValues, RestActivator, RestCommitter } from '../app/zeidon-rest-client';
-import {Order} from "Order";
+import { ZeidonRestValues, RestActivator, RestCommitter, RxHttpWrapper } from '../app/zeidon-rest-client';
+import {Order} from "../app/lod/Order";
 import { Observable } from 'rxjs/Observable';
-import {RxHttpRequest} from 'rx-http-request';
 import {Product} from "../app/lod/Product";
 
 const REST_VALUES: ZeidonRestValues = {
     restUrl: `http://localhost:8080/northwind`
   };
 
-class RxHttpWrapper {
-
-    get( url: string ) : Observable<Response> {
-        return RxHttpRequest.get(url)
-            .map( response => {
-                console.log("INSIDE MAP" );
-                return {
-                          "body" : response.body,
-                          "statusCode": response.response.statusCode
-                       };
-            } );
-    }
-
-    post( url: string, body: string, headers: Object ) : Observable<any> {
-        const options = {
-            body: body
-        };
-
-        return RxHttpRequest.post(url, options)
-                            .map( response => {
-                                return {
-                                    "body" : response.body,
-                                    "statusCode": response.response.statusCode
-                                 };
-                            } );
-
-    }
-}
-
 let zeidonConfig = new ZeidonConfiguration(
     new RestActivator( REST_VALUES, new RxHttpWrapper() ),
     new RestCommitter( REST_VALUES, new RxHttpWrapper() )
 );
 
+var rxit = require('jasmine-rx').rxit;
+var TestableObservable = require('jasmine-rx').TestableObservable;
 
 describe('activate', function() {
-    it( "should activate root", async function() {
-        return Product.activate( { ProductId: 77 } ).toPromise().then(
-            product => {
-                console.log( "Got product" );
-                product.logOi();
-                let a = false;
-                expect(a).toBe(true);
-            });
+    rxit( "should activate single Product", function() {
+        return Product.activate( { ProductId: 77 } ).do( function( product ) {
+            console.log( "Checking product" );
+            expect( product.Product$.ProductId).toBe( "77" );
+            expect( product.Product.length).toBe( 1 );
+            expect( product.Product$.Supplier$.SupplierId).toBe( "12" );
+        } );
     });
 });

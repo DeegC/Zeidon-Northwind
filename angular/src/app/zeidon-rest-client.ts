@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 // Observable class extensions
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
+import {RxHttpRequest} from 'rx-http-request';
 
 // Observable operators
 import 'rxjs/add/operator/catch';
@@ -93,3 +94,34 @@ export class RestCommitter implements Committer {
         return oi.createFromJson( response.body, { incrementalsSpecified: true} );
     }
 }
+
+/**
+ * A simple wrapper around the standard node HTTP module that returns observables.
+ */
+export class RxHttpWrapper {
+    get( url: string ) : Observable<Response> {
+        return RxHttpRequest.get(url)
+            .map( response => {
+                return {
+                            "body" : response.body,
+                            "statusCode": response.response.statusCode
+                        };
+            } );
+    }
+
+    post( url: string, body: string, headers: Object ) : Observable<any> {
+        const options = {
+            body: body
+        };
+
+        return RxHttpRequest.post(url, options)
+                            .map( response => {
+                                return {
+                                    "body" : response.body,
+                                    "statusCode": response.response.statusCode
+                                    };
+                            } );
+
+    }
+}
+
