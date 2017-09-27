@@ -10,6 +10,6 @@ describe('Attributes', function() {
         expect( newOrder.Order$.OrderDate.getTime()).toBe( now.getTime() );
         expect( newOrder.Order$.updated).toBeTruthy();
         newOrder.Order$.ShipName = "John Smith";
-        newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
+        // newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
     });
 });
