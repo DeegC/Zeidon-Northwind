@@ -7,9 +7,9 @@ describe('Attributes', function() {
         let newOrder = new Order();
         let now = new Date();
         newOrder.Order.create( { OrderDate: now });
-        newOrder.logOi();
         expect( newOrder.Order$.OrderDate.getTime()).toBe( now.getTime() );
-        //newOrder.Order$.ShipName = "John Smith";
-        //newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
+        expect( newOrder.Order$.updated).toBeTruthy();
+        newOrder.Order$.ShipName = "John Smith";
+        newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
     });
 });
