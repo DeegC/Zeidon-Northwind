@@ -1,4 +1,4 @@
-z1000-Zeidon    ORDER    TZZOXODO 09/22/17   15:39:34 1.0a2    
+z1000-Zeidon    ORDER    TZZOXODO 09/27/17   15:12:04 1.0a2    
 eOBJECT    1
 aNAME      Order
 aZKey      110000478
@@ -30,7 +30,7 @@ aLTH       4
 aKEY       Y
 aGENKEY    Y
 aREQUIRED  Y
-aUPDATE    Y
+aSEQ_AD    A
 aXVAATT_TOK 1
 
 eATTRIB    3

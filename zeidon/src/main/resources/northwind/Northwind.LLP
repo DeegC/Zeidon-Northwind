@@ -1,4 +1,4 @@
-z1000-Zeidon    NORTHWINDTZCMLPLO 09/26/17   00:54:45 1.0a2    
+z1000-Zeidon    NORTHWINDTZCMLPLO 09/27/17   15:41:06 1.0a2    
 eLPLR      1
 aName      Northwind
 aDesc      Zeidon application using Northwind DB
@@ -190,8 +190,8 @@ aCPLR_ZKey 110000478
 aStatus    1
 aUpdateInd 2
 aName      Order
-aLastSyncDate 20170827171257545
-aLastUpdateDate 20170827171257545
+aLastSyncDate 20170927151203953
+aLastUpdateDate 20170927151203953
 
 eW_MetaDef 3
 aCPLR_ZKey 110000448

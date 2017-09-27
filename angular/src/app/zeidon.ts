@@ -392,12 +392,12 @@ export class EntityInstance {
 
     }
 
-    protected setAttribute( attr: string, value: any, options: CreateOptions = DEFAULT_CREATE_OPTIONS ) {
+    setAttribute( attr: string, value: any, options: CreateOptions = DEFAULT_CREATE_OPTIONS ) {
     //    console.log( `Setting attribute ${attr}`)
         let attributeDef = this.getAttributeDef( attr );
 
         if ( ! attributeDef )
-            error( `Attribute ${attr} is unknown for entity ${this.entityDef.name}` );
+            throw new InvalidAttributeError( attr, this.entityDef );
 
         // Perform some validations unless incrementals are specified.
         if ( ! options.incrementalsSpecified ) {
@@ -455,6 +455,9 @@ export class EntityInstance {
 
     private getAttribHash( attr: string ): any {
         let attributeDef = this.getAttributeDef( attr );
+        if ( ! attributeDef )
+            throw new InvalidAttributeError( attr, this.entityDef );
+
         if ( attributeDef.persistent )
             return this.attributes;
         else
@@ -1064,24 +1067,6 @@ const DEFAULT_CREATE_OPTIONS = {
     position: Position.Last
  };
 
-export class ActivateError extends Error {
-    constructor(errorMessage: string, public lodName: string ) {
-        super(errorMessage);
-
-        // Set the prototype explicitly.
-        Object.setPrototypeOf(this, ActivateError.prototype);
-    }
-}
-
-export class ActivateLockError extends ActivateError {
-    constructor( public lodName: string ) {
-        super("LOD is locked", lodName);
-
-        // Set the prototype explicitly.
-        Object.setPrototypeOf(this, ActivateLockError.prototype);
-    }
-}
-
 export class Activator {
     activateOi<T extends ObjectInstance>( oi: T, options?: any ): Observable<T> {
         throw "activateOi has not been implemented"
@@ -1202,15 +1187,59 @@ export class AttributeValueError extends Error {
     }
 }
 
-let error = function ( message: string ) {
-   var e = new Error('dummy');
-   var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-      .replace(/^\s+at\s+/gm, '')
-      .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-      .split('\n');
+const debugError = function( message: string ) {
+    var e = new Error('dummy');
+    var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+       .replace(/^\s+at\s+/gm, '')
+       .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
+       .split('\n');
     console.log(stack.join("\n"));
 
     console.log( message );
     //alert( message );
     throw message;
+}
+
+// TODO: Is this needed?  Should we just throw Errors?
+let error = function ( message: string ) {
+    throw message;
+}
+
+export class ZeidonError extends Error {
+    constructor(errorMessage: string ) {
+        super(errorMessage);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, ZeidonError.prototype);
+    }
+
+}
+
+export class ActivateError extends ZeidonError {
+    constructor(errorMessage: string, public lodName: string ) {
+        super(errorMessage);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, ActivateError.prototype);
+    }
+}
+
+export class ActivateLockError extends ActivateError {
+    constructor( public lodName: string ) {
+        super("LOD is locked", lodName);
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, ActivateLockError.prototype);
+    }
+}
+
+export class InvalidAttributeError extends ZeidonError {
+    constructor( public attrName: string, entityDef ) {
+        // entityDef can be either an EntityDef or just the entity name.  Allowing a name makes it
+        // easier to construct tests.
+        super( `Attribute '${attrName}' is unknown for entity '${entityDef.name || entityDef}'` );
+
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, InvalidAttributeError.prototype);
+    }
 }

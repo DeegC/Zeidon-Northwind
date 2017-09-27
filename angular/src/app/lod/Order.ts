@@ -298,7 +298,7 @@ export const Order_LodDef = {
                     domainName:   "GeneratedKey",
                     persistent:   true,
                     key:          true,
-                    update:       true,
+                    update:       false,
                     foreignKey:   false,
                 },
                 OrderDate: {
