@@ -1178,15 +1178,6 @@ export interface Domain {
     domainFunctions?: any,
 }
 
-export class AttributeValueError extends Error {
-    attributeDef: any;
-
-    constructor( message: string, attributeDef: any ) {
-        super( message + `   Attribute: ${attributeDef.name}`)
-        this.attributeDef = attributeDef;
-    }
-}
-
 const debugError = function( message: string ) {
     var e = new Error('dummy');
     var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
@@ -1230,6 +1221,15 @@ export class ActivateLockError extends ActivateError {
 
         // Set the prototype explicitly.
         Object.setPrototypeOf(this, ActivateLockError.prototype);
+    }
+}
+
+export class AttributeValueError extends ZeidonError {
+    attributeDef: any;
+
+    constructor( message: string, attributeDef: any ) {
+        super( message + `   Attribute: ${attributeDef.name}`)
+        this.attributeDef = attributeDef;
     }
 }
 

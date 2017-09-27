@@ -11,7 +11,7 @@ export interface DomainFunctions {
 
 export class BaseDomainFunctions implements DomainFunctions {
     checkForRequiredValue( value: any, attributeDef: any ) {
-        if ( attributeDef.required && ( value == undefined || value === "" ) )
+        if ( attributeDef.required && ( value === undefined || value === null || value === "" ) )
             throw new AttributeValueError(`Value is required.`, attributeDef );
     }
 
@@ -126,7 +126,11 @@ export class DateTimeDomainFunctions extends BaseDomainFunctions {
         if ( Object.prototype.toString.call( value ) === '[object Date]' )
             return value;
 
-        return new Date( value );
+        let date = Date.parse( value );
+        if ( isNaN( date ) )
+            throw new AttributeValueError(`Invalid date/time value: ${value}`, attributeDef );
+
+        return date;
     }
 }
 

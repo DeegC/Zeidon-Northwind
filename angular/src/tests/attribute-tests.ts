@@ -1,11 +1,11 @@
-import { InvalidAttributeError } from './../app/zeidon';
+import { InvalidAttributeError, AttributeValueError } from './../app/zeidon';
 import {Order} from "../app/lod/Order";
 import { Observable } from 'rxjs/Observable';
 import {Product} from "../app/lod/Product";
 import {Position} from "../app/zeidon";
 
 describe('Attributes', function() {
-    it( "should create attributes", function() {
+    it( "should create attributes", () => {
         let newOrder = new Order();
         let now = new Date();
         newOrder.Order.create( { OrderDate: now });
@@ -21,13 +21,19 @@ describe('Attributes', function() {
 
         newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
         expect( newOrder.Order$.OrderDetail$.Quantity).toBe(10)
+
+        newOrder.Order$.OrderDetail.create( { Quantity: "20" } );
+        expect( newOrder.Order$.OrderDetail$.Quantity).toBe(20)
     });
 
-    it( "should verify attribute values", function() {
+    it( "should verify attribute values", () => {
         let newOrder = new Order();
         let now = new Date();
         newOrder.Order.create();
         expect( newOrder.Order$.OrderId).toBeFalsy();
+
+        expect( () => { newOrder.Order$.setAttribute( 'ShippedDate', "xxx" ) })
+            .toThrow( new AttributeValueError( "Invalid date/time value: xxx", { name: "ShippedDate" } ) );
 
         expect( () => { newOrder.Order$.OrderId = "10" })
             .toThrow( "Attribute Order.OrderId is read only" );
@@ -35,11 +41,15 @@ describe('Attributes', function() {
         expect( () => { newOrder.Order$.setAttribute( "OrderId", "10" ) })
             .toThrow( "Attribute Order.OrderId is read only" );
 
-        expect( () => { newOrder.Order$.setAttribute( "OrderIdx", "10" ) })
-            .toThrow( new InvalidAttributeError( "OrderIdx", "Order" ) );
+        expect( () => { newOrder.Order$.OrderDetail.create( { Quantity: "10x" }, { position: Position.Last } ) } )
+            .toThrow( new AttributeValueError( "Invalid integer value: 10x", { name: "Quantity" } ) );
+
+        newOrder.Order$.OrderDetail.create();
+        expect( () => { newOrder.Order$.OrderDetail$.Quantity = 10.10 } )
+            .toThrow( new AttributeValueError( "Invalid integer value: 10.1", { name: "Quantity" } ) );
     });
 
-    it( "should throw invalid attribute errors", function() {
+    it( "should throw invalid attribute errors", () => {
         let newOrder = new Order();
         newOrder.Order.create();
 
@@ -49,5 +59,8 @@ describe('Attributes', function() {
         expect( () => { newOrder.Order$.getAttribute('OrderIdx') })
             .toThrow( new InvalidAttributeError( "OrderIdx", "Order" ) );
 
+
+        expect( () => { newOrder.Order$.setAttribute( "OrderIdx", "10" ) })
+            .toThrow( new InvalidAttributeError( "OrderIdx", "Order" ) );
     });
 });
