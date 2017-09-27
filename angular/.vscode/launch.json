@@ -18,6 +18,23 @@
                 "outFiles": [
                     "${workspaceRoot}/dist/**/*.js"
                 ]
+            },
+            {
+                "type": "node",
+                "request": "launch",
+                "name": "Jasmine Individual Test",
+                "program": "${workspaceRoot}/node_modules/jasmine/bin/jasmine.js",
+                "args": [
+                    "JASMINE_CONFIG_PATH=src/tests/support/jasmine.json",
+                    "dist/tests/attribute-tests.js"
+                ],
+                "outFiles": [
+                    "${workspaceRoot}/dist/**/*.js"
+                ],
+                "env": {
+                    "NODE_PATH": "."
+                }
             }
+
         ]
     }

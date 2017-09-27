@@ -123,15 +123,19 @@ export class DoubleDomainFunctions extends BaseDomainFunctions {
 export class DateTimeDomainFunctions extends BaseDomainFunctions {
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
         this.checkForRequiredValue( value, attributeDef );
-        return Date.parse( value );
-    }
+        if ( Object.prototype.toString.call( value ) === '[object Date]' )
+            return value;
 
-    convertToJsType( value: any, attributeDef: any ): any {
         return new Date( value );
     }
 }
 
 export class DateDomainFunctions extends DateTimeDomainFunctions {
+    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
+        let date = super.convertExternalValue( value, attributeDef ) as Date;
+        date.setUTCHours( 0, 0, 0, 0 );
+        return date;
+    }
 }
 
 export class xxxDomainFunctions extends BaseDomainFunctions {
