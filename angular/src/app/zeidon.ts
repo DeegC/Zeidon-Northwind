@@ -844,7 +844,8 @@ class ArrayDelegate<T extends EntityInstance> {
                     break;
 
                 case Position.Next:
-                    this.array.splice( this.currentlySelected, 0, ei );
+                    let newPos = Math.min( this.currentlySelected + 1, this.array.length );
+                    this.array.splice( newPos, 0, ei );
                     break;
 
                 case Position.Prev:
@@ -970,6 +971,22 @@ class ArrayDelegate<T extends EntityInstance> {
         }
     }
 
+    first(): EntityInstance {
+        if ( this.array.length === 0 )
+            return undefined;
+
+        this.currentlySelected = 0;
+        return this.selected();
+    }
+
+    last(): EntityInstance {
+        if ( this.array.length === 0 )
+            return undefined;
+
+        this.currentlySelected = this.array.length - 1;
+        return this.selected();
+    }
+
     setSelected( value: number | EntityInstance ): EntityInstance {
         if ( value instanceof EntityInstance ) {
             this.currentlySelected = this.array.findIndex( ei => value === ei );
@@ -1021,10 +1038,10 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         });
 
         // Add all the functions to EntityArray.
-        _arr.create = function( initialize : Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
+        _arr.create = function( initialize : Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): T {
             return this.delegate.create( initialize, options );
         }
-        _arr.include = function( sourceEi: EntityInstance, options?: IncludeOptions ): EntityInstance {
+        _arr.include = function( sourceEi: EntityInstance, options?: IncludeOptions ): T {
             return this.delegate.include( this, sourceEi, options );
         };
         _arr.excludeAll = function() { this.delegate.excludeAll(); };
@@ -1033,26 +1050,30 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         _arr.drop = function( index?: number) { this.delegate.drop( index ); };
         _arr.exclude = function( index?: number) { this.delegate.exclude( index ); };
         _arr.selected = function() { return this.delegate.selected(); };
+        _arr.first = function() { return this.delegate.first(); };
+        _arr.last = function() { return this.delegate.last(); };
         _arr.setSelected = function(value: number | EntityInstance) { return this.delegate.setSelected( value ); };
         _arr.allEntities = function() { return this.delegate.allEntities(); };
 
         return _arr;
     }
 
-    create: ( initialize? : Object, options?: CreateOptions ) => EntityInstance;
+    create: ( initialize? : Object, options?: CreateOptions ) => T;
     excludeAll: () => void;
-    deleteAll: ( filter?: ( EntityInstance ) => boolean ) => void;
+    deleteAll: ( filter?: ( T ) => boolean ) => void;
     delete: ( index? : number ) => void;
     drop: ( index? : number ) => void;
     exclude: ( index? : number ) => void;
-    include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => EntityInstance;
-    selected: () => EntityInstance;
-    setSelected: (value: number | EntityInstance ) => EntityInstance;
+    include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => T;
+    selected: () => T;
+    first: () => T;
+    last: () => T;
+    setSelected: (value: number | EntityInstance ) => T;
 
     /**
      * Returns all entity instances, including hidden ones.
      */
-    allEntities: () => Array<EntityInstance>;
+    allEntities: () => Array<T>;
 }
 
 export interface CreateOptions {
