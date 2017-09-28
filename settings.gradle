@@ -1,4 +1,5 @@
-include 'zeidon', 'scalatra'
+include 'zeidon', 'scalatra', 'angular'
 
 project(":zeidon").name = "northwind-zeidon"
 project(":scalatra").name = "northwind-server"
+project(":angular").name = "northwind-angular"

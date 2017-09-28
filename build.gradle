@@ -1,5 +1,15 @@
-subprojects {
-  apply plugin: 'scala'
+plugins {
+  id "com.palantir.npm-run" version "0.5.0" apply false
+}
+
+
+subprojects { subproject ->
+
+  if (subproject.name.startsWith("northwind-angular")) {
+      apply plugin: 'com.palantir.npm-run'
+  } else {
+      apply plugin: 'scala'
+  }
 
   group = 'com.quinsoft.zeidon'
   version = '1.0'
@@ -10,11 +20,5 @@ subprojects {
        url "https://oss.sonatype.org/content/repositories/snapshots"
      }
      mavenCentral()
-  }
-
-  dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.scalatest:scalatest_2.11:3.0.0'
-    testRuntime 'org.scala-lang.modules:scala-xml_2.11:1.0.5'
   }
 }
