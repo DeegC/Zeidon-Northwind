@@ -1,4 +1,4 @@
-z1000-Zeidon    ORDER    TZZOXODO 09/27/17   15:12:04 1.0a2    
+z1000-Zeidon    ORDER    TZZOXODO 09/28/17   22:33:01 1.0a2    
 eOBJECT    1
 aNAME      Order
 aZKey      110000478
@@ -41,6 +41,8 @@ aAPDM_TOK  110000025
 aDOMAIN    DateTime
 aTYPE      T
 aLTH       6
+aINIT      NOW
+aSEQ_AD    A
 aUPDATE    Y
 aXVAATT_TOK 2
 

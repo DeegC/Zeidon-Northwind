@@ -126,6 +126,9 @@ export class DateTimeDomainFunctions extends BaseDomainFunctions {
         if ( Object.prototype.toString.call( value ) === '[object Date]' )
             return value;
 
+        if ( value === "NOW" )
+            return new Date();
+
         let date = Date.parse( value );
         if ( isNaN( date ) )
             throw new AttributeValueError(`Invalid date/time value: ${value}`, attributeDef );

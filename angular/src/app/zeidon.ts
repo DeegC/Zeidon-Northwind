@@ -14,7 +14,7 @@ const ENTITY_IS_LINKED = "_linked";
 let entityInstanceFingerprintCount = 0;
 
 export class Application {
-    lodDefs : Object;
+    lodDefs: Object;
 
     constructor( lodDefs: Object ) {
         this.lodDefs = lodDefs;
@@ -22,7 +22,7 @@ export class Application {
 }
 
 export class ObjectInstance {
-    protected roots : EntityArray<EntityInstance>;
+    protected roots: EntityArray<EntityInstance>;
     public isUpdated = false;
     public isLocked = false;
 
@@ -44,14 +44,14 @@ export class ObjectInstance {
     // Saves the options used to activate this OI.
     private activateQual: any;
 
-    public toJSON( options : ZeidonToJsonOptions = {} ): Object {
+    public toJSON( options: ZeidonToJsonOptions = {} ): Object {
         let jarray = [];
         for ( let root of this.roots.allEntities() ) {
             // TODO: can't use forCommit yet because the OI that comes back doesn't have
             // the missing entities.  We can't use forCommit until we implement a merge.
             // If forCommit is true, only write updated entities.
             // if ( ! options.forCommit || root.childUpdated )
-                jarray.push( root.toJSON( options ) );
+            jarray.push( root.toJSON( options ) );
         };
 
         let json = {};
@@ -65,20 +65,20 @@ export class ObjectInstance {
 
     public logOi( incrementals?: boolean ) {
         if ( incrementals )
-            console.log( JSON.stringify( this.toZeidonMeta(), null, 2) );
+            console.log( JSON.stringify( this.toZeidonMeta(), null, 2 ) );
         else
-            console.log( JSON.stringify( this, null, 2) );
+            console.log( JSON.stringify( this, null, 2 ) );
     }
 
     /**
      * Wrap the JSON for this object with Zeidon OI meta.  Used for committing.
      */
-    toZeidonMeta( options? : CommitOptions ) : any {
+    toZeidonMeta( options?: CommitOptions ): any {
         options = options || { meta: true, forCommit: true };
 
         let wrapper = {
             ".meta": { version: "1" },
-            OIs : [ {
+            OIs: [ {
                 ".oimeta": {
                     application: this.getApplicationName(),
                     odName: this.getLodDef().name,
@@ -92,16 +92,16 @@ export class ObjectInstance {
 
         // Add the OI.
         let oi = this.toJSON( options );
-        let root = oi[this.getLodDef().name ];
-        wrapper.OIs[0][ this.getLodDef().name ] = root;
+        let root = oi[ this.getLodDef().name ];
+        wrapper.OIs[ 0 ][ this.getLodDef().name ] = root;
 
         return wrapper;
     }
 
     public static activateOi<T extends ObjectInstance>( oi: T, qual?: any ): Observable<T> {
         let config = configurationInstance;
-        if ( ! config )
-            error( "ZeidonConfiguration not properly initiated.")
+        if ( !config )
+            error( "ZeidonConfiguration not properly initiated." )
 
         oi.activateQual = qual;
         return config.getActivator().activateOi( oi, qual );
@@ -109,8 +109,8 @@ export class ObjectInstance {
 
     public commit( options?: CommitOptions ): Observable<this> {
         let config = configurationInstance;
-        if ( ! config )
-            error( "ZeidonConfiguration not properly initiated.")
+        if ( !config )
+            error( "ZeidonConfiguration not properly initiated." )
 
         return config.getCommitter().commitOi( this, options ) as Observable<this>;
     }
@@ -137,8 +137,8 @@ export class ObjectInstance {
     public drop() {
         if ( this.isLocked ) {
             let config = configurationInstance;
-            if ( ! config )
-                error( "ZeidonConfiguration not properly initiated.")
+            if ( !config )
+                error( "ZeidonConfiguration not properly initiated." )
 
             config.getCommitter().dropOi( this );
 
@@ -174,46 +174,46 @@ export class ObjectInstance {
         }
 
         this.reset();
-        if ( ! initialize ) {
+        if ( !initialize ) {
             return this;
         }
         else
-        if ( initialize.OIs ) {
-            // TODO: Someday we should handle multiple return OIs for for now
-            // we'll assume just one and hardcode '[0]'.
-             let oimeta = initialize.OIs[0][ ".oimeta" ];
-             if ( oimeta )
-                this.loadOiMetaFromJson( oimeta, options );
+            if ( initialize.OIs ) {
+                // TODO: Someday we should handle multiple return OIs for for now
+                // we'll assume just one and hardcode '[0]'.
+                let oimeta = initialize.OIs[ 0 ][ ".oimeta" ];
+                if ( oimeta )
+                    this.loadOiMetaFromJson( oimeta, options );
 
 
-            let root = initialize.OIs[0][ this.rootEntityName() ];
-            if ( root ) {
-                for ( let i of initialize.OIs[0][ this.rootEntityName() ] ) {
-                    this.roots.create( i, options );
+                let root = initialize.OIs[ 0 ][ this.rootEntityName() ];
+                if ( root ) {
+                    for ( let i of initialize.OIs[ 0 ][ this.rootEntityName() ] ) {
+                        this.roots.create( i, options );
+                    }
                 }
-            }
-        } else
-        if ( initialize.constructor === Array ) {
-            for ( let i of initialize ) {
-                this.roots.create( i, options );
-            }
-        } else
-        if ( initialize[ this.rootEntityName() ] && initialize[ this.rootEntityName() ].constructor === Array ) {
-            for ( let i of initialize[ this.rootEntityName() ] ) {
-                this.roots.create( i, options );
-            }
-        } else
-        if ( initialize != {} ) {
-            // Ignore version for now.
-            delete initialize.version;
-            this.roots.create( initialize, options );
-        }
+            } else
+                if ( initialize.constructor === Array ) {
+                    for ( let i of initialize ) {
+                        this.roots.create( i, options );
+                    }
+                } else
+                    if ( initialize[ this.rootEntityName() ] && initialize[ this.rootEntityName() ].constructor === Array ) {
+                        for ( let i of initialize[ this.rootEntityName() ] ) {
+                            this.roots.create( i, options );
+                        }
+                    } else
+                        if ( initialize != {} ) {
+                            // Ignore version for now.
+                            delete initialize.version;
+                            this.roots.create( initialize, options );
+                        }
 
         return this;
     }
 
     handleActivateError( e ) {
-        console.log("There was an error: " + e );
+        console.log( "There was an error: " + e );
     }
 }
 
@@ -263,10 +263,10 @@ export class EntityInstance {
     /**
      * Returns true if this EI is linked with another.
      */
-    get isLinked() { return !! this.attributes[ ENTITY_IS_LINKED ] }
+    get isLinked() { return !!this.attributes[ ENTITY_IS_LINKED ] }
 
     private setIncremental( v: boolean, flag: string ) {
-        if ( v && ! this.incrementals[ flag ] ) {
+        if ( v && !this.incrementals[ flag ] ) {
             this.oi.isUpdated = true;
             this.childUpdated = true;
             for ( let parent = this.parentEntityInstance(); parent; parent = parent.parentEntityInstance() ) {
@@ -284,17 +284,17 @@ export class EntityInstance {
     public set updated( v: boolean ) { this.setIncremental( v, "updated" ) }
 
     public get entityName(): string { throw "entityName() but be overridden" };
-    public get entityDef(): any { return this.oi.getLodDef().entities[ this.entityName ];}
+    public get entityDef(): any { return this.oi.getLodDef().entities[ this.entityName ]; }
     public getAttributeDef( attributeName: string ): any {
         let attributeDef = this.entityDef.attributes[ attributeName ];
-        if ( ! attributeDef )
+        if ( !attributeDef )
             return undefined;
 
-        if ( ! attributeDef.domain ) {
+        if ( !attributeDef.domain ) {
             let domain = this.oi.getDomain( attributeDef.domainName );
             if ( domain ) {
                 attributeDef.domain = domain;
-                if ( ! domain.domainFunctions )
+                if ( !domain.domainFunctions )
                     domain.domainFunctions = this.oi.getDomainFunctions( domain.class );
             }
             else {
@@ -316,30 +316,30 @@ export class EntityInstance {
         if ( keyDefs.length != 1 )
             error( `keyAttributeDef can only be called for entities with a single key. Entity = ${this.entityName}` );
 
-        return keyDefs[0];
+        return keyDefs[ 0 ];
     };
 
     get key(): string {
         let key = this.keyAttributeDef;
         return this.getAttribute( key.name )
     };
-    set key(value: string) { this.setAttribute(this.keyAttributeDef, value) };
+    set key( value: string ) { this.setAttribute( this.keyAttributeDef, value ) };
 
-    constructor( initialize:  Object,
-                 oi:          ObjectInstance,
-                 parentArray: EntityArray<EntityInstance>,
-                 options:     CreateOptions = DEFAULT_CREATE_OPTIONS ) {
+    constructor( initialize: Object,
+        oi: ObjectInstance,
+        parentArray: EntityArray<EntityInstance>,
+        options: CreateOptions = DEFAULT_CREATE_OPTIONS ) {
         this.oi = oi;
         this.parentArray = parentArray;
         for ( let attr in initialize ) {
-            if ( this.getAttributeDef(attr) ) {
-                this.setAttribute( attr, initialize[attr], options);
+            if ( this.getAttributeDef( attr ) ) {
+                this.setAttribute( attr, initialize[ attr ], options );
                 continue;
             }
 
-            if ( this.entityDef.childEntities[attr] ) {
-                let init = initialize[attr];
-                if ( ! ( init.constructor === Array ) ) {
+            if ( this.entityDef.childEntities[ attr ] ) {
+                let init = initialize[ attr ];
+                if ( !( init.constructor === Array ) ) {
                     init = [ init ];  // If it's not an array, wrap it.
                 }
                 for ( let o of init ) {
@@ -350,12 +350,12 @@ export class EntityInstance {
             }
 
             if ( attr === ".meta" ) {
-                this.parseEntityMeta( initialize[attr] );
+                this.parseEntityMeta( initialize[ attr ] );
                 continue;
             }
 
-            if ( attr.startsWith(".") ) {
-                let metaName = attr.substr(1); // Remove leading "."
+            if ( attr.startsWith( "." ) ) {
+                let metaName = attr.substr( 1 ); // Remove leading "."
                 if ( this.getAttributeDef( metaName ) ) {
                     let attribs = this.getAttribHash( metaName );
                     attribs[ attr ] = initialize[ attr ];
@@ -366,7 +366,7 @@ export class EntityInstance {
             error( `Unknown attribute ${attr} for entity ${this.entityName}` );
         }
 
-        if ( ! options.incrementalsSpecified ) {
+        if ( !options.incrementalsSpecified ) {
             this.setDefaultAttributeValues();
             this.created = true;
             this.oi.isUpdated = true;
@@ -375,12 +375,12 @@ export class EntityInstance {
 
     private setDefaultAttributeValues() {
         let entityDef = this.entityDef;
-        if ( ! entityDef.hasInit )
+        if ( !entityDef.hasInit )
             return;
 
         for ( let attributeName in entityDef.attributes ) {
             let attributeDef = entityDef.attributes[ attributeName ];
-            if ( ! attributeDef.initialValue )
+            if ( !attributeDef.initialValue )
                 continue;
 
             // If the attribute is already set, skip it.
@@ -393,15 +393,15 @@ export class EntityInstance {
     }
 
     setAttribute( attr: string, value: any, options: CreateOptions = DEFAULT_CREATE_OPTIONS ) {
-    //    console.log( `Setting attribute ${attr}`)
+        //    console.log( `Setting attribute ${attr}`)
         let attributeDef = this.getAttributeDef( attr );
 
-        if ( ! attributeDef )
+        if ( !attributeDef )
             throw new InvalidAttributeError( attr, this.entityDef );
 
         // Perform some validations unless incrementals are specified.
-        if ( ! options.incrementalsSpecified ) {
-            if ( ! attributeDef.update ) {
+        if ( !options.incrementalsSpecified ) {
+            if ( !attributeDef.update ) {
                 error( `Attribute ${this.entityDef.name}.${attr} is read only` );
             }
 
@@ -424,7 +424,7 @@ export class EntityInstance {
             return;
 
         let metaAttr = "." + attr;
-        if ( ! attribs[ metaAttr ] )
+        if ( !attribs[ metaAttr ] )
             attribs[ metaAttr ] = {} as any;
 
         attribs[ metaAttr ].updated = true;
@@ -437,7 +437,7 @@ export class EntityInstance {
 
     public getAttribute( attr: string ): any {
         let attribs = this.getAttribHash( attr );
-        let value = attribs[attr];
+        let value = attribs[ attr ];
 
         let attributeDef = this.getAttributeDef( attr );
         if ( attributeDef.domain && attributeDef.domain.domainFunctions ) {
@@ -450,12 +450,12 @@ export class EntityInstance {
     public isAttributeUpdated( attr: string ): boolean {
         let attribs = this.getAttribHash( attr );
         let metaName = "." + attr;
-        return ( attribs[metaName ] && attribs[metaName].updated );
+        return ( attribs[ metaName ] && attribs[ metaName ].updated );
     }
 
     private getAttribHash( attr: string ): any {
         let attributeDef = this.getAttributeDef( attr );
-        if ( ! attributeDef )
+        if ( !attributeDef )
             throw new InvalidAttributeError( attr, this.entityDef );
 
         if ( attributeDef.persistent )
@@ -464,7 +464,7 @@ export class EntityInstance {
             return this.workAttributes;
     }
 
-    getChildEntityArray( entityName: string): EntityArray<EntityInstance> {
+    getChildEntityArray( entityName: string ): EntityArray<EntityInstance> {
         let entities = this.childEntityInstances[ entityName ];
         if ( entities === undefined ) {
             entities = new EntityArray<EntityInstance>( entityName, this.oi, this );
@@ -474,7 +474,7 @@ export class EntityInstance {
         return entities;
     }
 
-    public delete( options? : DeleteOptions ) {
+    public delete( options?: DeleteOptions ) {
         let idx = this.parentArray.findIndex( ei => ei === this );
         this.parentArray.delete( idx, options );
     }
@@ -578,7 +578,7 @@ export class EntityInstance {
             }
 
             let childDef = this.entityDef.childEntities[ key ];
-            if ( ! childDef ) {
+            if ( !childDef ) {
                 if ( options.ignoreUnknownAttributeErrors )
                     continue;
                 else
@@ -594,12 +594,12 @@ export class EntityInstance {
 
             // Children of 1-to-1 relationships are not in an array.  Convert it to
             // an array to make it easier to process.
-            if ( ! Array.isArray( valueChildren ) )
+            if ( !Array.isArray( valueChildren ) )
                 valueChildren = [ valueChildren ];
 
             for ( let valueChild of valueChildren ) {
                 let eiChild = eiChildren.find( eiChild => eiChild.fingerprint === valueChild.fingerprint )
-                if ( ! eiChild )
+                if ( !eiChild )
                     error( "Couldn't find EI using fingerprint" );
 
                 childFingerprints[ valueChild.fingerprint ] = true;
@@ -609,12 +609,12 @@ export class EntityInstance {
             // Do we have a fingerprint for every child entity?
             if ( Object.keys( childFingerprints ).length < eiChildren.length ) {
                 // No.  Delete all child entities that are missing from the list of fingerprints.
-                eiChildren.deleteAll( (ei) => ! childFingerprints[ ei.fingerprint ] );
+                eiChildren.deleteAll( ( ei ) => !childFingerprints[ ei.fingerprint ] );
             }
         }
     }
 
-    public toJSON( options : ZeidonToJsonOptions = {} ): Object {
+    public toJSON( options: ZeidonToJsonOptions = {} ): Object {
         // TODO: can't use forCommit yet because the OI that comes back doesn't have
         // the missing entities.  We can't use forCommit until we implement a merge.
         // if ( options.forCommit && ! this.childUpdated )
@@ -635,10 +635,10 @@ export class EntityInstance {
         for ( let attrName in this.entityDef.attributes ) {
             let attrValue = this.getAttribute( attrName );
             if ( attrValue )
-                json[attrName] = attrValue;
+                json[ attrName ] = attrValue;
 
             if ( options.meta && this.isAttributeUpdated( attrName ) ) {
-                json["." + attrName] = { updated: true };
+                json[ "." + attrName ] = { updated: true };
             }
         };
 
@@ -656,8 +656,8 @@ export class EntityInstance {
                 // TODO: can't use forCommit yet because the OI that comes back doesn't have
                 // the missing entities.  We can't use forCommit until we implement a merge.
                 //if ( ! options.forCommit || entities[0].childUpdated )
-                if ( entities[0].childUpdated )
-                    json[ entityName ] =  entities[0].toJSON( options );
+                if ( entities[ 0 ].childUpdated )
+                    json[ entityName ] = entities[ 0 ].toJSON( options );
             } else {
                 // Filter is used to remove= undefined values; these are returned if options.forCommit
                 // is true and the ei wasn't updated.
@@ -670,14 +670,14 @@ export class EntityInstance {
 };
 
 export interface UpdateOptions {
-    ignoreUnknownAttributeErrors? : boolean
+    ignoreUnknownAttributeErrors?: boolean
 }
 
 export const Position = {
     First: 'first',
-    Last:  'last',
-    Next:  'next',
-    Prev:  'prev'
+    Last: 'last',
+    Next: 'next',
+    Prev: 'prev'
 }
 
 /**
@@ -687,7 +687,7 @@ export const Position = {
 export type CursorPosition = string | number;
 
 export interface IncludeOptions {
-    position? : CursorPosition;
+    position?: CursorPosition;
 }
 
 /**
@@ -697,16 +697,16 @@ class Relinker {
     sourceEi: EntityInstance;
 
     include( targetArr: EntityArray<EntityInstance>,
-             source: EntityInstance,
-             includeOptions : IncludeOptions ) {
+        source: EntityInstance,
+        includeOptions: IncludeOptions ) {
 
         this.sourceEi = source;
         this.validateInclude( targetArr );
-        console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.delegate.entityDef.name}`)
+        console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.delegate.entityDef.name}` )
 
         // If sourceEi is not linked to anything else, then we need to add all non-hidden
         // attributes to the hash.
-        if ( ! this.sourceEi.isLinked )
+        if ( !this.sourceEi.isLinked )
             this.addAllPersistentAttributes();
 
         this.includeWithChildren( targetArr, source, includeOptions.position );
@@ -714,10 +714,10 @@ class Relinker {
     }
 
     private includeWithChildren( targetArr: EntityArray<EntityInstance>,
-                                 source: EntityInstance,
-                                 position: CursorPosition ) {
+        source: EntityInstance,
+        position: CursorPosition ) {
         targetArr.create( {}, { position: position, incrementalsSpecified: true } );
-        this.link( source, targetArr.selected());
+        this.link( source, targetArr.selected() );
 
         // Now find matching entities under source with the same relationship as target.
         // We need to include those next.
@@ -728,15 +728,15 @@ class Relinker {
             for ( let tgtChildName in targetArr.delegate.entityDef.childEntities ) {
                 let tgtChildDef = targetArr.delegate.lodDef.entities[ tgtChildName ];
                 if ( tgtChildDef.erToken === srcChildDef.erToken &&
-                     tgtChildDef.relToken === srcChildDef.relToken &&
-                     tgtChildDef.isRelLink === srcChildDef.isRelLink ) {
+                    tgtChildDef.relToken === srcChildDef.relToken &&
+                    tgtChildDef.isRelLink === srcChildDef.isRelLink ) {
 
                     // Same relationship!  Include all the children.
                     let srcChildArr = source.getChildEntityArray( srcChildDef.name );
                     let tgtChildArr = targetArr.selected().getChildEntityArray( srcChildDef.name );
                     for ( let srcChildEi of srcChildArr ) {
                         this.includeWithChildren( targetArr.selected().getChildEntityArray( tgtChildName ),
-                                                  srcChildEi, Position.Last );
+                            srcChildEi, Position.Last );
                     }
                 }
             }
@@ -764,7 +764,7 @@ class Relinker {
             if ( attributeDef.hidden )
                 continue;
 
-            if ( ! attributeDef.persistent )
+            if ( !attributeDef.persistent )
                 continue;
 
             if ( attributes[ attrName ] )  // Already have a value?
@@ -788,7 +788,7 @@ class Relinker {
         if ( targetArr.length >= targetEntityDef.cardMax )
             throw `Including a new instance for ${targetEntityDef.name} voilates max cardinality`;
 
-        if ( ! targetEntityDef.includable )
+        if ( !targetEntityDef.includable )
             throw `Entity ${targetEntityDef.name} is not includable`;
 
         // TODO: check to see if oi is updatable.
@@ -803,13 +803,13 @@ class Relinker {
  * See https://github.com/Microsoft/TypeScript/issues/12013 for more.
  */
 class ArrayDelegate<T extends EntityInstance> {
-    hiddenEntities : Array<T>;
+    hiddenEntities: Array<T>;
     currentlySelected;
 
     constructor( private array: Array<T>,
-                 private entityName: string,
-                 private oi: ObjectInstance,
-                 private parentEi: EntityInstance ) {
+        private entityName: string,
+        private oi: ObjectInstance,
+        private parentEi: EntityInstance ) {
         this.currentlySelected = 0;
     }
 
@@ -817,12 +817,12 @@ class ArrayDelegate<T extends EntityInstance> {
     get entityDef() { return this.oi.getLodDef().entities[ this.entityName ]; }
     get length() { return this.array.length }
 
-    create( initialize : Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
-        if ( ! this.entityDef.create && ! options.incrementalsSpecified )
+    create( initialize: Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
+        if ( !this.entityDef.create && !options.incrementalsSpecified )
             throw `Entity ${this.entityDef.name} does not have create authority`;
 
         let ei = Object.create( this.oi.getPrototype( this.entityName ) );
-        ei.constructor.apply(ei, [ initialize, this.oi, this.array, options ] );
+        ei.constructor.apply( ei, [ initialize, this.oi, this.array, options ] );
 
         // Figure out where to insert the new ei.
         let position = options.position;
@@ -869,10 +869,10 @@ class ArrayDelegate<T extends EntityInstance> {
     }
 
     include( entityArray: EntityArray<EntityInstance>, sourceEi: EntityInstance, options: IncludeOptions = {} ): EntityInstance {
-        if ( ! this.entityDef.includable )
+        if ( !this.entityDef.includable )
             error( `Entity ${this.entityDef.name} does not have include authority.` );
 
-        options = {...options}; // Clone the options so we can change the values.
+        options = { ...options }; // Clone the options so we can change the values.
         if ( options.position === undefined )
             options.position = this.currentlySelected;
 
@@ -881,11 +881,11 @@ class ArrayDelegate<T extends EntityInstance> {
         return null;
     }
 
-    private validateExclude( index? : number ) {
-        if ( ! this.entityDef.excludable )
+    private validateExclude( index?: number ) {
+        if ( !this.entityDef.excludable )
             error( `Entity ${this.entityDef.name} does not have exclude authority.` );
 
-        if ( ! this.hiddenEntities )
+        if ( !this.hiddenEntities )
             this.hiddenEntities = new Array<T>();
     }
 
@@ -896,29 +896,29 @@ class ArrayDelegate<T extends EntityInstance> {
 
         this.hiddenEntities = this.hiddenEntities.concat( this.array );
         for ( let ei of this.array )
-            (<any>ei).excluded = true;
+            ( <any>ei ).excluded = true;
 
         this.oi.isUpdated = true;
         this.array.length = 0;
     }
 
-    private validateDelete( index? : number ) {
-        if ( ! this.entityDef.deletable )
+    private validateDelete( index?: number ) {
+        if ( !this.entityDef.deletable )
             error( `Entity ${this.entityDef.name} does not have delete authority.` );
 
-        let list = index ? [ this.array[index] ] : this.array;
+        let list = index ? [ this.array[ index ] ] : this.array;
         for ( let ei of list ) {
             if ( ei.incomplete )
                 error( `Entity ${this.entityDef.name} is incomplete and cannot be deleted.` )
         }
 
-        if ( ! this.hiddenEntities )
+        if ( !this.hiddenEntities )
             this.hiddenEntities = new Array<T>();
     }
 
     deleteAll( filter?: ( EntityInstance ) => boolean ) {
         this.validateDelete();
-        if ( this.array.length == 0 )
+        if ( this.array.length === 0 )
             return;
 
         this.hiddenEntities = this.hiddenEntities.concat( this.array );
@@ -930,17 +930,22 @@ class ArrayDelegate<T extends EntityInstance> {
         this.array.length = 0;
     }
 
-    delete( index? : number, options? : DeleteOptions ) {
+    delete( index?: number, options?: DeleteOptions ) {
         if ( index === undefined )
             index = this.currentlySelected;
 
         this.validateDelete( index );
 
-        let ei = this.array.splice( index, 1 )[0];
-        this.hiddenEntities.push( ei );
+        let ei = this.array.splice( index, 1 )[ 0 ];
+
+        // If the EI was also created then it's "dead" and no longer needed.
+        if ( ! ei.created ) {
+            this.hiddenEntities.push( ei );
+        }
+
         this.deleteEntity( ei as any );
 
-        let position = (options && options.reposition) || Position.Next;
+        let position = ( options && options.reposition ) || Position.Next;
         if ( typeof position === "number" ) {
             if ( position < 0 || position > this.array.length )
                 throw new ZeidonError( `Invailid reposition '${position}'.  Must be between 0 and ${this.array.length}` );
@@ -972,27 +977,32 @@ class ArrayDelegate<T extends EntityInstance> {
         }
     }
 
-    drop( index? : number ) {
+    drop( index?: number ) {
         if ( index == undefined )
             index = this.currentlySelected;
 
-        let ei = this.array.splice( index, 1 )[0];
+        let ei = this.array.splice( index, 1 )[ 0 ];
         ei.deleted = true;
-        while( ei = ei.parentEntityInstance() as T ) {
+        while ( ei = ei.parentEntityInstance() as T ) {
             ei.incomplete = true;
         }
     }
 
-    exclude( index? : number ) {
+    exclude( index?: number ) {
         if ( index == undefined )
             index = this.currentlySelected;
 
-        let ei = this.array.splice( index, 1 )[0];
+        let ei = this.array.splice( index, 1 )[ 0 ];
         ei.excluded = true;
         this.oi.isUpdated = true;
+
+        // If the EI was also included then it's "dead" and no longer needed.
+        if ( !ei.created ) {
+            this.hiddenEntities.push( ei );
+        }
     }
 
-    private deleteEntity ( ei: EntityInstance ) {
+    private deleteEntity( ei: EntityInstance ) {
         ei.deleted = true;
         ei.oi.isUpdated = true;
         let entityDef = ei.entityDef;
@@ -1035,7 +1045,7 @@ class ArrayDelegate<T extends EntityInstance> {
     }
 
     selected(): EntityInstance {
-        return this.array[this.currentlySelected];
+        return this.array[ this.currentlySelected ];
     }
 
     /**
@@ -1064,44 +1074,44 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         // See comment starting ArrayDelegate for why we do this.
         this.delegate = new ArrayDelegate( _arr, entityName, oi, parentEi );
 
-        Object.defineProperty(_arr, 'parentEi', {
+        Object.defineProperty( _arr, 'parentEi', {
             get: () => parentEi,
             enumerable: true,
             configurable: true
-        });
+        } );
 
         // Add all the functions to EntityArray.
-        _arr.create = function( initialize : Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): T {
+        _arr.create = function ( initialize: Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): T {
             return this.delegate.create( initialize, options );
         }
-        _arr.include = function( sourceEi: EntityInstance, options?: IncludeOptions ): T {
+        _arr.include = function ( sourceEi: EntityInstance, options?: IncludeOptions ): T {
             return this.delegate.include( this, sourceEi, options );
         };
-        _arr.excludeAll = function() { this.delegate.excludeAll(); };
-        _arr.deleteAll = function( filter?: ( EntityInstance ) => boolean ) { this.delegate.deleteAll(filter); };
-        _arr.delete = function( index?: number) { this.delegate.delete( index ); };
-        _arr.drop = function( index?: number) { this.delegate.drop( index ); };
-        _arr.exclude = function( index?: number) { this.delegate.exclude( index ); };
-        _arr.selected = function() { return this.delegate.selected(); };
-        _arr.first = function() { return this.delegate.first(); };
-        _arr.last = function() { return this.delegate.last(); };
-        _arr.setSelected = function(value: number | EntityInstance) { return this.delegate.setSelected( value ); };
-        _arr.allEntities = function() { return this.delegate.allEntities(); };
+        _arr.excludeAll = function () { this.delegate.excludeAll(); };
+        _arr.deleteAll = function ( filter?: ( EntityInstance ) => boolean ) { this.delegate.deleteAll( filter ); };
+        _arr.delete = function ( index?: number ) { this.delegate.delete( index ); };
+        _arr.drop = function ( index?: number ) { this.delegate.drop( index ); };
+        _arr.exclude = function ( index?: number ) { this.delegate.exclude( index ); };
+        _arr.selected = function () { return this.delegate.selected(); };
+        _arr.first = function () { return this.delegate.first(); };
+        _arr.last = function () { return this.delegate.last(); };
+        _arr.setSelected = function ( value: number | EntityInstance ) { return this.delegate.setSelected( value ); };
+        _arr.allEntities = function () { return this.delegate.allEntities(); };
 
         return _arr;
     }
 
-    create: ( initialize? : Object, options?: CreateOptions ) => T;
+    create: ( initialize?: Object, options?: CreateOptions ) => T;
     excludeAll: () => void;
     deleteAll: ( filter?: ( T ) => boolean ) => void;
-    delete: ( index? : number, options? : DeleteOptions ) => void;
-    drop: ( index? : number ) => void;
-    exclude: ( index? : number ) => void;
+    delete: ( index?: number, options?: DeleteOptions ) => void;
+    drop: ( index?: number ) => void;
+    exclude: ( index?: number ) => void;
     include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => T;
     selected: () => T;
     first: () => T;
     last: () => T;
-    setSelected: (value: number | EntityInstance ) => T;
+    setSelected: ( value: number | EntityInstance ) => T;
 
     /**
      * Returns all entity instances, including hidden ones.
@@ -1110,20 +1120,20 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
 }
 
 export interface CreateOptions {
-    incrementalsSpecified? : boolean;
-    readOnlyOi? : boolean;
-    position? : CursorPosition;
+    incrementalsSpecified?: boolean;
+    readOnlyOi?: boolean;
+    position?: CursorPosition;
 }
 
 export interface DeleteOptions {
-    reposition? : CursorPosition;
+    reposition?: CursorPosition;
 }
 
 const DEFAULT_CREATE_OPTIONS = {
     incrementalsSpecified: false,
     readOnlyOi: false,
     position: Position.Last
- };
+};
 
 export class Activator {
     activateOi<T extends ObjectInstance>( oi: T, options?: any ): Observable<T> {
@@ -1131,11 +1141,11 @@ export class Activator {
     }
 
     // Error handler called if there is an error.
-    errorHandler?: (error:any) => void;
+    errorHandler?: ( error: any ) => void;
 }
 
 export class Committer {
-    commitOi( oi: ObjectInstance, options?: CommitOptions ): Observable<ObjectInstance>{
+    commitOi( oi: ObjectInstance, options?: CommitOptions ): Observable<ObjectInstance> {
         throw "commitOi has not been implemented"
     }
 
@@ -1144,7 +1154,7 @@ export class Committer {
     }
 
     // Error handler called if there is an error.
-    errorHandler?: (error:any) => void;
+    errorHandler?: ( error: any ) => void;
 }
 
 /**
@@ -1157,8 +1167,8 @@ export class ZeidonConfiguration {
         configurationInstance = this;
     }
 
-    getActivator() : Activator { return this.activator; }
-    getCommitter() : Committer { return this.committer; }
+    getActivator(): Activator { return this.activator; }
+    getCommitter(): Committer { return this.committer; }
 }
 
 export class Pagination {
@@ -1167,7 +1177,7 @@ export class Pagination {
     totalCount: number = null;
     pageSize: number = 20;
 
-  constructor( ) { }
+    constructor() { }
 
     incrementPage() {
         let currentPage = Math.min( this.currentPage + 1, this.totalPages || 9999 );
@@ -1217,9 +1227,9 @@ export class Pagination {
 }
 
 export interface ZeidonToJsonOptions {
-    childEntities? : string[];  // If a non-empty array, only write childEntities listed in the array.
-    meta? :          boolean;   // Write OI/entity meta (e.g. incrementals).
-    forCommit? :     boolean;   // Only write entities needed for update.
+    childEntities?: string[];  // If a non-empty array, only write childEntities listed in the array.
+    meta?: boolean;   // Write OI/entity meta (e.g. incrementals).
+    forCommit?: boolean;   // Only write entities needed for update.
 }
 
 export interface CommitOptions {
@@ -1236,13 +1246,13 @@ export interface Domain {
     domainFunctions?: any,
 }
 
-const debugError = function( message: string ) {
-    var e = new Error('dummy');
-    var stack = e.stack.replace(/^[^\(]+?[\n$]/gm, '')
-       .replace(/^\s+at\s+/gm, '')
-       .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@')
-       .split('\n');
-    console.log(stack.join("\n"));
+const debugError = function ( message: string ) {
+    var e = new Error( 'dummy' );
+    var stack = e.stack.replace( /^[^\(]+?[\n$]/gm, '' )
+        .replace( /^\s+at\s+/gm, '' )
+        .replace( /^Object.<anonymous>\s*\(/gm, '{anonymous}()@' )
+        .split( '\n' );
+    console.log( stack.join( "\n" ) );
 
     console.log( message );
     //alert( message );
@@ -1255,30 +1265,30 @@ let error = function ( message: string ) {
 }
 
 export class ZeidonError extends Error {
-    constructor(errorMessage: string ) {
-        super(errorMessage);
+    constructor( errorMessage: string ) {
+        super( errorMessage );
 
         // Set the prototype explicitly.
-        Object.setPrototypeOf(this, ZeidonError.prototype);
+        Object.setPrototypeOf( this, ZeidonError.prototype );
     }
 
 }
 
 export class ActivateError extends ZeidonError {
-    constructor(errorMessage: string, public lodName: string ) {
-        super(errorMessage);
+    constructor( errorMessage: string, public lodName: string ) {
+        super( errorMessage );
 
         // Set the prototype explicitly.
-        Object.setPrototypeOf(this, ActivateError.prototype);
+        Object.setPrototypeOf( this, ActivateError.prototype );
     }
 }
 
 export class ActivateLockError extends ActivateError {
     constructor( public lodName: string ) {
-        super("LOD is locked", lodName);
+        super( "LOD is locked", lodName );
 
         // Set the prototype explicitly.
-        Object.setPrototypeOf(this, ActivateLockError.prototype);
+        Object.setPrototypeOf( this, ActivateLockError.prototype );
     }
 }
 
@@ -1286,7 +1296,7 @@ export class AttributeValueError extends ZeidonError {
     attributeDef: any;
 
     constructor( message: string, attributeDef: any ) {
-        super( message + `   Attribute: ${attributeDef.name}`)
+        super( message + `   Attribute: ${attributeDef.name}` )
         this.attributeDef = attributeDef;
     }
 }
@@ -1298,6 +1308,6 @@ export class InvalidAttributeError extends ZeidonError {
         super( `Attribute '${attrName}' is unknown for entity '${entityDef.name || entityDef}'` );
 
         // Set the prototype explicitly.
-        Object.setPrototypeOf(this, InvalidAttributeError.prototype);
+        Object.setPrototypeOf( this, InvalidAttributeError.prototype );
     }
 }

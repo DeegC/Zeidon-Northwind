@@ -277,7 +277,7 @@ export const Order_LodDef = {
             erToken:     "110000286",
             create:      true,
             cardMax:     0,
-            hasInit:     false,
+            hasInit:     true,
             creatable:   true,
             includable:  false,
             deletable:   true,
@@ -310,6 +310,7 @@ export const Order_LodDef = {
                     key:          false,
                     update:       true,
                     foreignKey:   false,
+                    initialValue: "NOW",
                 },
                 ShippedDate: {
                     name:         "ShippedDate",

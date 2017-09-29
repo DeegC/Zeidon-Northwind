@@ -1,4 +1,4 @@
-z1000-Zeidon    ORDER    TZZOLODO 09/27/17   15:12:03 1.0a2    
+z1000-Zeidon    ORDER    TZZOLODO 09/28/17   22:33:01 1.0a2    
 eLOD       1
 aZKey      110000478
 aNextZKeyToAssign 110000557
@@ -685,6 +685,9 @@ eDomainRec 5
 
 eLOD_AttributeRec 3
 aZKey      110000481
+aUpdate    Y
+aInit      NOW
+aSeqOrder  A
 
 eER_AttributeRec 4
 aName      OrderDate
@@ -795,7 +798,7 @@ aTE_TableName orders
 aSAP_Entity 0
 
 eLOD_Entity 2
-awkSelectedAttributeForDragSort 1
+awkSelectedAttributeForDragSort 2
 
 eLOD_Attribute 3
 awkSequence 1
