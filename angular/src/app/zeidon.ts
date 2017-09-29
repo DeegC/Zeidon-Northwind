@@ -73,7 +73,7 @@ export class ObjectInstance {
     /**
      * Wrap the JSON for this object with Zeidon OI meta.  Used for committing.
      */
-    toZeidonMeta( options? : CommitOptions ) : Object {
+    toZeidonMeta( options? : CommitOptions ) : any {
         options = options || { meta: true, forCommit: true };
 
         let wrapper = {

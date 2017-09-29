@@ -63,9 +63,21 @@ describe('Entities', function() {
         expect( product.Product$.deleted).toBeFalsy();
         expect( product.Product$.excluded).toBeFalsy();
         expect( product.Product$.included).toBeFalsy();
+    });
 
-        product.Product$.delete();
-        expect( product.Product.length).toBe( 1 );
+    it( "should delete single entity.", function() {
+        let product = instantiateProduct();
+        expect(product.Product$.ProductId).toBe("77");
+        expect( product.Product$.deleted).toBeFalsy();
+        let productEi = product.Product$;
+
+        productEi.delete();
+        expect( productEi.deleted).toBeTruthy();
+        expect( product.Product.length).toBe( 0 );
+
+        let meta = product.toZeidonMeta();
+        //expect( meta.OIs[0] )
+        console.log(meta);
     });
 });
 
