@@ -1,3 +1,4 @@
+import { ZeidonError } from './../app/zeidon';
 import {Order} from "../app/lod/Order";
 import {Product} from "../app/lod/Product";
 import { Position, ObjectInstance } from '../app/zeidon';
@@ -41,8 +42,34 @@ describe('Entities', function() {
         product.Product.forEach( (pei, idx) => {
             expect( pei.ProductId).toBe( product.Product[idx].ProductId );
         } );
+
+        expect( () => { product.Product.create( {ProductId: "1004" }, { position: 100 } ) } )
+          .toThrow( new ZeidonError( "Invailid position '100'.  Must be between 0 and 5" ) );
+    });
+
+    it( "should correctly set entity incremental flags on create.", function() {
+        let product = instantiateProduct();
+        expect(product.Product$.ProductId).toBe("77");
+        expect(product.Product$.created).toBeFalsy();
+        expect( product.Product$.updated).toBeFalsy();
+        expect( product.Product$.deleted).toBeFalsy();
+        expect( product.Product$.excluded).toBeFalsy();
+        expect( product.Product$.included).toBeFalsy();
+
+        // Create entity.  Default is to do it at the end.
+        product.Product.create( {ProductId: "1000" } );
+        expect( product.Product$.created).toBeTruthy();
+        expect( product.Product$.updated).toBeTruthy();
+        expect( product.Product$.deleted).toBeFalsy();
+        expect( product.Product$.excluded).toBeFalsy();
+        expect( product.Product$.included).toBeFalsy();
+
+        product.Product$.delete();
+        expect( product.Product.length).toBe( 1 );
     });
 });
+
+
 
 let instantiateProduct = function() {
     let product = new Product();

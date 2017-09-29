@@ -474,9 +474,9 @@ export class EntityInstance {
         return entities;
     }
 
-    public delete() {
+    public delete( options? : DeleteOptions ) {
         let idx = this.parentArray.findIndex( ei => ei === this );
-        this.parentArray.delete( idx );
+        this.parentArray.delete( idx, options );
     }
 
     public drop() {
@@ -831,6 +831,9 @@ class ArrayDelegate<T extends EntityInstance> {
             this.array.push( ei );
         }
         else if ( typeof position === "number" ) {
+            if ( position < 0 || position > this.array.length )
+                throw new ZeidonError( `Invailid position '${position}'.  Must be between 0 and ${this.array.length}` );
+
             this.array.splice( position, 0, ei );
         }
         else {
@@ -927,7 +930,7 @@ class ArrayDelegate<T extends EntityInstance> {
         this.array.length = 0;
     }
 
-    delete( index? : number ) {
+    delete( index? : number, options? : DeleteOptions ) {
         if ( index === undefined )
             index = this.currentlySelected;
 
@@ -935,8 +938,38 @@ class ArrayDelegate<T extends EntityInstance> {
 
         let ei = this.array.splice( index, 1 )[0];
         this.hiddenEntities.push( ei );
-
         this.deleteEntity( ei as any );
+
+        let position = (options && options.reposition) || Position.Next;
+        if ( typeof position === "number" ) {
+            if ( position < 0 || position > this.array.length )
+                throw new ZeidonError( `Invailid reposition '${position}'.  Must be between 0 and ${this.array.length}` );
+
+            this.currentlySelected = position;
+        }
+        else {
+            switch ( position ) {
+                case Position.Last:
+                    this.currentlySelected = this.array.length - 1;
+                    break;
+
+                case Position.First:
+                    this.currentlySelected = 0;
+                    break;
+
+                case Position.Next:
+                    this.currentlySelected = Math.min( index + 1, this.array.length );
+                    break;
+
+                case Position.Prev:
+                    // If currentlySelected is 0, then put at the beginning.
+                    this.currentlySelected = Math.max( index - 1, 0 );
+                    break;
+
+                default:
+                    error( `Unknown reposition option: ${position}` );
+            }
+        }
     }
 
     drop( index? : number ) {
@@ -1061,7 +1094,7 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     create: ( initialize? : Object, options?: CreateOptions ) => T;
     excludeAll: () => void;
     deleteAll: ( filter?: ( T ) => boolean ) => void;
-    delete: ( index? : number ) => void;
+    delete: ( index? : number, options? : DeleteOptions ) => void;
     drop: ( index? : number ) => void;
     exclude: ( index? : number ) => void;
     include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => T;
@@ -1080,6 +1113,10 @@ export interface CreateOptions {
     incrementalsSpecified? : boolean;
     readOnlyOi? : boolean;
     position? : CursorPosition;
+}
+
+export interface DeleteOptions {
+    reposition? : CursorPosition;
 }
 
 const DEFAULT_CREATE_OPTIONS = {
