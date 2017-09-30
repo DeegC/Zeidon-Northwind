@@ -9,8 +9,10 @@ describe( 'Entities', function () {
   } );
 
   it( "should create entities with position.", function () {
-    let product = instantiateProduct();
+    let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
+    expect( product.Product$.Category$.CategoryId ).toBe( "2" );
+    expect( product.Product$.Category.length ).toBe( 1 );
 
     // Create entity.  Default is to do it at the end.
     product.Product.create( { ProductId: "1000" } );
@@ -18,6 +20,10 @@ describe( 'Entities', function () {
     expect( product.Product[ 0 ].ProductId ).toBe( "77" );
     expect( product.Product[ 1 ].ProductId ).toBe( "1000" );
     expect( product.Product$.ProductId ).toBe( "1000" );
+    expect( product.Product$.Category.length ).toBe( 0 );
+    expect( product.Product$.Category.first() ).toBeUndefined();
+    expect( product.Product$.Category.last() ).toBeUndefined();
+    expect( product.Product$.Category$ ).toBeUndefined();
 
     product.Product.create( { ProductId: "1001" }, { position: Position.First } );
     expect( product.Product.length ).toBe( 3 );
@@ -48,7 +54,7 @@ describe( 'Entities', function () {
   } );
 
   it( "should correctly set entity incremental flags on create.", function () {
-    let product = instantiateProduct();
+    let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
     expect( product.Product$.created ).toBeFalsy();
     expect( product.Product$.updated ).toBeFalsy();
@@ -66,23 +72,26 @@ describe( 'Entities', function () {
   } );
 
   it( "should delete single entity.", function () {
-    let product = instantiateProduct();
+    let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
     expect( product.Product$.deleted ).toBeFalsy();
     let productEi = product.Product$;
+    let supplierEi = product.Product$.Supplier$;
+    let categoryEi = product.Product$.Category$;
 
     productEi.delete();
     expect( productEi.deleted ).toBeTruthy();
     expect( product.Product.length ).toBe( 0 );
+    expect( supplierEi.deleted ).toBeFalsy();
+    expect( supplierEi.excluded ).toBeTruthy();
 
     // Make sure the deleted entity is still in the meta so it can be deleted.
     let meta = product.toZeidonMeta();
     expect( meta.OIs[ 0 ].Product[ 0 ][ ".meta" ].incrementals ).toBe( "D" );
-    console.log( meta );
   } );
 
   it( "should remove created/deleted entity", function () {
-    let product = instantiateProduct();
+    let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
 
     let productEi = product.Product.create( { ProductId: "1000" } );
@@ -94,11 +103,10 @@ describe( 'Entities', function () {
     // Make sure the deleted entity is gone from meta.
     let meta = product.toZeidonMeta();
     expect( meta.OIs[ 0 ].Product.length ).toBe( 1 );
-    console.log( meta );
   } );
 } );
 
-let instantiateProduct = function () {
+let instantiateProduct77 = function () {
   let product = new Product();
   product.createFromJson(
     {

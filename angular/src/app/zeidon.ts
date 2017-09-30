@@ -35,6 +35,7 @@ export class ObjectInstance {
     public getLodDef(): any { throw "getLodDef must be overridden" };
     public getApplicationName(): String { throw "getApplicationName must be overriden" };
     public getDomain( name: string ): Domain { throw "getDomain() must be overriden" };
+    public getEntityDef( name: string ): any { return this.getLodDef().entities[ name ] }
 
     public getDomainFunctions( name: string ): any {
         // Can be overwritten but not necessary.
@@ -1006,7 +1007,8 @@ class ArrayDelegate<T extends EntityInstance> {
         ei.deleted = true;
         ei.oi.isUpdated = true;
         let entityDef = ei.entityDef;
-        for ( let child of entityDef.childEntities ) {
+        for ( let childName in entityDef.childEntities ) {
+            let child = ei.oi.getEntityDef( childName );
             if ( child.parentDelete )
                 ei.getChildEntityArray( entityDef.name ).deleteAll();
             else
