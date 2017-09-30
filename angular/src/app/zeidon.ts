@@ -820,7 +820,7 @@ class ArrayDelegate<T extends EntityInstance> {
 
     create( initialize: Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
         if ( !this.entityDef.create && !options.incrementalsSpecified )
-            throw `Entity ${this.entityDef.name} does not have create authority`;
+            throw new ZeidonError( `Entity ${this.entityDef.name} does not have create authority.` );
 
         let ei = Object.create( this.oi.getPrototype( this.entityName ) );
         ei.constructor.apply( ei, [ initialize, this.oi, this.array, options ] );
@@ -871,7 +871,7 @@ class ArrayDelegate<T extends EntityInstance> {
 
     include( entityArray: EntityArray<EntityInstance>, sourceEi: EntityInstance, options: IncludeOptions = {} ): EntityInstance {
         if ( !this.entityDef.includable )
-            error( `Entity ${this.entityDef.name} does not have include authority.` );
+            throw new ZeidonError( `Entity ${this.entityDef.name} does not have include authority` );
 
         options = { ...options }; // Clone the options so we can change the values.
         if ( options.position === undefined )
@@ -884,16 +884,21 @@ class ArrayDelegate<T extends EntityInstance> {
 
     private validateExclude( index?: number ) {
         if ( !this.entityDef.excludable )
-            error( `Entity ${this.entityDef.name} does not have exclude authority.` );
+            throw new ZeidonError( `Entity ${this.entityDef.name} does not have exclude authority` );
 
         if ( !this.hiddenEntities )
             this.hiddenEntities = new Array<T>();
     }
 
-    excludeAll() {
-        this.validateExclude();
+    excludeAll( options : ExcludeOptions ) {
+        if ( ! options || ! options.incrementalsSpecified )
+            this.validateExclude();
+
         if ( this.array.length == 0 )
             return;
+
+        if ( ! this.hiddenEntities )
+            this.hiddenEntities = [];
 
         this.hiddenEntities = this.hiddenEntities.concat( this.array );
         for ( let ei of this.array )
@@ -905,19 +910,19 @@ class ArrayDelegate<T extends EntityInstance> {
 
     private validateDelete( index?: number ) {
         if ( !this.entityDef.deletable )
-            error( `Entity ${this.entityDef.name} does not have delete authority.` );
+            throw new ZeidonError( `Entity ${this.entityDef.name} does not have delete authority.` );
 
         let list = index ? [ this.array[ index ] ] : this.array;
         for ( let ei of list ) {
             if ( ei.incomplete )
-                error( `Entity ${this.entityDef.name} is incomplete and cannot be deleted.` )
+                throw new ZeidonError( `Entity ${this.entityDef.name} is incomplete and cannot be deleted.` );
         }
 
         if ( !this.hiddenEntities )
             this.hiddenEntities = new Array<T>();
     }
 
-    deleteAll( filter?: ( EntityInstance ) => boolean ) {
+    deleteAll( filter?: ( EntityInstance ) => boolean, options? : DeleteOptions ) {
         this.validateDelete();
         if ( this.array.length === 0 )
             return;
@@ -925,28 +930,14 @@ class ArrayDelegate<T extends EntityInstance> {
         this.hiddenEntities = this.hiddenEntities.concat( this.array );
         for ( let ei of this.array ) {
             if ( filter === undefined || filter( ei ) === true )
-                this.deleteEntity( ei );
+                this.deleteEntity( ei, options );
         }
 
         this.array.length = 0;
     }
 
-    delete( index?: number, options?: DeleteOptions ) {
-        if ( index === undefined )
-            index = this.currentlySelected;
-
-        this.validateDelete( index );
-
-        let ei = this.array.splice( index, 1 )[ 0 ];
-
-        // If the EI was also created then it's "dead" and no longer needed.
-        if ( ! ei.created ) {
-            this.hiddenEntities.push( ei );
-        }
-
-        this.deleteEntity( ei as any );
-
-        let position = ( options && options.reposition ) || Position.Next;
+    resetCurrentlySelected( index: number, position : CursorPosition ) {
+        position = position || Position.Next;
         if ( typeof position === "number" ) {
             if ( position < 0 || position > this.array.length )
                 throw new ZeidonError( `Invailid reposition '${position}'.  Must be between 0 and ${this.array.length}` );
@@ -973,9 +964,27 @@ class ArrayDelegate<T extends EntityInstance> {
                     break;
 
                 default:
-                    error( `Unknown reposition option: ${position}` );
+                    throw `Unknown reposition option: ${position}`;
             }
         }
+    }
+
+    delete( index?: number, options?: DeleteOptions ) {
+        if ( index === undefined )
+            index = this.currentlySelected;
+
+        if ( ! options || ! options.incrementalsSpecified )
+            this.validateDelete( index );
+
+        let ei = this.array.splice( index, 1 )[ 0 ];
+
+        // If the EI was also created then it's "dead" and no longer needed.
+        if ( ! ei.created ) {
+            this.hiddenEntities.push( ei );
+        }
+
+        this.deleteEntity( ei as any );
+        this.resetCurrentlySelected ( index, options && options.reposition );
     }
 
     drop( index?: number ) {
@@ -989,7 +998,7 @@ class ArrayDelegate<T extends EntityInstance> {
         }
     }
 
-    exclude( index?: number ) {
+    exclude( index?: number, options? : ExcludeOptions ) {
         if ( index == undefined )
             index = this.currentlySelected;
 
@@ -1001,18 +1010,20 @@ class ArrayDelegate<T extends EntityInstance> {
         if ( !ei.created ) {
             this.hiddenEntities.push( ei );
         }
+
+        this.resetCurrentlySelected( index, options && options.reposition );
     }
 
-    private deleteEntity( ei: EntityInstance ) {
+    private deleteEntity( ei: EntityInstance, options? : DeleteOptions ) {
         ei.deleted = true;
         ei.oi.isUpdated = true;
         let entityDef = ei.entityDef;
         for ( let childName in entityDef.childEntities ) {
-            let child = ei.oi.getEntityDef( childName );
-            if ( child.parentDelete )
-                ei.getChildEntityArray( entityDef.name ).deleteAll();
+            let childEntityDef = ei.oi.getEntityDef( childName );
+            if ( childEntityDef.parentDelete )
+                ei.getChildEntityArray( childName ).deleteAll( undefined, { incrementalsSpecified: true });
             else
-                ei.getChildEntityArray( entityDef.name ).excludeAll();
+                ei.getChildEntityArray( childName ).excludeAll( { incrementalsSpecified: true } );
         }
     }
 
@@ -1089,8 +1100,8 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         _arr.include = function ( sourceEi: EntityInstance, options?: IncludeOptions ): T {
             return this.delegate.include( this, sourceEi, options );
         };
-        _arr.excludeAll = function () { this.delegate.excludeAll(); };
-        _arr.deleteAll = function ( filter?: ( EntityInstance ) => boolean ) { this.delegate.deleteAll( filter ); };
+        _arr.excludeAll = function ( options? : ExcludeOptions ) { this.delegate.excludeAll( options ); };
+        _arr.deleteAll = function ( filter?: ( EntityInstance ) => boolean, options? : DeleteOptions ) { this.delegate.deleteAll( filter, options ); };
         _arr.delete = function ( index?: number ) { this.delegate.delete( index ); };
         _arr.drop = function ( index?: number ) { this.delegate.drop( index ); };
         _arr.exclude = function ( index?: number ) { this.delegate.exclude( index ); };
@@ -1104,8 +1115,8 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     }
 
     create: ( initialize?: Object, options?: CreateOptions ) => T;
-    excludeAll: () => void;
-    deleteAll: ( filter?: ( T ) => boolean ) => void;
+    excludeAll: ( options? : ExcludeOptions ) => void;
+    deleteAll: ( filter?: ( T ) => boolean, options? : DeleteOptions ) => void;
     delete: ( index?: number, options?: DeleteOptions ) => void;
     drop: ( index?: number ) => void;
     exclude: ( index?: number ) => void;
@@ -1129,6 +1140,12 @@ export interface CreateOptions {
 
 export interface DeleteOptions {
     reposition?: CursorPosition;
+    incrementalsSpecified?: boolean;
+}
+
+export interface ExcludeOptions {
+    reposition?: CursorPosition;
+    incrementalsSpecified?: boolean;
 }
 
 const DEFAULT_CREATE_OPTIONS = {

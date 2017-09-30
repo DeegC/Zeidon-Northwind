@@ -71,6 +71,20 @@ describe( 'Entities', function () {
     expect( product.Product$.included ).toBeFalsy();
   } );
 
+  it( "should not allow delete on entity without delete authority.", function () {
+    let product = instantiateProduct77();
+    expect( product.Product$.ProductId ).toBe( "77" );
+    expect( () => { product.Product$.Supplier$.delete() } )
+      .toThrow( new ZeidonError( `Entity Supplier does not have delete authority.` ) );
+  } );
+
+  it( "should not allow create on entity without delete authority.", function () {
+    let product = instantiateProduct77();
+    expect( product.Product$.ProductId ).toBe( "77" );
+    expect( () => { product.Product$.Supplier.create() } )
+      .toThrow( new ZeidonError( `Entity Supplier does not have create authority.` ) );
+  } );
+
   it( "should delete single entity.", function () {
     let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
