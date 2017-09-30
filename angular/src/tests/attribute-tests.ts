@@ -59,8 +59,11 @@ describe('Attributes', function() {
         expect( () => { newOrder.Order$.getAttribute('OrderIdx') })
             .toThrow( new InvalidAttributeError( "OrderIdx", "Order" ) );
 
-
         expect( () => { newOrder.Order$.setAttribute( "OrderIdx", "10" ) })
             .toThrow( new InvalidAttributeError( "OrderIdx", "Order" ) );
-    });
+
+        newOrder.readOnly = true;
+        expect( () => { newOrder.Order$.ShipName = "John Smith" } )
+            .toThrow( new ZeidonError( "This OI is read-only." ) );
+        });
 });

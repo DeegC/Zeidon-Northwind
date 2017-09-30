@@ -410,6 +410,9 @@ export class EntityInstance {
                 throw new ZeidonError( `Attribute ${this.entityDef.name}.${attr} is read only` );
             }
 
+            if ( this.oi.readOnly )
+                throw new ZeidonError( "This OI is read-only." );
+
             if ( this.deleted || this.excluded )
                 throw new ZeidonError( `Can't set attribute for hidden EntityInstance: ${this.entityDef.name}.${attr}` );
         }
