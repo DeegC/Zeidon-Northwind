@@ -24,6 +24,7 @@ export class Application {
 export class ObjectInstance {
     protected roots: EntityArray<EntityInstance>;
     public isUpdated = false;
+    public readOnly = false;
     public isLocked = false;
 
     constructor( initialize = undefined, options: CreateOptions = DEFAULT_CREATE_OPTIONS ) {
@@ -85,7 +86,7 @@ export class ObjectInstance {
                     odName: this.getLodDef().name,
                     incremental: true,
                     locked: this.isLocked,
-                    readOnlyOi: false
+                    readOnlyOi: this.readOnly
                 }
             }]
 
@@ -167,6 +168,9 @@ export class ObjectInstance {
 
         if ( oimeta.locked )
             this.isLocked = true;
+
+        if ( oimeta.readOnlyOi !== undefined )
+            this.readOnly = oimeta.readOnlyOi;
     }
 
     createFromJson( initialize, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): this {
@@ -403,11 +407,11 @@ export class EntityInstance {
         // Perform some validations unless incrementals are specified.
         if ( !options.incrementalsSpecified ) {
             if ( !attributeDef.update ) {
-                error( `Attribute ${this.entityDef.name}.${attr} is read only` );
+                throw new ZeidonError( `Attribute ${this.entityDef.name}.${attr} is read only` );
             }
 
             if ( this.deleted || this.excluded )
-                error( `Can't set attribute for hidden EntityInstance: ${this.entityDef.name}.${attr}` );
+                throw new ZeidonError( `Can't set attribute for hidden EntityInstance: ${this.entityDef.name}.${attr}` );
         }
 
         if ( attributeDef.domain && attributeDef.domain && attributeDef.domain.domainFunctions ) {
@@ -689,6 +693,7 @@ export type CursorPosition = string | number;
 
 export interface IncludeOptions {
     position?: CursorPosition;
+    incrementalsSpecified? : boolean;
 }
 
 /**
@@ -778,7 +783,7 @@ class Relinker {
     private validateLink( targetEntityDef ) {
         let sourceEntityDef = this.sourceEi.entityDef;
         if ( sourceEntityDef.erToken !== targetEntityDef.erToken )
-            throw `Entities ${sourceEntityDef.name} and ${sourceEntityDef.name} are not the same ER entity`;
+            throw new ZeidonError( `Entities ${targetEntityDef.name} and ${sourceEntityDef.name} are not the same ER entity.` );
     }
 
     private validateInclude( targetArr: EntityArray<EntityInstance> ) {
@@ -787,10 +792,10 @@ class Relinker {
         this.validateLink( targetEntityDef );
 
         if ( targetArr.length >= targetEntityDef.cardMax )
-            throw `Including a new instance for ${targetEntityDef.name} voilates max cardinality`;
+            throw new ZeidonError( `Including a new instance for ${targetEntityDef.name} voilates max cardinality.` );
 
         if ( !targetEntityDef.includable )
-            throw `Entity ${targetEntityDef.name} is not includable`;
+            throw new ZeidonError( `Entity ${targetEntityDef.name} is not includable.` );
 
         // TODO: check to see if oi is updatable.
     }
@@ -819,8 +824,13 @@ class ArrayDelegate<T extends EntityInstance> {
     get length() { return this.array.length }
 
     create( initialize: Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
+        options = options || {};  // Make sure options is at least an empty object.
+
         if ( !this.entityDef.create && !options.incrementalsSpecified )
             throw new ZeidonError( `Entity ${this.entityDef.name} does not have create authority.` );
+
+        if ( this.oi.readOnly && !options.incrementalsSpecified )
+            throw new ZeidonError( "This OI is read-only." );
 
         let ei = Object.create( this.oi.getPrototype( this.entityName ) );
         ei.constructor.apply( ei, [ initialize, this.oi, this.array, options ] );
@@ -871,7 +881,10 @@ class ArrayDelegate<T extends EntityInstance> {
 
     include( entityArray: EntityArray<EntityInstance>, sourceEi: EntityInstance, options: IncludeOptions = {} ): EntityInstance {
         if ( !this.entityDef.includable )
-            throw new ZeidonError( `Entity ${this.entityDef.name} does not have include authority` );
+            throw new ZeidonError( `Entity ${this.entityDef.name} does not have include authority.` );
+
+        if ( this.oi.readOnly && !options.incrementalsSpecified )
+            throw new ZeidonError( "This OI is read-only." );
 
         options = { ...options }; // Clone the options so we can change the values.
         if ( options.position === undefined )
@@ -884,14 +897,14 @@ class ArrayDelegate<T extends EntityInstance> {
 
     private validateExclude( index?: number ) {
         if ( !this.entityDef.excludable )
-            throw new ZeidonError( `Entity ${this.entityDef.name} does not have exclude authority` );
+            throw new ZeidonError( `Entity ${this.entityDef.name} does not have exclude authority.` );
 
         if ( !this.hiddenEntities )
             this.hiddenEntities = new Array<T>();
     }
 
-    excludeAll( options : ExcludeOptions ) {
-        if ( ! options || ! options.incrementalsSpecified )
+    excludeAll( options : ExcludeOptions = {} ) {
+        if ( ! options.incrementalsSpecified )
             this.validateExclude();
 
         if ( this.array.length == 0 )
@@ -908,7 +921,10 @@ class ArrayDelegate<T extends EntityInstance> {
         this.array.length = 0;
     }
 
-    private validateDelete( index?: number ) {
+    private validateDelete( options : DeleteOptions = {}, index?: number ) {
+        if ( this.oi.readOnly && !options.incrementalsSpecified )
+            throw new ZeidonError( "This OI is read-only." );
+
         if ( !this.entityDef.deletable )
             throw new ZeidonError( `Entity ${this.entityDef.name} does not have delete authority.` );
 
@@ -923,7 +939,8 @@ class ArrayDelegate<T extends EntityInstance> {
     }
 
     deleteAll( filter?: ( EntityInstance ) => boolean, options? : DeleteOptions ) {
-        this.validateDelete();
+        options = options || {};
+        this.validateDelete( options );
         if ( this.array.length === 0 )
             return;
 
@@ -970,11 +987,13 @@ class ArrayDelegate<T extends EntityInstance> {
     }
 
     delete( index?: number, options?: DeleteOptions ) {
+        options = options || {};
+
         if ( index === undefined )
             index = this.currentlySelected;
 
         if ( ! options || ! options.incrementalsSpecified )
-            this.validateDelete( index );
+            this.validateDelete( options, index );
 
         let ei = this.array.splice( index, 1 )[ 0 ];
 
@@ -999,6 +1018,10 @@ class ArrayDelegate<T extends EntityInstance> {
     }
 
     exclude( index?: number, options? : ExcludeOptions ) {
+        options = options || {};  // Make sure options is at least an empty object.
+        if ( this.oi.readOnly && !options.incrementalsSpecified )
+            throw new ZeidonError( "This OI is read-only." );
+
         if ( index == undefined )
             index = this.currentlySelected;
 
@@ -1014,7 +1037,7 @@ class ArrayDelegate<T extends EntityInstance> {
         this.resetCurrentlySelected( index, options && options.reposition );
     }
 
-    private deleteEntity( ei: EntityInstance, options? : DeleteOptions ) {
+    private deleteEntity( ei: EntityInstance, options : DeleteOptions = {} ) {
         ei.deleted = true;
         ei.oi.isUpdated = true;
         let entityDef = ei.entityDef;
@@ -1134,7 +1157,6 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
 
 export interface CreateOptions {
     incrementalsSpecified?: boolean;
-    readOnlyOi?: boolean;
     position?: CursorPosition;
 }
 
@@ -1150,7 +1172,6 @@ export interface ExcludeOptions {
 
 const DEFAULT_CREATE_OPTIONS = {
     incrementalsSpecified: false,
-    readOnlyOi: false,
     position: Position.Last
 };
 

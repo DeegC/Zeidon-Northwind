@@ -2,7 +2,7 @@ import { InvalidAttributeError, AttributeValueError } from './../app/zeidon';
 import {Order} from "../app/lod/Order";
 import { Observable } from 'rxjs/Observable';
 import {Product} from "../app/lod/Product";
-import {Position} from "../app/zeidon";
+import {Position, ZeidonError} from "../app/zeidon";
 
 describe('Attributes', function() {
     it( "should create attributes", () => {
@@ -36,10 +36,10 @@ describe('Attributes', function() {
             .toThrow( new AttributeValueError( "Invalid date/time value: xxx", { name: "ShippedDate" } ) );
 
         expect( () => { newOrder.Order$.OrderId = "10" })
-            .toThrow( "Attribute Order.OrderId is read only" );
+            .toThrow( new ZeidonError( "Attribute Order.OrderId is read only" ) );
 
         expect( () => { newOrder.Order$.setAttribute( "OrderId", "10" ) })
-            .toThrow( "Attribute Order.OrderId is read only" );
+            .toThrow( new ZeidonError( "Attribute Order.OrderId is read only" ) );
 
         expect( () => { newOrder.Order$.OrderDetail.create( { Quantity: "10x" }, { position: Position.Last } ) } )
             .toThrow( new AttributeValueError( "Invalid integer value: 10x", { name: "Quantity" } ) );

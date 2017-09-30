@@ -71,11 +71,29 @@ describe( 'Entities', function () {
     expect( product.Product$.included ).toBeFalsy();
   } );
 
+  it( "should not allow updates when OI is readonly.", function () {
+    let product = instantiateProduct77();
+    expect( product.Product$.ProductId ).toBe( "77" );
+    product.readOnly = true;
+    expect( () => { product.Product.create( { ProductId: "1000" } ) } )
+      .toThrow( new ZeidonError( `This OI is read-only.` ) );
+    expect( () => { product.Product$.delete() } )
+      .toThrow( new ZeidonError( `This OI is read-only.` ) );
+    expect( () => { product.Product$.Supplier$.exclude() } )
+      .toThrow( new ZeidonError( `This OI is read-only.` ) );
+    expect( () => { product.Product$.Supplier.include( product.Product$.Supplier$ ) } )
+      .toThrow( new ZeidonError( `This OI is read-only.` ) );
+  } );
+
   it( "should not allow delete on entity without delete authority.", function () {
     let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
     expect( () => { product.Product$.Supplier$.delete() } )
       .toThrow( new ZeidonError( `Entity Supplier does not have delete authority.` ) );
+
+    let order = instantiateOrder10248();
+    expect( () => { order.Order$.OrderDetail$.Product$.Category$.delete() } )
+      .toThrow( new ZeidonError( `Entity Category does not have delete authority.` ) );
   } );
 
   it( "should not allow create on entity without delete authority.", function () {
@@ -83,6 +101,19 @@ describe( 'Entities', function () {
     expect( product.Product$.ProductId ).toBe( "77" );
     expect( () => { product.Product$.Supplier.create() } )
       .toThrow( new ZeidonError( `Entity Supplier does not have create authority.` ) );
+  } );
+
+  it( "should check for multiple include errors.", function () {
+    let product = instantiateProduct77();
+    expect( product.Product$.ProductId ).toBe( "77" );
+    let order = instantiateOrder10248();
+    expect( order.Order$.OrderId ).toBe( "10248" );
+    expect( () => { order.Order$.OrderDetail$.Product$.Category.include( product.Product$.Category$ ) } )
+      .toThrow( new ZeidonError( `Entity Category does not have include authority.` ) );
+    expect( () => { order.Order$.OrderDetail$.Product.include( product.Product$.Category$ ) } )
+      .toThrow( new ZeidonError( `Entities Product and Category are not the same ER entity.` ) );
+    expect( () => { order.Order$.OrderDetail$.Product.include( product.Product$ ) } )
+      .toThrow( new ZeidonError( `Including a new instance for Product voilates max cardinality.` ) );
   } );
 
   it( "should delete single entity.", function () {
@@ -132,7 +163,6 @@ let instantiateProduct77 = function () {
           "application": "Northwind",
           "odName": "Product",
           "incremental": true,
-          "locked": true,
           "totalRootCount": 1
         },
         "Product": [ {
@@ -168,4 +198,133 @@ let instantiateProduct77 = function () {
     }, { incrementalsSpecified: true } );
 
   return product;
+}
+
+let instantiateOrder10248 = function () {
+  let order = new Order();
+  order.createFromJson(
+    {
+      ".meta": {
+        "version": "1"
+      },
+      "OIs": [ {
+        ".oimeta": {
+          "application": "Northwind",
+          "odName": "Order",
+          "incremental": true,
+          "totalRootCount": 1
+        },
+        "Order": [ {
+          "OrderId": "10248",
+          "OrderDate": "1996-07-04T00:00:00.000-04:00",
+          "ShippedDate": "1996-07-16T00:00:00.000-04:00",
+          "RequiredDate": "1996-08-01T00:00:00.000-04:00",
+          "Freight": 32.38,
+          "ShipName": "Vins et alcools Chevalier",
+          "ShipAddress": "59 rue de l-Abbaye",
+          "ShipCity": "Reims",
+          "ShipPostalCode": "51100",
+          "ShipCountry": "France",
+          "EMPLOYEEID": "5",
+          "CUSTOMERID": "VINET",
+          "SHIPPERID": "3",
+          "OrderDetail": [ {
+            "UnitPrice": 14.0,
+            "Quantity": 12,
+            "Discount": 0.0,
+            "PRODUCTID": "11",
+            "ORDERID": "10248",
+            "Product": [ {
+              "ProductId": "11",
+              "ProductName": "Queso Cabrales",
+              "ReorderLevel": 30,
+              "QuantityPerUnit": "1 kg pkg.",
+              "Discontinued": false,
+              "UnitPrice": 21.0,
+              "UnitsInStock": 22,
+              "UnitsOnOrder": 30,
+              "SUPPLIERID": "5",
+              "CATEGORYID": "4",
+              "Category": [ {
+                "CategoryId": "4",
+                "CategoryName": "Dairy Products",
+                "Description": "Cheeses",
+              }]
+            }]
+          }, {
+            "UnitPrice": 9.8,
+            "Quantity": 10,
+            "Discount": 0.0,
+            "PRODUCTID": "42",
+            "ORDERID": "10248",
+            "Product": [ {
+              "ProductId": "42",
+              "ProductName": "Singaporean Hokkien Fried Mee",
+              "ReorderLevel": 0,
+              "QuantityPerUnit": "32 - 1 kg pkgs.",
+              "Discontinued": true,
+              "UnitPrice": 14.0,
+              "UnitsInStock": 26,
+              "UnitsOnOrder": 0,
+              "SUPPLIERID": "20",
+              "CATEGORYID": "5",
+              "Category": [ {
+                "CategoryId": "5",
+                "CategoryName": "Grains/Cereals",
+                "Description": "Breads, crackers, pasta, and cereal",
+              }]
+            }]
+          }, {
+            "UnitPrice": 34.8,
+            "Quantity": 5,
+            "Discount": 0.0,
+            "PRODUCTID": "72",
+            "ORDERID": "10248",
+            "Product": [ {
+              "ProductId": "72",
+              "ProductName": "Mozzarella di Giovanni",
+              "ReorderLevel": 0,
+              "QuantityPerUnit": "24 - 200 g pkgs.",
+              "Discontinued": false,
+              "UnitPrice": 34.8,
+              "UnitsInStock": 14,
+              "UnitsOnOrder": 0,
+              "SUPPLIERID": "14",
+              "CATEGORYID": "4",
+              "Category": [ {
+                "CategoryId": "4",
+                "CategoryName": "Dairy Products",
+                "Description": "Cheeses",
+              }]
+            }]
+          }],
+          "Customer": [ {
+            "CustomerId": "VINET",
+            "CompanyName": "Vins et alcools Chevalier",
+            "ContactName": "Paul Henriot",
+            "ContactTitle": "Accounting Manager",
+            "Address": "59 rue de l'Abbaye",
+            "City": "Reims",
+            "PostalCode": "51100",
+            "Country": "France",
+            "Phone": "26.47.15.10",
+            "Fax": "26.47.15.11"
+          }],
+          "Employee": [ {
+            "EmployeeId": "5",
+            "LastName": "Buchanan",
+            "FirstName": "Steven",
+            "Title": "Sales Manager",
+            "TitleOfCourtesy": "Mr.",
+            "ReportsTo": "2"
+          }],
+          "Shipper": [ {
+            "ShipperId": "3",
+            "CompanyName": "Federal Shipping",
+            "Phone": "(503) 555-9931"
+          }]
+        }]
+      }]
+    }, { incrementalsSpecified: true } );
+  return order;
 }
