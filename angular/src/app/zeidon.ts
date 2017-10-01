@@ -482,9 +482,13 @@ export class EntityInstance {
         return entities;
     }
 
-    public delete( options?: DeleteOptions ) {
-        let idx = this.parentArray.findIndex( ei => ei === this );
-        this.parentArray.delete( idx, options );
+    public delete( options: DeleteOptions = {} ) {
+        if ( options.index )
+            throw new ZeidonError( "'index' option unexpected when deleting an entity instance.")
+
+        options = { ...options }; // Clone so we can add index.
+        options.index = this.parentArray.findIndex( ei => ei === this );
+        this.parentArray.delete( options );
     }
 
     public drop() {
@@ -492,9 +496,13 @@ export class EntityInstance {
         this.parentArray.drop( idx );
     }
 
-    public exclude() {
-        let idx = this.parentArray.findIndex( ei => ei === this );
-        this.parentArray.exclude( idx );
+    public exclude( options : ExcludeOptions = {} ) {
+        if ( options.index )
+            throw new ZeidonError( "'index' option unexpected when excluding an entity instance." )
+
+        options = { ...options }; // Clone so we can add index.
+        options.index = this.parentArray.findIndex( ei => ei === this );
+        this.parentArray.exclude( options );
     }
 
     public parentEntityInstance(): EntityInstance {
@@ -617,7 +625,7 @@ export class EntityInstance {
             // Do we have a fingerprint for every child entity?
             if ( Object.keys( childFingerprints ).length < eiChildren.length ) {
                 // No.  Delete all child entities that are missing from the list of fingerprints.
-                eiChildren.deleteAll( ( ei ) => !childFingerprints[ ei.fingerprint ] );
+                eiChildren.deleteAll( { filter: ( ei ) => !childFingerprints[ ei.fingerprint ] } );
             }
         }
     }
@@ -906,7 +914,7 @@ class ArrayDelegate<T extends EntityInstance> {
             this.hiddenEntities = new Array<T>();
     }
 
-    excludeAll( options : ExcludeOptions = {} ) {
+    excludeAll( options : ExcludeAllOptions = {} ) {
         if ( ! options.incrementalsSpecified )
             this.validateExclude();
 
@@ -924,7 +932,7 @@ class ArrayDelegate<T extends EntityInstance> {
         this.array.length = 0;
     }
 
-    private validateDelete( options : DeleteOptions = {}, index?: number ) {
+    private validateDelete( options : DeleteOptions, index?: number ) {
         if ( this.oi.readOnly && !options.incrementalsSpecified )
             throw new ZeidonError( "This OI is read-only." );
 
@@ -941,7 +949,7 @@ class ArrayDelegate<T extends EntityInstance> {
             this.hiddenEntities = new Array<T>();
     }
 
-    deleteAll( filter?: ( EntityInstance ) => boolean, options? : DeleteOptions ) {
+    deleteAll( options : DeleteAllOptions = {} ) {
         options = options || {};
         this.validateDelete( options );
         if ( this.array.length === 0 )
@@ -949,8 +957,8 @@ class ArrayDelegate<T extends EntityInstance> {
 
         this.hiddenEntities = this.hiddenEntities.concat( this.array );
         for ( let ei of this.array ) {
-            if ( filter === undefined || filter( ei ) === true )
-                this.deleteEntity( ei, options );
+            if ( options.filter === undefined || options.filter( ei ) === true )
+                ei.delete();
         }
 
         this.array.length = 0;
@@ -989,13 +997,10 @@ class ArrayDelegate<T extends EntityInstance> {
         }
     }
 
-    delete( index?: number, options?: DeleteOptions ) {
-        options = options || {};
+    delete( options: DeleteOptions = {} ) {
+        let index = options.index || this.currentlySelected;
 
-        if ( index === undefined )
-            index = this.currentlySelected;
-
-        if ( ! options || ! options.incrementalsSpecified )
+        if ( ! options.incrementalsSpecified )
             this.validateDelete( options, index );
 
         let ei = this.array.splice( index, 1 )[ 0 ];
@@ -1005,8 +1010,8 @@ class ArrayDelegate<T extends EntityInstance> {
             this.hiddenEntities.push( ei );
         }
 
-        this.deleteEntity( ei as any );
-        this.resetCurrentlySelected ( index, options && options.reposition );
+        this.deleteEntity( ei );
+        this.resetCurrentlySelected ( index, options.reposition );
     }
 
     drop( index?: number ) {
@@ -1020,14 +1025,11 @@ class ArrayDelegate<T extends EntityInstance> {
         }
     }
 
-    exclude( index?: number, options? : ExcludeOptions ) {
-        options = options || {};  // Make sure options is at least an empty object.
+    exclude( options : ExcludeOptions = {} ) {
         if ( this.oi.readOnly && !options.incrementalsSpecified )
             throw new ZeidonError( "This OI is read-only." );
 
-        if ( index == undefined )
-            index = this.currentlySelected;
-
+        let index = options.index || this.currentlySelected;
         let ei = this.array.splice( index, 1 )[ 0 ];
         ei.excluded = true;
         this.oi.isUpdated = true;
@@ -1037,17 +1039,17 @@ class ArrayDelegate<T extends EntityInstance> {
             this.hiddenEntities.push( ei );
         }
 
-        this.resetCurrentlySelected( index, options && options.reposition );
+        this.resetCurrentlySelected( index, options.reposition );
     }
 
-    private deleteEntity( ei: EntityInstance, options : DeleteOptions = {} ) {
+    private deleteEntity( ei: EntityInstance ) {
         ei.deleted = true;
         ei.oi.isUpdated = true;
         let entityDef = ei.entityDef;
         for ( let childName in entityDef.childEntities ) {
             let childEntityDef = ei.oi.getEntityDef( childName );
             if ( childEntityDef.parentDelete )
-                ei.getChildEntityArray( childName ).deleteAll( undefined, { incrementalsSpecified: true });
+                ei.getChildEntityArray( childName ).deleteAll( { incrementalsSpecified: true });
             else
                 ei.getChildEntityArray( childName ).excludeAll( { incrementalsSpecified: true } );
         }
@@ -1126,11 +1128,11 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         _arr.include = function ( sourceEi: EntityInstance, options?: IncludeOptions ): T {
             return this.delegate.include( this, sourceEi, options );
         };
-        _arr.excludeAll = function ( options? : ExcludeOptions ) { this.delegate.excludeAll( options ); };
-        _arr.deleteAll = function ( filter?: ( EntityInstance ) => boolean, options? : DeleteOptions ) { this.delegate.deleteAll( filter, options ); };
-        _arr.delete = function ( index?: number ) { this.delegate.delete( index ); };
+        _arr.excludeAll = function ( options? : ExcludeAllOptions ) { this.delegate.excludeAll( options ); };
+        _arr.deleteAll = function ( options? : DeleteAllOptions ) { this.delegate.deleteAll( options ); };
+        _arr.delete = function ( options?: DeleteOptions ) { this.delegate.delete( options ); };
         _arr.drop = function ( index?: number ) { this.delegate.drop( index ); };
-        _arr.exclude = function ( index?: number ) { this.delegate.exclude( index ); };
+        _arr.exclude = function ( options?: ExcludeOptions ) { this.delegate.exclude( options ); };
         _arr.selected = function () { return this.delegate.selected(); };
         _arr.first = function () { return this.delegate.first(); };
         _arr.last = function () { return this.delegate.last(); };
@@ -1141,11 +1143,11 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     }
 
     create: ( initialize?: Object, options?: CreateOptions ) => T;
-    excludeAll: ( options? : ExcludeOptions ) => void;
-    deleteAll: ( filter?: ( T ) => boolean, options? : DeleteOptions ) => void;
-    delete: ( index?: number, options?: DeleteOptions ) => void;
+    excludeAll: ( options? : ExcludeAllOptions ) => void;
+    deleteAll: ( options? : DeleteAllOptions ) => void;
+    delete: ( options?: DeleteOptions ) => void;
     drop: ( index?: number ) => void;
-    exclude: ( index?: number ) => void;
+    exclude: ( options?: ExcludeOptions ) => void;
     include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => T;
     selected: () => T;
     first: () => T;
@@ -1166,11 +1168,21 @@ export interface CreateOptions {
 export interface DeleteOptions {
     reposition?: CursorPosition;
     incrementalsSpecified?: boolean;
+    index?: number;
+}
+
+export interface DeleteAllOptions extends DeleteOptions {
+    filter?: ( EntityInstance ) => boolean;
 }
 
 export interface ExcludeOptions {
     reposition?: CursorPosition;
     incrementalsSpecified?: boolean;
+    index?: number;
+}
+
+export interface ExcludeAllOptions extends ExcludeOptions {
+    filter?: ( EntityInstance ) => boolean;
 }
 
 const DEFAULT_CREATE_OPTIONS = {
