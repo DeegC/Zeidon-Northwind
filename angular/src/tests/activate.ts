@@ -19,7 +19,6 @@ var TestableObservable = require( 'jasmine-rx' ).TestableObservable;
 describe( 'activate', function () {
     rxit( "should activate single Product", function () {
         return Product.activate( { ProductId: 77 } ).do( function ( product ) {
-            console.log( "Checking product" );
             expect( product.Product$.ProductId ).toBe( "77" );
             expect( product.Product.length ).toBe( 1 );
             expect( product.Product$.Supplier$.SupplierId ).toBe( "12" );

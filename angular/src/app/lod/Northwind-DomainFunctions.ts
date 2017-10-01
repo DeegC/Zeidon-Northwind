@@ -145,7 +145,7 @@ export class DateDomainFunctions extends DateTimeDomainFunctions {
     }
 }
 
-export class xxxDomainFunctions extends BaseDomainFunctions {
+export class BlobDomainFunctions extends BaseDomainFunctions {
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
         this.checkForRequiredValue( value, attributeDef );
         return value;
@@ -155,6 +155,18 @@ export class xxxDomainFunctions extends BaseDomainFunctions {
         return value;
     }
 }
+
+export class xxxDomainFunctions extends BaseDomainFunctions {
+    convertExternalValue?( value: any, attributeDef: any, context?: any ): any {
+        this.checkForRequiredValue( value, attributeDef );
+        return value;
+    }
+
+    convertToJsType( value: any, attributeDef: any ): any {
+        return value;
+    }
+}
+
 export const Northwind_DomainFunctions = {
     "com.quinsoft.zeidon.domains.BooleanDomain": new BooleanDomainFunctions(),
     "com.quinsoft.zeidon.domains.IntegerDomain": new IntegerDomainFunctions(),
@@ -162,4 +174,5 @@ export const Northwind_DomainFunctions = {
     "com.quinsoft.zeidon.domains.DoubleDomain": new DoubleDomainFunctions(),
     "com.quinsoft.zeidon.domains.DateTimeDomain": new DateTimeDomainFunctions(),
     "com.quinsoft.zeidon.domains.DateDomain": new DateDomainFunctions(),
+    "com.quinsoft.zeidon.domains.BlobDomain": new BlobDomainFunctions(),
 }

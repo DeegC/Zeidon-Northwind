@@ -28,32 +28,9 @@ export const Northwind_DomainList = {
         name: "Integer",
         class: "com.quinsoft.zeidon.domains.DoubleDomain",
     } as Domain,
-    "Temperature": {
-        name: "Temperature",
-        class: "com.quinsoft.zeidon.domains.DoubleDomain",
-    } as Domain,
-    "TemperatureUnit": {
-        name: "TemperatureUnit",
-        class: "com.quinsoft.zeidon.domains.StaticTableDomain",
-        contexts: {
-            "Unit": {
-                name: "Unit",
-                entries: [
-                    {
-                        internalValue: "F",
-                        externalValue: "Fahrenehit"
-                    },
-                    {
-                        internalValue: "C",
-                        externalValue: "Celsius"
-                    },
-                    {
-                        internalValue: "K",
-                        externalValue: "Kelvin"
-                    },
-                ]
-            }
-        }
+    "Blob": {
+        name: "Integer",
+        class: "com.quinsoft.zeidon.domains.BlobDomain",
     } as Domain,
     "Text": {
         name: "Text",

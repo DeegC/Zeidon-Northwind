@@ -719,7 +719,6 @@ class Relinker {
 
         this.sourceEi = source;
         this.validateInclude( targetArr );
-        console.log( `Attempting to include ${source.entityDef.name} into ${targetArr.delegate.entityDef.name}` )
 
         // If sourceEi is not linked to anything else, then we need to add all non-hidden
         // attributes to the hash.
@@ -1055,20 +1054,24 @@ class ArrayDelegate<T extends EntityInstance> {
         }
     }
 
-    first(): EntityInstance {
+    first( setCurrent? : boolean ): EntityInstance {
         if ( this.array.length === 0 )
             return undefined;
 
-        this.currentlySelected = 0;
-        return this.selected();
+        if ( setCurrent )
+            this.currentlySelected = 0;
+
+        return this.array[ 0 ];
     }
 
-    last(): EntityInstance {
+    last( setCurrent? : boolean ): EntityInstance {
         if ( this.array.length === 0 )
             return undefined;
 
-        this.currentlySelected = this.array.length - 1;
-        return this.selected();
+        if ( setCurrent )
+            this.currentlySelected = this.array.length - 1;
+
+        return this.array[ this.array.length - 1 ];
     }
 
     setSelected( value: number | EntityInstance ): EntityInstance {
@@ -1134,8 +1137,8 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
         _arr.drop = function ( index?: number ) { this.delegate.drop( index ); };
         _arr.exclude = function ( options?: ExcludeOptions ) { this.delegate.exclude( options ); };
         _arr.selected = function () { return this.delegate.selected(); };
-        _arr.first = function () { return this.delegate.first(); };
-        _arr.last = function () { return this.delegate.last(); };
+        _arr.first = function ( setCurrent? : boolean ) { return this.delegate.first( setCurrent ); };
+        _arr.last = function ( setCurrent? : boolean ) { return this.delegate.last( setCurrent ); };
         _arr.setSelected = function ( value: number | EntityInstance ) { return this.delegate.setSelected( value ); };
         _arr.allEntities = function () { return this.delegate.allEntities(); };
 
@@ -1150,8 +1153,8 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     exclude: ( options?: ExcludeOptions ) => void;
     include: ( sourceEi: EntityInstance, options?: IncludeOptions ) => T;
     selected: () => T;
-    first: () => T;
-    last: () => T;
+    first: ( setCurrent? : boolean ) => T;
+    last: ( setCurrent? : boolean ) => T;
     setSelected: ( value: number | EntityInstance ) => T;
 
     /**

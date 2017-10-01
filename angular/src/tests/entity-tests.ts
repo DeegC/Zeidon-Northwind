@@ -21,8 +21,8 @@ describe( 'Entities', function () {
     expect( product.Product[ 1 ].ProductId ).toBe( "1000" );
     expect( product.Product$.ProductId ).toBe( "1000" );
     expect( product.Product$.Category.length ).toBe( 0 );
-    expect( product.Product$.Category.first() ).toBeUndefined();
-    expect( product.Product$.Category.last() ).toBeUndefined();
+    expect( product.Product$.Category.first( true ) ).toBeUndefined();
+    expect( product.Product$.Category.last( true ) ).toBeUndefined();
     expect( product.Product$.Category$ ).toBeUndefined();
 
     product.Product.create( { ProductId: "1001" }, { position: Position.First } );
@@ -40,10 +40,10 @@ describe( 'Entities', function () {
     expect( product.Product$.ProductId ).toBe( "1003" );
 
     expect( product.Product.last().ProductId ).toBe( "1000" );
-    expect( product.Product$.ProductId ).toBe( "1000" );   // .last() resets currently selected.
+    expect( product.Product$.ProductId ).toBe( "1003" );
 
     expect( product.Product.first().ProductId ).toBe( "1003" );
-    expect( product.Product$.ProductId ).toBe( "1003" );   // .first() resets currently selected.
+    expect( product.Product$.ProductId ).toBe( "1003" );
 
     product.Product.forEach( ( pei, idx ) => {
       expect( pei.ProductId ).toBe( product.Product[ idx ].ProductId );
@@ -114,6 +114,31 @@ describe( 'Entities', function () {
       .toThrow( new ZeidonError( `Entities Product and Category are not the same ER entity.` ) );
     expect( () => { order.Order$.OrderDetail$.Product.include( product.Product$ ) } )
       .toThrow( new ZeidonError( `Including a new instance for Product voilates max cardinality.` ) );
+  } );
+
+  it( "should perform include.", function () {
+    let product = instantiateProduct77();
+    let order = instantiateOrder10248();
+    order.Order$.OrderDetail.create();
+    order.Order$.OrderDetail$.Product.include( product.Product$ );
+    expect( order.Order$.OrderDetail$.Product$.ProductId ).toBe( "77" );
+    expect( order.Order$.OrderDetail$.Product$.Category$.CategoryId ).toBe( "2" );
+    expect( order.Order$.OrderDetail$.Product$.included ).toBeTruthy();
+    expect( order.Order$.OrderDetail$.Product$.updated ).toBeFalsy();
+    expect( order.Order$.OrderDetail$.Product$.deleted ).toBeFalsy();
+    expect( order.Order$.OrderDetail$.Product$.excluded ).toBeFalsy();
+    expect( order.Order$.OrderDetail$.Product$.created ).toBeFalsy();
+    expect( product.Product$.included ).toBeFalsy();
+    expect( product.Product$.created ).toBeFalsy();
+    expect( product.Product$.updated ).toBeFalsy();
+    expect( product.Product$.deleted ).toBeFalsy();
+    expect( product.Product$.excluded ).toBeFalsy();
+
+    expect( order.Order$.OrderDetail$.Product$.ReorderLevel ).toBe( 15 );
+    expect( order.Order$.OrderDetail$.Product$.updated ).toBeFalsy();
+    product.Product$.ReorderLevel = 20;
+    expect( order.Order$.OrderDetail$.Product$.ReorderLevel ).toBe( 20 );
+    expect( order.Order$.OrderDetail$.Product$.updated ).toBeTruthy();
   } );
 
   it( "should delete single entity.", function () {
