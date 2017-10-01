@@ -1,30 +1,9 @@
-import { Domain } from "../zeidon"
+import { Domain, BaseDomainFunctions } from "../zeidon"
 import { AttributeValueError } from "../zeidon"
 
 /**
  * User-written code to process domains.
  */
-export interface DomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any;
-    convertToJsType( value: any, attributeDef: any ): any;
-}
-
-export class BaseDomainFunctions implements DomainFunctions {
-    checkForRequiredValue( value: any, attributeDef: any ) {
-        if ( attributeDef.required && ( value === undefined || value === null || value === "" ) )
-            throw new AttributeValueError(`Value is required.`, attributeDef );
-    }
-
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        return value;
-    }
-
-    convertToJsType( value: any, attributeDef: any ): any {
-        return value;
-    }
-}
-
 export class StringDomainFunctions extends BaseDomainFunctions {
     convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
         this.checkForRequiredValue( value, attributeDef );

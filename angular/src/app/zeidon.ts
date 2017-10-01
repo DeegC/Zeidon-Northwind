@@ -1304,6 +1304,27 @@ export interface Domain {
     domainFunctions?: any,
 }
 
+export interface DomainFunctions {
+    convertExternalValue?( value: any, attributeDef: any, context?: any ): any;
+    convertToJsType( value: any, attributeDef: any ): any;
+}
+
+export class BaseDomainFunctions implements DomainFunctions {
+    checkForRequiredValue( value: any, attributeDef: any ) {
+        if ( attributeDef.required && ( value === undefined || value === null || value === "" ) )
+            throw new AttributeValueError( `Value is required.`, attributeDef );
+    }
+
+    convertExternalValue?( value: any, attributeDef: any, context?: any ): any {
+        this.checkForRequiredValue( value, attributeDef );
+        return value;
+    }
+
+    convertToJsType( value: any, attributeDef: any ): any {
+        return value;
+    }
+}
+
 const debugError = function ( message: string ) {
     var e = new Error( 'dummy' );
     var stack = e.stack.replace( /^[^\(]+?[\n$]/gm, '' )
