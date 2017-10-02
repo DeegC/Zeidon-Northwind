@@ -6,7 +6,7 @@ Project name: ${project.name}
 
 configurations {
     repl
-    jirb // irb based on jruby
+    classpath // print the java classpath
     generateTypescriptFiles
 }
 
@@ -14,12 +14,8 @@ buildscript {
     repositories { jcenter() }
 
     dependencies {
-        classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.3.3'
     }
 }
-
-apply plugin: "com.github.jruby-gradle.base"
-import com.github.jrubygradle.JRubyExec
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -44,7 +40,7 @@ dependencies {
     repl 'org.scala-lang:scala-compiler:2.12.3'
     repl 'jline:jline:2.13'
 
-    jrubyExec "rubygems:colorize:0.7.7+"
+    compile 'com.quinsoft.zeidon:zruby:1.5.0-SNAPSHOT'
 
     generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.5.0-SNAPSHOT'
     generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
@@ -97,21 +93,9 @@ Call with: gradle repl --no-daemon --console plain
   jvmArgs( '-DSQLITE_ROOT=../sqlite', '-Djline.inputrc=~/.jline.inputrc', '-Xdebug', '-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' )
 }
 
-task jirb(type:JRubyExec) {
-  description "Run Zeidon under jRuby"
+task classpath {
+  description "Print java classpath"
 
-
-  def initFile = ''
-
-  File.createTempFile("temp",".tmp").with {
-    deleteOnExit()
-    write '''
-require "irb"
-
-    IRB.start(__FILE__)
-    '''
-    initFile = absolutePath
-  }
-
-  script "${initFile}"
+  new File(".tmpclasspath").text = sourceSets.main.runtimeClasspath.asPath
+  println "classpath=${sourceSets.main.runtimeClasspath.asPath}"
 }

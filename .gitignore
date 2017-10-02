@@ -12,5 +12,6 @@ bin/
 target/
 .cache-main
 .cache-tests
+.tmpclasspath
 
 angular/dist
