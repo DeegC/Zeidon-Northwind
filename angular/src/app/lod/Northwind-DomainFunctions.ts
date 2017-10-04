@@ -100,7 +100,7 @@ export class DoubleDomainFunctions extends BaseDomainFunctions {
 }
 
 export class DateTimeDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
+    convertToDate?( value: any, attributeDef: any, context? : any ): any {
         this.checkForRequiredValue( value, attributeDef );
         if ( Object.prototype.toString.call( value ) === '[object Date]' )
             return value;
@@ -112,7 +112,16 @@ export class DateTimeDomainFunctions extends BaseDomainFunctions {
         if ( isNaN( date ) )
             throw new AttributeValueError(`Invalid date/time value: ${value}`, attributeDef );
 
-        return date;
+        return new Date( date );
+    }
+
+    convertExternalValue?( value: any, attributeDef: any, context?: any ): any {
+        let date = this.convertToDate( value, attributeDef );
+
+        if ( Object.prototype.toString.call( date ) === '[object Date]' )
+            return date;
+
+        throw new AttributeValueError( `Invalid date/time value: ${value}`, attributeDef );
     }
 }
 

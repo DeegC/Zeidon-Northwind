@@ -25,11 +25,11 @@ export class Order extends zeidon.ObjectInstance {
         return Order_LodDef;
     };
 
-    public getDomain( name: string ): zeidon.Domain { 
+    public getDomain( name: string ): zeidon.Domain {
         return Northwind_DomainList[name];
     };
 
-    public getDomainFunctions( name: string ): any { 
+    public getDomainFunctions( name: string ): any {
         return Northwind_DomainFunctions[name];
     }
 
@@ -57,7 +57,9 @@ export class Order_Order extends zeidon.EntityInstance {
     get OrderDate(): Date { return this.getAttribute("OrderDate") };
     set OrderDate(value: Date) { this.setAttribute("OrderDate", value) };
 
-    get ShippedDate(): Date { return this.getAttribute("ShippedDate") };
+    get ShippedDate(): Date {
+        return this.getAttribute("ShippedDate")
+    };
     set ShippedDate(value: Date) { this.setAttribute("ShippedDate", value) };
 
     get RequiredDate(): Date { return this.getAttribute("RequiredDate") };
@@ -260,13 +262,13 @@ export class Order_Shipper extends zeidon.EntityInstance {
 }
 
 const OrderEntityPrototypes = {
-    Order: Order_Order.prototype, 
-    OrderDetail: Order_OrderDetail.prototype, 
-    Product: Order_Product.prototype, 
-    Category: Order_Category.prototype, 
-    Customer: Order_Customer.prototype, 
-    Employee: Order_Employee.prototype, 
-    Shipper: Order_Shipper.prototype, 
+    Order: Order_Order.prototype,
+    OrderDetail: Order_OrderDetail.prototype,
+    Product: Order_Product.prototype,
+    Category: Order_Category.prototype,
+    Customer: Order_Customer.prototype,
+    Employee: Order_Employee.prototype,
+    Shipper: Order_Shipper.prototype,
 }
 
 export const Order_LodDef = {

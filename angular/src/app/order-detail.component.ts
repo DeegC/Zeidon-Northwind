@@ -42,13 +42,19 @@ export class OrderDetailComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        let id = +this._route.snapshot.params['id'];
+        let id = this._route.snapshot.params['id'];
         console.log( "OrderDetail init" );
-        Order.activate( { OrderId: id } ).subscribe( order => {
-            this.order = order;
+        if ( id === 'NewOrder' ) {
+            this.order = new Order();
+            this.order.Order.create();
             this.buildForm();
-            console.log( "Loaded order" );
-        } );
+        } else {
+            Order.activate( { OrderId: id } ).subscribe( order => {
+                this.order = order;
+                this.buildForm();
+                console.log( "Loaded order" );
+            } );
+        }
     }
 
     cancel(): void {

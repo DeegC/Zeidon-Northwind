@@ -44,6 +44,10 @@ export class OrdersComponent implements OnInit {
         this.getOrders();
     }
 
+    newOrder( ) {
+        this._router.navigate( [ '/order',  'NewOrder'] );
+    }
+
     searchOrders() {
         this.pagination.reset();
         this.getOrders();

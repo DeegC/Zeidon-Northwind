@@ -11,6 +11,8 @@ describe('Attributes', function() {
         newOrder.Order.create( { OrderDate: now });
         expect( newOrder.Order$.OrderDate.getTime()).toBe( now.getTime() );
         expect( newOrder.Order$.isAttributeUpdated('OrderDate')).toBeTruthy();
+        expect( Object.prototype.toString.call( newOrder.Order$.OrderDate ) ).toBe( '[object Date]' );
+        expect( Object.prototype.toString.call( newOrder.Order$.OrderId ) ).not.toBe( '[object Date]' );
 
         expect( newOrder.Order$.OrderId).toBeFalsy();
         expect( newOrder.Order$.getAttribute( 'OrderId' ) ).toBeFalsy();

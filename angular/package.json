@@ -24,7 +24,7 @@
     "copy-dist-files": "node ./copy-dist-files.js",
     "i18n": "ng-xi18n",
       
-    "test-commit": "node dist/app/test-scripts.js"
+      "test-commit": "node dist/app/test-scripts.js"
   },
   "keywords": [],
   "author": "",
