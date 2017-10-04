@@ -50,8 +50,6 @@ else
     echo -e ".:../conf:$(cat .tmpclasspath)" > .tmpclasspath
 fi
 
-cp=`cat .tmpclasspath`
-#echo "cp=$cp"
-
 echo "Starting jirb"
-jruby -S -J-cp .:$cp irb -r ./jirb-startup.rb
+export SQLITE_DIR=../conf
+jruby -J-cp $(cat .tmpclasspath) -J-Djline.inputrc=~/.jline.inputrc -S irb -r ./jirb-startup.rb

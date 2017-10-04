@@ -41,6 +41,7 @@ dependencies {
     repl 'jline:jline:2.13'
 
     compile 'com.quinsoft.zeidon:zruby:1.5.0-SNAPSHOT'
+    compile 'com.quinsoft.zeidon:object-browser:1.5.0-SNAPSHOT'
 
     generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.5.0-SNAPSHOT'
     generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
