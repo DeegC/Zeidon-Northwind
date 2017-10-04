@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Start Ruby's IRB with JRuby and automatically create a Northwind task.
+
 DEBUG_PORT=8000
 DEBUG_FLAGS="-J-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n"
 

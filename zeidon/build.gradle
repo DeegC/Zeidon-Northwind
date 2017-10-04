@@ -95,7 +95,7 @@ Call with: gradle repl --no-daemon --console plain
 }
 
 task classpath {
-  description "Print java classpath"
+  description "Print java classpath and write it to a file"
 
   new File(".tmpclasspath").text = sourceSets.main.runtimeClasspath.asPath
   println "classpath=${sourceSets.main.runtimeClasspath.asPath}"
