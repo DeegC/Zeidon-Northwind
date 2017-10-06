@@ -13,9 +13,8 @@
     },
 
     "files.trimTrailingWhitespace": true,
+    "window.zoomLevel": 0,
 
     // Following for Numbered Bookmarks extension.
-    "numberedBookmarks.saveBookmarksBetweenSessions": true,
-    "numberedBookmarks.useStickyBookmarks": true,
     "window.title": "Northwind: ${activeEditorShort}"
 }

@@ -2,7 +2,8 @@ import { Component, Input, Output, OnInit, EventEmitter, SimpleChanges, OnChange
 import { FormGroup, Validators } from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import { NorthwindService } from './northwind.service';
-import {Order} from './lod/Order';
+import { Customer} from './lod/Customer';
+import { Order } from './lod/Order';
 import * as zeidon from './zeidon-angular';
 
 @Component({
@@ -14,6 +15,7 @@ import * as zeidon from './zeidon-angular';
 export class OrderDetailComponent implements OnInit, OnChanges {
 
     order: Order;
+    customerList: Customer;
     errorMessage: string;
     submitted = false;
     form: FormGroup;
@@ -47,18 +49,30 @@ export class OrderDetailComponent implements OnInit, OnChanges {
         if ( id === 'NewOrder' ) {
             this.order = new Order();
             this.order.Order.create();
+            Customer.activate( { rootOnly: true } ).subscribe( list => {
+                this.customerList = list;
+            })
             this.buildForm();
         } else {
             Order.activate( { OrderId: id } ).subscribe( order => {
                 this.order = order;
                 this.buildForm();
-                console.log( "Loaded order" );
             } );
         }
     }
 
     cancel(): void {
         window.history.back();
+    }
+
+    onCustomerSelected( customerIdx ): void {
+        let customer = this.customerList.Customer[ customerIdx ];
+        if ( this.order.Order$.Customer$ )
+            this.order.Order$.Customer$.exclude();
+
+        this.order.Order$.Customer.include( customer );
+        this.buildForm();
+        this.order.logOi();
     }
 
     goBack() {

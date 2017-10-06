@@ -1,6 +1,6 @@
 <div *ngIf="order">
   <form [formGroup]="form" (ngSubmit)="saveOrder($event)">
-    <h2>Order Details for {{order.OrderId}}</h2>
+    <h2>Order Details for {{order.Order$.OrderId}}</h2>
   	  <div>
 	      <label>Id: </label>{{order.Order$.OrderId}}
       </div>
@@ -24,51 +24,75 @@
 
       <h3>Shipped To</h3>
 
-      <div formGroupName="Customer">
-        <label>Contact Name: </label>
-        <input type="text"
-               formControlName="ContactName"
-               [readonly]="true"
-        />
-      </div>
+      <div *ngIf="order.Order$.Customer.length > 0; else showCustomers" >
+        <div formGroupName="Customer">
+          <label>Contact Name: </label>
+          <input type="text"
+                formControlName="ContactName"
+          />
+        </div>
 
-      <div>
-        <label>Address </label>
-        <p>{{order.Order$.Customer$.Address}}</p>
+        <div>
+          <label>Address </label>
+          <p>{{order.Order$.Customer$.Address}}</p>
+        </div>
       </div>
+     <ng-template #showCustomers>
+        <div *ngIf="customerList; else showLoadingCustomers">
+          Found!
+          <select (change)="onCustomerSelected($event.target.selectedIndex)">
+            <option *ngFor="let customer of customerList.Customer"
+              [value]="customer.CustomerId">{{ customer.CompanyName }}</option>
+          </select>
+        </div>
+
+        <ng-template #showLoadingCustomers>
+          Fetching customer data...
+        </ng-template>
+     </ng-template>
 
       <h3>Products</h3>
 
-      <table class="table table-striped">
-          <thead>
-              <tr>
-                      <td>Product Name</td>
-                      <td>Quantity</td>
-                      <td>Unit Price</td>
-              </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let detail of order.Order$.OrderDetail">
-                  <td>{{detail.Product$.ProductName}}</td>
-                  <td>{{detail.Quantity}}</td>
-                  <td>{{detail.UnitPrice}}</td>
-              </tr>
-          </tbody>
-      </table>
+      <div *ngIf="order.Order$.OrderDetail.length > 0; else showProducts">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                        <td>Product Name</td>
+                        <td>Quantity</td>
+                        <td>Unit Price</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let detail of order.Order$.OrderDetail">
+                    <td>{{detail.Product$.ProductName}}</td>
+                    <td>{{detail.Quantity}}</td>
+                    <td>{{detail.UnitPrice}}</td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+      <ng-template #showProducts>
+        Fetching product data...
+      </ng-template>
 
       <h3>Employee</h3>
 
-      <div formGroupName="Employee">
-        <label>Employee </label>
-        <input type="text"
-               formControlName="FirstName"
-               [readonly]="true"
-        />
-        <input type="text"
-               formControlName="LastName"
-               [readonly]="true"
-        />
+      <div *ngIf="order.Order$.Employee.length > 0; else showEmployees">
+        <div formGroupName="Employee">
+          <label>Employee </label>
+          <input type="text"
+                formControlName="FirstName"
+                [readonly]="true"
+          />
+          <input type="text"
+                formControlName="LastName"
+                [readonly]="true"
+          />
+        </div>
       </div>
+      <ng-template #showEmployees>
+        Fetching employee data...
+      </ng-template>
 
       <div>
         <button type="submit" class="btn btn-default" [disabled]="false">

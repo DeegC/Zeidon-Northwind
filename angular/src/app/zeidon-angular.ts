@@ -131,7 +131,11 @@ export class ZeidonFormBuilder {
                 continue;
 
             let value = ei.getAttribute( attrName);
-            form.addControl( attrName, new FormControl( value, domainValidator( ei, attributeDef ) ) );
+            let formControl = new FormControl( value, domainValidator( ei, attributeDef ) );
+            if ( attributeDef.update === false || entityDef.updatable === false || ei.oi.readOnly )
+                formControl.disable();
+
+            form.addControl( attrName, formControl );
         };
 
         for ( let entityName in entityDef.childEntities ) {

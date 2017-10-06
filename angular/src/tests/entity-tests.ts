@@ -8,6 +8,17 @@ describe( 'Entities', function () {
 
   } );
 
+  it( "should create new OI.", function () {
+    let product = new Product();
+    product.Product.create();
+    expect( product.Product$.ProductId ).toBeUndefined();
+    expect( product.Product$.Category ).toBeTruthy();
+    expect( product.Product$.Category.length ).toBe( 0 );
+    expect( product.Product$.Category$ ).toBeUndefined();
+    expect( product.Product$.Supplier.length ).toBe( 0 );
+    expect( product.Product$.Supplier$ ).toBeUndefined();
+  })
+
   it( "should create entities with position.", function () {
     let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
