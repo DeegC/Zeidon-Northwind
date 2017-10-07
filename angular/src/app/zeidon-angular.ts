@@ -83,7 +83,7 @@ export class ErrorElementDirective implements Validator, OnInit, OnChanges {
     }
 }
 
-let domainValidator = function( ei: EntityInstance, attributeDef ) {
+let domainValidator = function( entityDef: any, attributeDef ) {
     return function( control ) {
         control.zeidonErrorMessage = undefined;
         let domain = attributeDef.domain;
@@ -113,48 +113,58 @@ export interface ZeidonFormBuilderOptions {
 }
 
 export class ZeidonFormBuilder {
-    public group( ei       : EntityInstance,
-                  options? : ZeidonFormBuilderOptions,
-                  form?    : FormGroup ) : FormGroup {
+    public group( ei: EntityInstance,
+                  options?: ZeidonFormBuilderOptions,
+                  form?: FormGroup ): FormGroup {
+        return this.buildForms( ei, ei.oi.getLodDef(), ei.entityDef, options, form );
+    }
+
+    buildForms( ei        : EntityInstance,
+                lodDef    : any,
+                entityDef : any,
+                options?  : ZeidonFormBuilderOptions,
+                form?     : FormGroup ) : FormGroup {
 
         // Set default values
         options = options || {};
         form = form || new FormGroup({});
 
-        form.addControl( "fingerprint", new FormControl( ei.fingerprint ) );
-
-        // Add a FormControl to the form for each attribute.
-        let entityDef = ei.entityDef;
+        // Add a FormControl to the form for each attribute.  If ei is blank
+        // then set the attribute value to undefined and read-only.  This allows the page
+        // to display a non-existent entity isntance without throwing an error.
         for ( let attrName in entityDef.attributes ) {
-            let attributeDef = ei.getAttributeDef( attrName );
+            let attributeDef = entityDef.attributes[ attrName ];
             if ( attributeDef.hidden )
                 continue;
 
-            let value = ei.getAttribute( attrName);
-            let formControl = new FormControl( value, domainValidator( ei, attributeDef ) );
-            if ( attributeDef.update === false || entityDef.updatable === false || ei.oi.readOnly )
+            let value = ei ? ei.getAttribute( attrName) : undefined;
+            let formControl = new FormControl( value, domainValidator( entityDef, attributeDef ) );
+            if ( attributeDef.update === false || entityDef.updatable === false || ( ei && ei.oi.readOnly ) )
                 formControl.disable();
 
             form.addControl( attrName, formControl );
         };
+
+        if ( ! ei )
+            return form;
+
+        // Add the fingerprint so we can match up EIs later.
+        form.addControl( "fingerprint", new FormControl( ei.fingerprint ) );
 
         for ( let entityName in entityDef.childEntities ) {
             if ( options.childEntities && options.childEntities.indexOf( entityName ) == -1 ) {
                 continue;
             }
 
-            let entities = ei.getChildEntityArray( entityName )
-            if ( entities.length === 0 )
-                continue;
-
-            let childEntityDef = ei.oi.getLodDef().entities[ entityName ];
+            let entities = ei.getChildEntityArray( entityName );
+            let childEntityDef = lodDef.entities[ entityName ];
             if ( childEntityDef.cardMax === 1 ) {
-                let formGroup = this.group( entities[ 0 ], options );
+                let formGroup = this.buildForms( entities[ 0 ], lodDef, childEntityDef, options );
                 form.addControl( entityName, formGroup );
             } else {
                 let formArray = new FormArray([]);
                 for ( let child of entities ) {
-                    let formGroup = this.group( child, options );
+                    let formGroup = this.buildForms( child, lodDef, childEntityDef, options );
                     formArray.push( formGroup );
                 }
                 form.addControl( entityName, formArray );

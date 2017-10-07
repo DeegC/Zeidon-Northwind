@@ -833,6 +833,13 @@ class ArrayDelegate<T extends EntityInstance> {
     get entityDef() { return this.oi.getLodDef().entities[ this.entityName ]; }
     get length() { return this.array.length }
 
+    getHidden() {
+        if ( ! this.hiddenEntities )
+            this.hiddenEntities = [];
+
+        return this.hiddenEntities;
+    }
+
     create( initialize: Object = {}, options: CreateOptions = DEFAULT_CREATE_OPTIONS ): EntityInstance {
         options = options || {};  // Make sure options is at least an empty object.
 
@@ -908,9 +915,6 @@ class ArrayDelegate<T extends EntityInstance> {
     private validateExclude( index?: number ) {
         if ( !this.entityDef.excludable )
             throw new ZeidonError( `Entity ${this.entityDef.name} does not have exclude authority.` );
-
-        if ( !this.hiddenEntities )
-            this.hiddenEntities = new Array<T>();
     }
 
     excludeAll( options : ExcludeAllOptions = {} ) {
@@ -920,10 +924,7 @@ class ArrayDelegate<T extends EntityInstance> {
         if ( this.array.length == 0 )
             return;
 
-        if ( ! this.hiddenEntities )
-            this.hiddenEntities = [];
-
-        this.hiddenEntities = this.hiddenEntities.concat( this.array );
+        this.hiddenEntities = this.getHidden().concat( this.array );
         for ( let ei of this.array )
             ( <any>ei ).excluded = true;
 
@@ -943,9 +944,6 @@ class ArrayDelegate<T extends EntityInstance> {
             if ( ei.incomplete )
                 throw new ZeidonError( `Entity ${this.entityDef.name} is incomplete and cannot be deleted.` );
         }
-
-        if ( !this.hiddenEntities )
-            this.hiddenEntities = new Array<T>();
     }
 
     deleteAll( options : DeleteAllOptions = {} ) {
@@ -954,7 +952,7 @@ class ArrayDelegate<T extends EntityInstance> {
         if ( this.array.length === 0 )
             return;
 
-        this.hiddenEntities = this.hiddenEntities.concat( this.array );
+        this.hiddenEntities = this.getHidden().concat( this.array );
         for ( let ei of this.array ) {
             if ( options.filter === undefined || options.filter( ei ) === true )
                 ei.delete();
@@ -1006,7 +1004,7 @@ class ArrayDelegate<T extends EntityInstance> {
 
         // If the EI was also created then it's "dead" and no longer needed.
         if ( ! ei.created ) {
-            this.hiddenEntities.push( ei );
+            this.getHidden().push( ei );
         }
 
         this.deleteEntity( ei );
@@ -1035,7 +1033,7 @@ class ArrayDelegate<T extends EntityInstance> {
 
         // If the EI was also included then it's "dead" and no longer needed.
         if ( !ei.created ) {
-            this.hiddenEntities.push( ei );
+            this.getHidden().push( ei );
         }
 
         this.resetCurrentlySelected( index, options.reposition );
