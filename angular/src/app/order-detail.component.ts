@@ -73,7 +73,8 @@ export class OrderDetailComponent implements OnInit, OnChanges {
     }
 
     onCustomerSelected( customerIdx ): void {
-        let customer = this.customerList.Customer[ customerIdx ];
+        // Subtract 1 from idx to take into account the blank option.
+        let customer = this.customerList.Customer[ customerIdx - 1 ];
         if ( this.order.Order$.Customer$ )
             this.order.Order$.Customer$.exclude();
 
@@ -82,7 +83,8 @@ export class OrderDetailComponent implements OnInit, OnChanges {
     }
 
     onEmployeeSelected( employeeIdx ): void {
-        let employee = this.employeeList.Employee[ employeeIdx ];
+        // Subtract 1 from idx to take into account the blank option.
+        let employee = this.employeeList.Employee[ employeeIdx - 1 ];
         if ( this.order.Order$.Employee$ )
             this.order.Order$.Employee$.exclude();
 
