@@ -26,8 +26,12 @@
 
       <div *ngIf="customerList; else showLoadingCustomers">
         <select (change)="onCustomerSelected($event.target.selectedIndex)">
+          <option selected disabled hidden style='display: none' value=''></option>
           <option *ngFor="let customer of customerList.Customer"
-            [value]="customer.CustomerId">{{ customer.CompanyName }}</option>
+            [value]="customer.CustomerId"
+            [selected]="customer.CustomerId === (order.Order$.Customer$ ? order.Order$.Customer$.CustomerId : undefined)">
+            {{ customer.CompanyName }}
+          </option>
         </select>
       </div>
       <ng-template #showLoadingCustomers>

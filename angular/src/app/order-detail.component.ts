@@ -49,9 +49,6 @@ export class OrderDetailComponent implements OnInit, OnChanges {
         if ( id === 'NewOrder' ) {
             this.order = new Order();
             this.order.Order.create();
-            Customer.activate( { rootOnly: true } ).subscribe( list => {
-                this.customerList = list;
-            })
             this.buildForm();
         } else {
             Order.activate( { OrderId: id } ).subscribe( order => {
@@ -59,6 +56,10 @@ export class OrderDetailComponent implements OnInit, OnChanges {
                 this.buildForm();
             } );
         }
+
+        Customer.activate( { rootOnly: true } ).subscribe( list => {
+            this.customerList = list;
+        } )
     }
 
     cancel(): void {
@@ -72,7 +73,6 @@ export class OrderDetailComponent implements OnInit, OnChanges {
 
         this.order.Order$.Customer.include( customer );
         this.buildForm();
-        this.order.logOi();
     }
 
     goBack() {

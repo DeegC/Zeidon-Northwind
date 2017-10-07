@@ -139,7 +139,10 @@ export class ZeidonFormBuilder {
 
             let value = ei ? ei.getAttribute( attrName) : undefined;
             let formControl = new FormControl( value, domainValidator( entityDef, attributeDef ) );
-            if ( attributeDef.update === false || entityDef.updatable === false || ( ei && ei.oi.readOnly ) )
+
+            // If the attribute is not updatable for some reason then set it as disabled.
+            // If ei == undefined then there is no valid entity instance.
+            if ( attributeDef.update === false || entityDef.updatable === false || ! ei || ei.oi.readOnly )
                 formControl.disable();
 
             form.addControl( attrName, formControl );
@@ -190,6 +193,7 @@ export interface ZeidonComponentWithOis {
 export class DropViewsOnDeactivate implements CanDeactivate<ZeidonComponentWithOis> {
 
     canDeactivate(target: ZeidonComponentWithOis) {
+        console.log( "Deactivate: dropping OIs" );
         let ois = target.getOis();
         if ( ois ) {
             for ( let oi of ois ) {

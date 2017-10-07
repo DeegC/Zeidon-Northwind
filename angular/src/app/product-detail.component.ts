@@ -45,7 +45,6 @@ export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWit
     }
 
     cancel() {
-        this.product.drop();
         window.history.back();
     }
 }
