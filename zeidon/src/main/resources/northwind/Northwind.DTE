@@ -1,4 +1,4 @@
-z1000-Zeidon    NORTHWINDTZTENVRO 09/15/15   23:50:51 1.0a2    
+z1000-Zeidon    NORTHWINDTZTENVRO 10/09/17   23:11:11 1.0a2    
 eTE_DB_Environ 1
 aName      Northwind
 aZKey      833
@@ -9,10 +9,10 @@ eTE_DBMS_Source 2
 aName      MySql
 aZKey      110000445
 aParadigm  R
-aDBMS      MySql/JDBC with SERIAL keys
+aDBMS      MySqll with SERIAL keys
 aGenerateExecutable kzhsqlmb
-aExecutable kzhsqloa
 aDisplayOwner N
+aDisplayDBMS_ID N
 
 eTE_TablRec 3
 aName      categories
@@ -72,7 +72,7 @@ aNotNull   Y
 
 eDomain    6
 aZKey      110000042
-aName      String
+aName      Text
 aDataType  S
 aMaxStringLth 10000
 aDesc      Any Character String

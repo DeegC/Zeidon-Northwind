@@ -152,6 +152,34 @@ describe( 'Entities', function () {
     expect( order.Order$.OrderDetail$.Product$.updated ).toBeTruthy();
   } );
 
+  it( "should perform exclude/include.", function () {
+    let product = instantiateProduct1();
+    let order = instantiateOrder10248();
+
+    expect( order.isUpdated ).toBeFalsy();
+
+    order.Order$.OrderDetail.setSelected( 0 );
+    let originalProduct = order.Order$.OrderDetail$.Product$;
+    expect( originalProduct.ProductId ).toBe( "11" );
+    order.Order$.OrderDetail$.Product$.exclude();
+    expect( originalProduct.excluded ).toBeTruthy();
+    expect( order.Order$.OrderDetail$.Product$ ).toBeUndefined();
+    expect( order.isUpdated ).toBeTruthy();
+
+    order.Order$.OrderDetail$.Product.include( product.Product$ );
+
+    expect( order.Order$.OrderDetail$.Product$ ).toBeTruthy();
+    expect( order.Order$.OrderDetail$.Product$.ProductId ).toBe( "1" );
+
+    let meta = order.toZeidonMeta();
+    let detail = meta.OIs[ 0 ].Order[ 0 ].OrderDetail[ 0 ];
+    expect( detail.Product.length ).toBe( 2 );
+    let included = detail.Product[0];
+    let excluded = detail.Product[1];
+    expect( included[".meta"].incrementals).toBe( "I" );
+    expect( excluded[ ".meta" ].incrementals ).toBe( "X" );
+  } );
+
   it( "should delete single entity.", function () {
     let product = instantiateProduct77();
     expect( product.Product$.ProductId ).toBe( "77" );
@@ -209,6 +237,56 @@ let instantiateProduct77 = function () {
           "Discontinued": false,
           "UnitPrice": 17.0,
           "UnitsInStock": 29,
+          "UnitsOnOrder": 0,
+          "SUPPLIERID": "12",
+          "CATEGORYID": "2",
+          "Supplier": [ {
+            "SupplierId": "12",
+            "CompanyName": "Plutzer Lebensmittelgro�m�rkte AG",
+            "ContactName": "Martin Bein",
+            "ContactTitle": "International Marketing Mgr.",
+            "Phone": "(069) 992755",
+            "Address": "Bogenallee 51",
+            "City": "Frankfurt",
+            "PostalCode": "60439",
+            "Country": "Germany",
+            "HomePage": "Plutzer (on the World Wide Web)#http://www.microsoft.com/accessdev/sampleapps/plutzer.htm#"
+          }],
+          "Category": [ {
+            "CategoryId": "2",
+            "CategoryName": "Condiments",
+            "Description": "Sweet and savory sauces, relishes, spreads, and seasonings"
+          }]
+        }]
+      }]
+    }, { incrementalsSpecified: true } );
+
+  return product;
+}
+
+
+let instantiateProduct1 = function () {
+  let product = new Product();
+  product.createFromJson(
+    {
+      ".meta": {
+        "version": "1"
+      },
+      "OIs": [ {
+        ".oimeta": {
+          "application": "Northwind",
+          "odName": "Product",
+          "incremental": true,
+          "totalRootCount": 1
+        },
+        "Product": [ {
+          "ProductId": "1",
+          "ProductName": "Test Product",
+          "ReorderLevel": 1,
+          "QuantityPerUnit": "1 boxes",
+          "Discontinued": false,
+          "UnitPrice": 10.0,
+          "UnitsInStock": 20,
           "UnitsOnOrder": 0,
           "SUPPLIERID": "12",
           "CATEGORYID": "2",

@@ -579,7 +579,7 @@ export class EntityInstance {
      */
     public update( values: any, options: UpdateOptions = {} ) {
         if ( typeof values !== 'object' )
-            error( "Argument passed to update() must be an object" );
+            throw new ZeidonError( "Argument passed to update() must be an object" );
 
         for ( let key in values ) {
             // Ignore known non-attributes/entities like fingerprint
@@ -588,6 +588,12 @@ export class EntityInstance {
 
             let attributeDef = this.getAttributeDef( key );
             if ( attributeDef ) {
+                if ( ! attributeDef.updatable )
+                    continue;
+
+                if ( ! this.entityDef.updatable )
+                    continue;
+
                 let value = values[ key ];
                 this.setAttribute( key, value );
                 continue;
@@ -598,7 +604,7 @@ export class EntityInstance {
                 if ( options.ignoreUnknownAttributeErrors )
                     continue;
                 else
-                    error( `Key '${key} in values does not match a known entity or attribute` );
+                    throw new ZeidonError( `Key '${key} in values does not match a known entity or attribute` );
             }
 
             let eiChildren = this.getChildEntityArray( key );
@@ -616,16 +622,10 @@ export class EntityInstance {
             for ( let valueChild of valueChildren ) {
                 let eiChild = eiChildren.find( eiChild => eiChild.fingerprint === valueChild.fingerprint )
                 if ( !eiChild )
-                    error( "Couldn't find EI using fingerprint" );
+                    throw new ZeidonError( "Couldn't find EI using fingerprint" );
 
                 childFingerprints[ valueChild.fingerprint ] = true;
                 eiChild.update( valueChild );
-            }
-
-            // Do we have a fingerprint for every child entity?
-            if ( Object.keys( childFingerprints ).length < eiChildren.length ) {
-                // No.  Delete all child entities that are missing from the list of fingerprints.
-                eiChildren.deleteAll( { filter: ( ei ) => !childFingerprints[ ei.fingerprint ] } );
             }
         }
     }

@@ -13,7 +13,7 @@ import * as zeidon from './zeidon-angular';
   templateUrl: 'order-detail.component.html',
   styleUrls: ['order-detail.component.css']
 })
-export class OrderDetailComponent implements OnInit, OnChanges {
+export class OrderDetailComponent implements OnInit {
 
     order: Order;
     customerList: Customer;
@@ -27,17 +27,13 @@ export class OrderDetailComponent implements OnInit, OnChanges {
         private _route:ActivatedRoute ) {
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        console.log( "ngOnChanges for order" );
-        this.buildForm();
-    }
-
     buildForm() {
         this.form = new zeidon.ZeidonFormBuilder().group( this.order.Order$ );
     }
 
     saveOrder( event ): void {
         this.order.Order$.update( this.form.value );
+        console.log( JSON.stringify( this.order.toZeidonMeta(), null, 2 ) );
         this.order.commit().subscribe(order => {
             this.order = order;
             this.buildForm();
@@ -96,4 +92,3 @@ export class OrderDetailComponent implements OnInit, OnChanges {
         window.history.back();
     }
 }
-

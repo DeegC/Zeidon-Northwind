@@ -40,7 +40,7 @@ class ZeidonUnitTests {
         order.serializeOi.withIncremental.toFile("/tmp/orders.json")
     }
 
-    @Test
+//    @Test
     def testPessimisticLocks() {
         val product = View( task ) basedOn "Product"
         val productId = 10
@@ -89,7 +89,7 @@ class ZeidonUnitTests {
         }
     }
 
-    @Test
+//    @Test
     def testBlobs() {
         val empl = View( task ) basedOn "Employee"
         empl.activateWhere( _.Employee.EmployeeId = 1 )
