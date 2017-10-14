@@ -48,6 +48,7 @@
 
       <h3>Products</h3>
 
+      <div formGroupName="OrderDetail">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -57,13 +58,19 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let detail of order.Order$.OrderDetail">
-                    <td>{{detail.Product$.ProductName}}</td>
-                    <td>{{detail.Quantity}}</td>
-                    <td>{{detail.UnitPrice}}</td>
-                </tr>
+                <div *ngFor="let detail of order.Order$.OrderDetail; let i = index;">
+                  <div [formGroupName]="i">
+                    <tr>
+                        <td>{{detail.Product$.ProductName}}</td>
+                        <td><input type="text" formControlName="Quantity"/></td>
+                        <td><input type="text" formControlName="UnitPrice" /></td>
+                    </tr>
+                  </div>
+                </div>
             </tbody>
         </table>
+      </div>
+
 
       <h3>Employee</h3>
 
@@ -89,7 +96,7 @@
       </div>
 
       <div>
-        <button type="submit" class="btn btn-default" [disabled]="! order.isUpdated">
+        <button type="submit" class="btn btn-default" [disabled]="! (order.isUpdated || form.valid)">
             Save Order
         </button>
         <button type="button" class="btn btn-default" (click)="cancel()" >

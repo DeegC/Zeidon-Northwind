@@ -32,8 +32,9 @@ export class OrderDetailComponent implements OnInit {
     }
 
     saveOrder( event ): void {
+        console.log( JSON.stringify( this.form.value, null, 2 ) );
         this.order.Order$.update( this.form.value );
-        console.log( JSON.stringify( this.order.toZeidonMeta(), null, 2 ) );
+//        console.log( JSON.stringify( this.order.toZeidonMeta(), null, 2 ) );
         this.order.commit().subscribe(order => {
             this.order = order;
             this.buildForm();
