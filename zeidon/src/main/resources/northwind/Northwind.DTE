@@ -1,4 +1,4 @@
-z1000-Zeidon    NORTHWINDTZTENVRO 10/09/17   23:11:11 1.0a2    
+z1000-Zeidon    NORTHWINDTZTENVRO 10/25/17   22:52:28 1.0a2    
 eTE_DB_Environ 1
 aName      Northwind
 aZKey      833
@@ -915,6 +915,7 @@ eTE_TablRec 3
 aName      orders
 aZKey      1814
 aDataOrRel D
+awkSelectedFieldForDragSort 14
 
 eTE_FieldDataRel 4
 aName      ORDERID
@@ -1156,7 +1157,7 @@ eER_EntityRelLink 6
 eTE_FieldDataRel_PK 5
 
 eTE_FieldDataRel 4
-aName      SHIPPERID
+aName      ShipVia
 aZKey      1883
 aDesc      shippers(has [0:m] ) orders
 aDataOrRelfieldOrSet R

@@ -28,7 +28,7 @@ class ZeidonUnitTests {
 //        oe.startBrowser
     }
 
-    @Test
+//    @Test
     def testActivateWithNull() {
         val order = View( task ) basedOn "Order"
         order.buildQual( _.Product.ProductId = 10 )
@@ -38,6 +38,17 @@ class ZeidonUnitTests {
             .activate()
 
         order.serializeOi.withIncremental.toFile("/tmp/orders.json")
+    }
+
+    @Test
+    def updateOrder() {
+        val order = View( task ) basedOn "Order"
+        order.activate( qb =>
+            qb.where(_.Order.OrderId = 10248 )
+        )
+
+        order.OrderDetail.Quantity = 99
+        order.UpdateOrder()
     }
 
 //    @Test
