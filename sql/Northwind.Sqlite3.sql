@@ -4751,7 +4751,7 @@ CREATE TABLE [Orders](
    [OrderDate]DATETIME,
    [RequiredDate]DATETIME,
    [ShippedDate]DATETIME,
-   [SHIPPERID]INTEGER,
+   [ShipVia]INTEGER,
    [Freight]NUMERIC DEFAULT 0,
    [ShipName]TEXT,
    [ShipAddress]TEXT,
