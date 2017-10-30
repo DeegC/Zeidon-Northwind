@@ -419,8 +419,8 @@ export const Order_LodDef = {
                     update:       true,
                     foreignKey:   true,
                 },
-                SHIPPERID: {
-                    name:         "SHIPPERID",
+                ShipVia: {
+                    name:         "ShipVia",
                     hidden:       true,
                     required:     true,
                     domainName:   "GeneratedKey",

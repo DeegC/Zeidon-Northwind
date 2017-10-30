@@ -22,10 +22,10 @@ describe('Attributes', function() {
         expect( newOrder.Order$.ShipName).toBe( "John Smith" );
 
         newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
-        expect( newOrder.Order$.OrderDetail$.Quantity).toBe(10)
+        expect( newOrder.Order$.OrderDetail$.Quantity).toBe(10);
 
         newOrder.Order$.OrderDetail.create( { Quantity: "20" } );
-        expect( newOrder.Order$.OrderDetail$.Quantity).toBe(20)
+        expect( newOrder.Order$.OrderDetail$.Quantity).toBe(20);
     });
 
     it( "should verify attribute values", () => {
@@ -50,6 +50,18 @@ describe('Attributes', function() {
         expect( () => { newOrder.Order$.OrderDetail$.Quantity = 10.10 } )
             .toThrow( new AttributeValueError( "Invalid integer value: 10.1", { name: "Quantity" } ) );
     });
+
+    it( "should update attributes via batch update", () => {
+        let newOrder = new Order();
+        newOrder.Order.create();
+        let now = new Date();
+        newOrder.Order$.update( {
+            OrderDate: now,
+            ShipName: "John Doe",
+            ShipAddress: "1 Main St"
+        } );
+        expect( newOrder.Order$.ShipName ).toBe( "John Doe" );
+    } );
 
     it( "should throw invalid attribute errors", () => {
         let newOrder = new Order();

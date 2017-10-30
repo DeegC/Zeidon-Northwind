@@ -341,7 +341,7 @@ let instantiateOrder10248 = function () {
           "ShipCountry": "France",
           "EMPLOYEEID": "5",
           "CUSTOMERID": "VINET",
-          "SHIPPERID": "3",
+          "ShipVia": "3",
           "OrderDetail": [ {
             "UnitPrice": 14.0,
             "Quantity": 12,
