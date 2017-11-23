@@ -25,14 +25,17 @@ export class Employee extends zeidon.ObjectInstance {
         return Employee_LodDef;
     };
 
-    public getDomain( name: string ): zeidon.Domain { 
+    public getDomain( name: string ): zeidon.Domain {
         return Northwind_DomainList[name];
     };
 
-    public getDomainFunctions( name: string ): any { 
-        return Northwind_DomainFunctions[name];
-    }
+    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
+        let f = Northwind_DomainFunctions[ domain.class ];
+        if ( f )
+            return new f( domain );
 
+        return undefined;
+    }
 
     get Employee(): zeidon.EntityArray<Employee_Employee> {
         return this.roots as zeidon.EntityArray<Employee_Employee>;
@@ -40,6 +43,13 @@ export class Employee extends zeidon.ObjectInstance {
 
     get Employee$(): Employee_Employee {
         return this.roots.selected() as Employee_Employee;
+    }
+
+    // Returns the current entity instance if it exists, otherwise returns an instance
+    // that will returned 'undefined' for any property values.  This is the
+    // equivalent to the "elvis operator"
+    get Employee$$(): Employee_Employee {
+        return (this.roots.selected() as Employee_Employee) || zeidon.SAFE_INSTANCE;
     }
 
     public static activate( qual?: any ): Observable<Employee> {
@@ -109,24 +119,39 @@ export class Employee_Employee extends zeidon.EntityInstance {
         return this.getChildEntityArray("DirectReport") as zeidon.EntityArray<Employee_DirectReport>;
     }
 
+
     get DirectReport$(): Employee_DirectReport {
         return this.getChildEntityArray("DirectReport").selected() as Employee_DirectReport;
+    }
+
+    get DirectReport$$(): Employee_DirectReport {
+        return (this.getChildEntityArray("DirectReport").selected() as Employee_DirectReport) || zeidon.SAFE_INSTANCE;
     }
 
     get Supervisor(): zeidon.EntityArray<Employee_Supervisor> {
         return this.getChildEntityArray("Supervisor") as zeidon.EntityArray<Employee_Supervisor>;
     }
 
+
     get Supervisor$(): Employee_Supervisor {
         return this.getChildEntityArray("Supervisor").selected() as Employee_Supervisor;
+    }
+
+    get Supervisor$$(): Employee_Supervisor {
+        return (this.getChildEntityArray("Supervisor").selected() as Employee_Supervisor) || zeidon.SAFE_INSTANCE;
     }
 
     get Territory(): zeidon.EntityArray<Employee_Territory> {
         return this.getChildEntityArray("Territory") as zeidon.EntityArray<Employee_Territory>;
     }
 
+
     get Territory$(): Employee_Territory {
         return this.getChildEntityArray("Territory").selected() as Employee_Territory;
+    }
+
+    get Territory$$(): Employee_Territory {
+        return (this.getChildEntityArray("Territory").selected() as Employee_Territory) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -259,8 +284,13 @@ export class Employee_Territory extends zeidon.EntityInstance {
         return this.getChildEntityArray("Region") as zeidon.EntityArray<Employee_Region>;
     }
 
+
     get Region$(): Employee_Region {
         return this.getChildEntityArray("Region").selected() as Employee_Region;
+    }
+
+    get Region$$(): Employee_Region {
+        return (this.getChildEntityArray("Region").selected() as Employee_Region) || zeidon.SAFE_INSTANCE;
     }
 }
 

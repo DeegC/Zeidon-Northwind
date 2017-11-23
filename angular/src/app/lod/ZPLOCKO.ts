@@ -25,14 +25,17 @@ export class ZPLOCKO extends zeidon.ObjectInstance {
         return ZPLOCKO_LodDef;
     };
 
-    public getDomain( name: string ): zeidon.Domain { 
+    public getDomain( name: string ): zeidon.Domain {
         return Northwind_DomainList[name];
     };
 
-    public getDomainFunctions( name: string ): any { 
-        return Northwind_DomainFunctions[name];
-    }
+    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
+        let f = Northwind_DomainFunctions[ domain.class ];
+        if ( f )
+            return new f( domain );
 
+        return undefined;
+    }
 
     get ZeidonLock(): zeidon.EntityArray<ZPLOCKO_ZeidonLock> {
         return this.roots as zeidon.EntityArray<ZPLOCKO_ZeidonLock>;
@@ -40,6 +43,13 @@ export class ZPLOCKO extends zeidon.ObjectInstance {
 
     get ZeidonLock$(): ZPLOCKO_ZeidonLock {
         return this.roots.selected() as ZPLOCKO_ZeidonLock;
+    }
+
+    // Returns the current entity instance if it exists, otherwise returns an instance
+    // that will returned 'undefined' for any property values.  This is the
+    // equivalent to the "elvis operator"
+    get ZeidonLock$$(): ZPLOCKO_ZeidonLock {
+        return (this.roots.selected() as ZPLOCKO_ZeidonLock) || zeidon.SAFE_INSTANCE;
     }
 
     public static activate( qual?: any ): Observable<ZPLOCKO> {

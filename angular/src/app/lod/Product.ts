@@ -25,14 +25,17 @@ export class Product extends zeidon.ObjectInstance {
         return Product_LodDef;
     };
 
-    public getDomain( name: string ): zeidon.Domain { 
+    public getDomain( name: string ): zeidon.Domain {
         return Northwind_DomainList[name];
     };
 
-    public getDomainFunctions( name: string ): any { 
-        return Northwind_DomainFunctions[name];
-    }
+    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
+        let f = Northwind_DomainFunctions[ domain.class ];
+        if ( f )
+            return new f( domain );
 
+        return undefined;
+    }
 
     get Product(): zeidon.EntityArray<Product_Product> {
         return this.roots as zeidon.EntityArray<Product_Product>;
@@ -40,6 +43,13 @@ export class Product extends zeidon.ObjectInstance {
 
     get Product$(): Product_Product {
         return this.roots.selected() as Product_Product;
+    }
+
+    // Returns the current entity instance if it exists, otherwise returns an instance
+    // that will returned 'undefined' for any property values.  This is the
+    // equivalent to the "elvis operator"
+    get Product$$(): Product_Product {
+        return (this.roots.selected() as Product_Product) || zeidon.SAFE_INSTANCE;
     }
 
     public static activate( qual?: any ): Observable<Product> {
@@ -79,16 +89,26 @@ export class Product_Product extends zeidon.EntityInstance {
         return this.getChildEntityArray("Supplier") as zeidon.EntityArray<Product_Supplier>;
     }
 
+
     get Supplier$(): Product_Supplier {
         return this.getChildEntityArray("Supplier").selected() as Product_Supplier;
+    }
+
+    get Supplier$$(): Product_Supplier {
+        return (this.getChildEntityArray("Supplier").selected() as Product_Supplier) || zeidon.SAFE_INSTANCE;
     }
 
     get Category(): zeidon.EntityArray<Product_Category> {
         return this.getChildEntityArray("Category") as zeidon.EntityArray<Product_Category>;
     }
 
+
     get Category$(): Product_Category {
         return this.getChildEntityArray("Category").selected() as Product_Category;
+    }
+
+    get Category$$(): Product_Category {
+        return (this.getChildEntityArray("Category").selected() as Product_Category) || zeidon.SAFE_INSTANCE;
     }
 }
 

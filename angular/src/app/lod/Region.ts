@@ -25,14 +25,17 @@ export class Region extends zeidon.ObjectInstance {
         return Region_LodDef;
     };
 
-    public getDomain( name: string ): zeidon.Domain { 
+    public getDomain( name: string ): zeidon.Domain {
         return Northwind_DomainList[name];
     };
 
-    public getDomainFunctions( name: string ): any { 
-        return Northwind_DomainFunctions[name];
-    }
+    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
+        let f = Northwind_DomainFunctions[ domain.class ];
+        if ( f )
+            return new f( domain );
 
+        return undefined;
+    }
 
     get Region(): zeidon.EntityArray<Region_Region> {
         return this.roots as zeidon.EntityArray<Region_Region>;
@@ -40,6 +43,13 @@ export class Region extends zeidon.ObjectInstance {
 
     get Region$(): Region_Region {
         return this.roots.selected() as Region_Region;
+    }
+
+    // Returns the current entity instance if it exists, otherwise returns an instance
+    // that will returned 'undefined' for any property values.  This is the
+    // equivalent to the "elvis operator"
+    get Region$$(): Region_Region {
+        return (this.roots.selected() as Region_Region) || zeidon.SAFE_INSTANCE;
     }
 
     public static activate( qual?: any ): Observable<Region> {
@@ -61,8 +71,13 @@ export class Region_Region extends zeidon.EntityInstance {
         return this.getChildEntityArray("Territory") as zeidon.EntityArray<Region_Territory>;
     }
 
+
     get Territory$(): Region_Territory {
         return this.getChildEntityArray("Territory").selected() as Region_Territory;
+    }
+
+    get Territory$$(): Region_Territory {
+        return (this.getChildEntityArray("Territory").selected() as Region_Territory) || zeidon.SAFE_INSTANCE;
     }
 }
 

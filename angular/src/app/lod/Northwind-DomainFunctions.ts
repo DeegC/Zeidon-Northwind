@@ -1,166 +1,19 @@
-import { Domain, BaseDomainFunctions } from "../zeidon"
-import { AttributeValueError } from "../zeidon"
-
-/**
- * User-written code to process domains.
- */
-export class StringDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        if ( value == undefined )
-            return undefined;
-
-        let str = value.toString();
-
-        if ( attributeDef.maxLength ) {
-            if ( str.length > attributeDef.maxLength )
-                throw new AttributeValueError(`Length is longer than max string length: ${value}`, attributeDef );
-            else
-            if ( str.length > attributeDef.domain.maxLength )
-                throw new AttributeValueError(`Length is longer than max string length: ${value}`, attributeDef );
-        }
-
-        return str;
-    }
-}
-
-export class IntegerDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        if ( value == undefined )
-            return undefined;
-
-        if ( typeof value === 'number' ) {
-            // Do nothing atm.
-        } else
-        if ( typeof value === 'string' ) {
-            let v = Number(value);
-            if ( isNaN( v ) ) {
-                throw new AttributeValueError(`Invalid integer value: ${value}`, attributeDef );
-            }
-
-            value = v;
-        } else {
-            throw new AttributeValueError(`Invalid integer value: ${value}`, attributeDef );
-        }
-
-        if ( ! Number.isInteger( value ) )
-            throw new AttributeValueError(`Invalid integer value: ${value}`, attributeDef );
-
-        return value;
-    }
-}
-
-export class BooleanDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-
-        switch ( value ) {
-            case true:
-            case false:
-                return value
-            case "true":
-            case "TRUE":
-                return true;
-            case "false":
-            case "FALSE":
-                return false;
-            case null:
-            case "":
-            case undefined:
-                return undefined;
-        }
-
-        throw new AttributeValueError(`Invalid boolean value: ${value}`, attributeDef );
-    }
-}
-
-export class DoubleDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        if ( value == undefined )
-            return undefined;
-
-        if ( typeof value === 'number' ) {
-            // Do nothing atm.
-        } else
-        if ( typeof value === 'string' ) {
-            let v = Number(value);
-            if ( isNaN( v ) ) {
-                throw new AttributeValueError(`Invalid double value: ${value}`, attributeDef );
-            }
-
-            value = v;
-        } else {
-            throw new AttributeValueError(`Invalid double value: ${value}`, attributeDef );
-        }
-
-        return value;
-    }
-}
-
-export class DateTimeDomainFunctions extends BaseDomainFunctions {
-    convertToDate?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        if ( Object.prototype.toString.call( value ) === '[object Date]' )
-            return value;
-
-        if ( value === "NOW" )
-            return new Date();
-
-        let date = Date.parse( value );
-        if ( isNaN( date ) )
-            throw new AttributeValueError(`Invalid date/time value: ${value}`, attributeDef );
-
-        return new Date( date );
-    }
-
-    convertExternalValue?( value: any, attributeDef: any, context?: any ): any {
-        let date = this.convertToDate( value, attributeDef );
-
-        if ( Object.prototype.toString.call( date ) === '[object Date]' )
-            return date;
-
-        throw new AttributeValueError( `Invalid date/time value: ${value}`, attributeDef );
-    }
-}
-
-export class DateDomainFunctions extends DateTimeDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        let date = super.convertExternalValue( value, attributeDef ) as Date;
-        date.setUTCHours( 0, 0, 0, 0 );
-        return date;
-    }
-}
-
-export class BlobDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context? : any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        return value;
-    }
-
-    convertToJsType( value: any, attributeDef: any ): any {
-        return value;
-    }
-}
-
-export class xxxDomainFunctions extends BaseDomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context?: any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        return value;
-    }
-
-    convertToJsType( value: any, attributeDef: any ): any {
-        return value;
-    }
-}
+import * as domains from "../zeidon-domains"
+import { DomainFunctions } from "../zeidon"
 
 export const Northwind_DomainFunctions = {
-    "com.quinsoft.zeidon.domains.BooleanDomain": new BooleanDomainFunctions(),
-    "com.quinsoft.zeidon.domains.IntegerDomain": new IntegerDomainFunctions(),
-    "com.quinsoft.zeidon.domains.StringDomain": new StringDomainFunctions(),
-    "com.quinsoft.zeidon.domains.DoubleDomain": new DoubleDomainFunctions(),
-    "com.quinsoft.zeidon.domains.DateTimeDomain": new DateTimeDomainFunctions(),
-    "com.quinsoft.zeidon.domains.DateDomain": new DateDomainFunctions(),
-    "com.quinsoft.zeidon.domains.BlobDomain": new BlobDomainFunctions(),
+    "com.quinsoft.zeidon.domains.BooleanDomain":
+        function ( domain ): DomainFunctions { return new domains.BooleanDomainFunctions( domain ) },
+    "com.quinsoft.zeidon.domains.DateDomain":
+        function ( domain ): DomainFunctions { return new domains.DateDomainFunctions( domain ) },
+    "com.quinsoft.zeidon.domains.DateTimeDomain":
+        function ( domain ): DomainFunctions { return new domains.DateTimeDomainFunctions( domain ) },
+    "com.quinsoft.zeidon.domains.IntegerDomain":
+        function ( domain ): DomainFunctions { return new domains.IntegerDomainFunctions( domain ) },
+    "com.quinsoft.zeidon.domains.StringDomain":
+        function ( domain ): DomainFunctions { return new domains.StringDomainFunctions( domain ) },
+    "com.quinsoft.zeidon.domains.DoubleDomain":
+        function ( domain ): DomainFunctions { return new domains.DoubleDomainFunctions( domain ) },
+    "com.quinsoft.zeidon.domains.StaticTableDomain":
+        function ( domain ): DomainFunctions { return new domains.StaticTableDomainFunctions( domain ) },
 }

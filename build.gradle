@@ -14,6 +14,11 @@ subprojects { subproject ->
   group = 'com.quinsoft.zeidon'
   version = '1.0'
 
+  ext.versions = [
+     scala: '2.12',
+     zeidon: '1.5.0-SNAPSHOT'
+  ]
+
   repositories {
      mavenLocal()
      maven {

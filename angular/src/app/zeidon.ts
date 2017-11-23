@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs/Observable';
+import * as domains from "./zeidon-domains"
 
 let configurationInstance: ZeidonConfiguration = undefined;
 
@@ -38,7 +39,7 @@ export class ObjectInstance {
     public getDomain( name: string ): Domain { throw "getDomain() must be overriden" };
     public getEntityDef( name: string ): any { return this.getLodDef().entities[ name ] }
 
-    public getDomainFunctions( name: string ): any {
+    public getDomainFunctions( domain: Domain ): DomainFunctions {
         // Can be overwritten but not necessary.
         return undefined;
     }
@@ -300,7 +301,7 @@ export class EntityInstance {
             if ( domain ) {
                 attributeDef.domain = domain;
                 if ( !domain.domainFunctions )
-                    domain.domainFunctions = this.oi.getDomainFunctions( domain.class );
+                    domain.domainFunctions = this.oi.getDomainFunctions( domain );
             }
             else {
                 console.log( `Couldn't find domain '${attributeDef.domain}' for attribute ${this.entityDef.name}.${attributeDef.name}` );
@@ -443,13 +444,13 @@ export class EntityInstance {
         }
     }
 
-    public getAttribute( attr: string ): any {
+    public getAttribute( attr: string, context: string = undefined ): any {
         let attribs = this.getAttribHash( attr );
         let value = attribs[ attr ];
 
         let attributeDef = this.getAttributeDef( attr );
         if ( attributeDef.domain && attributeDef.domain.domainFunctions ) {
-            value = attributeDef.domain.domainFunctions.convertToJsType( value, attributeDef );
+            value = attributeDef.domain.domainFunctions.convertToJsType( value, attributeDef, context );
         }
 
         return value;
@@ -1161,6 +1162,31 @@ export class EntityArray<T extends EntityInstance> extends Array<T> {
     allEntities: () => Array<T>;
 }
 
+// Used to create SAFE_INSTANCE.
+var handler = {
+    get: function ( target, key ) {
+        if ( key.endsWith( '$$' ) )
+            return target;
+
+        return undefined;
+    }
+};
+
+/**
+    This is the Zeidon equivalent to the "elvis operator".  It allows code to reference
+    a lower-level entity without blowing up if a mid-tier element doesn't exist.
+
+    Example: assume that Configuration entity is empty (e.g. undefined).  The following
+    will blow up:
+
+            newConfig.Configuration$.ThermometerConfig$.AlarmHigh
+
+    Using Elvis ('$$' instead of '$') will return 'undefined':
+
+            newConfig.Configuration$$.ThermometerConfig$$.AlarmHigh
+*/
+export const SAFE_INSTANCE = new Proxy( {}, handler );
+
 export interface CreateOptions {
     incrementalsSpecified?: boolean;
     position?: CursorPosition;
@@ -1298,29 +1324,17 @@ export interface Domain {
     name: string,
     class: string,
     maxLength?: number,
+    defaultContext?: string,
     contexts?: any,
+    domainType?: string,
     domainFunctions?: any,
 }
 
 export interface DomainFunctions {
-    convertExternalValue?( value: any, attributeDef: any, context?: any ): any;
-    convertToJsType( value: any, attributeDef: any ): any;
-}
-
-export class BaseDomainFunctions implements DomainFunctions {
-    checkForRequiredValue( value: any, attributeDef: any ) {
-        if ( attributeDef.required && ( value === undefined || value === null || value === "" ) )
-            throw new AttributeValueError( `Value is required.`, attributeDef );
-    }
-
-    convertExternalValue?( value: any, attributeDef: any, context?: any ): any {
-        this.checkForRequiredValue( value, attributeDef );
-        return value;
-    }
-
-    convertToJsType( value: any, attributeDef: any ): any {
-        return value;
-    }
+    convertExternalValue( value: any, attributeDef: any, context?: any ): any;
+    convertToJsType( value: any, attributeDef: any, context?: string ): any;
+    getTableEntries?( context?: string ): any;
+    getTableValues?( context?: string ): Array<string>;
 }
 
 const debugError = function ( message: string ) {

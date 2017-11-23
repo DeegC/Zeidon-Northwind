@@ -12,14 +12,13 @@ configurations {
 
 buildscript {
     repositories { jcenter() }
-
     dependencies {
     }
 }
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile( 'com.quinsoft.zeidon:zeidon-scala:1.5.0-SNAPSHOT') {
+    compile( "com.quinsoft.zeidon:zeidon-scala:${versions.zeidon}" ) {
         // Exclude some projects to keep the final .war size down.
         exclude module: 'scala-reflect'
         exclude module: 'httpclient'
@@ -41,11 +40,12 @@ dependencies {
     repl 'org.scala-lang:scala-compiler:2.12.3'
     repl 'jline:jline:2.13'
 
-    compile 'com.quinsoft.zeidon:zruby:1.5.0-SNAPSHOT'
-    compile 'com.quinsoft.zeidon:object-browser:1.5.0-SNAPSHOT'
+    compile "com.quinsoft.zeidon:zruby:${versions.zeidon}"
+    compile "com.quinsoft.zeidon:object-browser:${versions.zeidon}"
 
     generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.5.0-SNAPSHOT'
     generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
+    generateTypescriptFiles "com.quinsoft.zeidon:object-browser:${versions.zeidon}"
 }
 
 task generateTypescriptFiles( type: JavaExec ) {

@@ -37,25 +37,17 @@ import { ZeidonRestValues, RestActivator, RestCommitter } from './zeidon-rest-cl
 })
 export class ErrorElementDirective implements Validator, OnInit, OnChanges {
     @Input("zeidonErrorElement") errorElement: any;
-
-    private attributeName: string;
-    private attributeDef: any;
-    private domain: Domain;
+    private control: AbstractControl;
 
     constructor( private el: ElementRef,
                  private renderer: Renderer,
                  private viewContainer: ViewContainerRef ) {
-        this.attributeName = el.nativeElement.attributes.formControlName;
     }
 
     ngOnInit(): void {
-        console.log("validator OnInit" );
-        //this.attributeDef = this.entityInstance.getAttributeDef( this.attributeName );
-        //this.domain = this.attributeDef.domain;
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        console.log( "ngOnChanges for directive" );
     }
 
     registerOnValidatorChange( control ) {
@@ -64,11 +56,24 @@ export class ErrorElementDirective implements Validator, OnInit, OnChanges {
     }
 
     /**
+     * Add entity, attribute, and domain names to the element's class.
+     * @param control
+     */
+    private initControl( control ) {
+        this.control = control;
+        this.el.nativeElement.className = this.el.nativeElement.className +
+            ` attr_${control.attributeDef.name} entity_${control.entityDef.name} domain_${control.attributeDef.domain.name}`;
+    }
+
+    /**
      * This doesn't actually do any validation.  It checks to see if there is an error message
      * associated with the control.  If there is, update the elements with the appropriate
      * styles/classes.
      */
     validate( control ) {
+        if ( ! this.control )
+            this.initControl( control );
+
         if ( control.zeidonErrorMessage ) {
             if ( this.errorElement ) {
                 this.renderer.setElementStyle( this.errorElement, "display", "" );
@@ -131,7 +136,7 @@ export class ZeidonFormBuilder {
 
         // Add a FormControl to the form for each attribute.  If ei is blank
         // then set the attribute value to undefined and read-only.  This allows the page
-        // to display a non-existent entity isntance without throwing an error.
+        // to display a non-existent entity instance without throwing an error.
         for ( let attrName in entityDef.attributes ) {
             let attributeDef = entityDef.attributes[ attrName ];
             if ( attributeDef.hidden )
@@ -139,6 +144,12 @@ export class ZeidonFormBuilder {
 
             let value = ei ? ei.getAttribute( attrName) : undefined;
             let formControl = new FormControl( value, domainValidator( entityDef, attributeDef ) );
+
+            // Add entityDef and attributeDef to the control so it can be used later to add to the class.
+            // (See ErrorElementDirective.)
+            let fc = formControl as any;
+            fc.entityDef = entityDef;
+            fc.attributeDef = attributeDef;
 
             // If the attribute is not updatable for some reason then set it as disabled.
             // If ei == undefined then there is no valid entity instance.
@@ -227,5 +238,41 @@ export class ZeidonAngularConfiguration extends ZeidonConfiguration {
         super( new RestActivator( values, new HttpWrapper( http ) ),
                new RestCommitter( values, new HttpWrapper( http ) ) );
         console.log("--- ZeidonRestConfiguration --- " + values.restUrl );
+    }
+}
+
+@Injectable()
+export class ZeidonRestService {
+    constructor( private http: Http,
+                 private values: ZeidonRestValues ) { }
+
+    /**
+     * Deletes a root entity instance (and all its children) just from the
+     * EI id.
+     *
+     * @param root
+     */
+    deleteRoot( root: EntityInstance ) {
+        let oi = root.oi;
+        let lodName = oi.getLodDef().name;
+        let url = `${this.values.restUrl}/${lodName}/${root.key}`;
+        this.http.delete( url )
+            .toPromise()
+            .then(() => root.drop() )
+            .catch(( error: any ) => Observable.throw( error.json().error || 'Server error' ) );
+    }
+
+    deleteOi( oi: ObjectInstance ) {
+        // For now we only handle a single root.  No real reason it can't handle more
+        // but the semantics of calling the server need to be worked out.
+        if ( oi.root.length != 1 )
+            throw ( "deleteOi may only be called on OI with a single root." );
+
+        let lodName = oi.getLodDef().name;
+        let url = `${this.values.restUrl}/${lodName}/${oi.root[ 0 ].key}`;
+        this.http.delete( url )
+            .toPromise()
+            .then(() => oi.root[ 0 ].drop() )
+            .catch(( error: any ) => Observable.throw( error.json().error || 'Server error' ) );
     }
 }

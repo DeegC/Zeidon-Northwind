@@ -25,14 +25,17 @@ export class Order extends zeidon.ObjectInstance {
         return Order_LodDef;
     };
 
-    public getDomain( name: string ): zeidon.Domain { 
+    public getDomain( name: string ): zeidon.Domain {
         return Northwind_DomainList[name];
     };
 
-    public getDomainFunctions( name: string ): any { 
-        return Northwind_DomainFunctions[name];
-    }
+    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
+        let f = Northwind_DomainFunctions[ domain.class ];
+        if ( f )
+            return new f( domain );
 
+        return undefined;
+    }
 
     get Order(): zeidon.EntityArray<Order_Order> {
         return this.roots as zeidon.EntityArray<Order_Order>;
@@ -40,6 +43,13 @@ export class Order extends zeidon.ObjectInstance {
 
     get Order$(): Order_Order {
         return this.roots.selected() as Order_Order;
+    }
+
+    // Returns the current entity instance if it exists, otherwise returns an instance
+    // that will returned 'undefined' for any property values.  This is the
+    // equivalent to the "elvis operator"
+    get Order$$(): Order_Order {
+        return (this.roots.selected() as Order_Order) || zeidon.SAFE_INSTANCE;
     }
 
     public static activate( qual?: any ): Observable<Order> {
@@ -88,32 +98,52 @@ export class Order_Order extends zeidon.EntityInstance {
         return this.getChildEntityArray("OrderDetail") as zeidon.EntityArray<Order_OrderDetail>;
     }
 
+
     get OrderDetail$(): Order_OrderDetail {
         return this.getChildEntityArray("OrderDetail").selected() as Order_OrderDetail;
+    }
+
+    get OrderDetail$$(): Order_OrderDetail {
+        return (this.getChildEntityArray("OrderDetail").selected() as Order_OrderDetail) || zeidon.SAFE_INSTANCE;
     }
 
     get Customer(): zeidon.EntityArray<Order_Customer> {
         return this.getChildEntityArray("Customer") as zeidon.EntityArray<Order_Customer>;
     }
 
+
     get Customer$(): Order_Customer {
         return this.getChildEntityArray("Customer").selected() as Order_Customer;
+    }
+
+    get Customer$$(): Order_Customer {
+        return (this.getChildEntityArray("Customer").selected() as Order_Customer) || zeidon.SAFE_INSTANCE;
     }
 
     get Employee(): zeidon.EntityArray<Order_Employee> {
         return this.getChildEntityArray("Employee") as zeidon.EntityArray<Order_Employee>;
     }
 
+
     get Employee$(): Order_Employee {
         return this.getChildEntityArray("Employee").selected() as Order_Employee;
+    }
+
+    get Employee$$(): Order_Employee {
+        return (this.getChildEntityArray("Employee").selected() as Order_Employee) || zeidon.SAFE_INSTANCE;
     }
 
     get Shipper(): zeidon.EntityArray<Order_Shipper> {
         return this.getChildEntityArray("Shipper") as zeidon.EntityArray<Order_Shipper>;
     }
 
+
     get Shipper$(): Order_Shipper {
         return this.getChildEntityArray("Shipper").selected() as Order_Shipper;
+    }
+
+    get Shipper$$(): Order_Shipper {
+        return (this.getChildEntityArray("Shipper").selected() as Order_Shipper) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -133,8 +163,13 @@ export class Order_OrderDetail extends zeidon.EntityInstance {
         return this.getChildEntityArray("Product") as zeidon.EntityArray<Order_Product>;
     }
 
+
     get Product$(): Order_Product {
         return this.getChildEntityArray("Product").selected() as Order_Product;
+    }
+
+    get Product$$(): Order_Product {
+        return (this.getChildEntityArray("Product").selected() as Order_Product) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -169,8 +204,13 @@ export class Order_Product extends zeidon.EntityInstance {
         return this.getChildEntityArray("Category") as zeidon.EntityArray<Order_Category>;
     }
 
+
     get Category$(): Order_Category {
         return this.getChildEntityArray("Category").selected() as Order_Category;
+    }
+
+    get Category$$(): Order_Category {
+        return (this.getChildEntityArray("Category").selected() as Order_Category) || zeidon.SAFE_INSTANCE;
     }
 }
 
