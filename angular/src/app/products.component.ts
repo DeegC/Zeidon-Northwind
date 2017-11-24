@@ -26,7 +26,7 @@ export class ProductsComponent implements OnInit {
                 pagination: this.pagination,
                 rootOnly: true,
                 readOnly: true
-            } ).subscribe( products =>
+            } ).then( products =>
             {
                 console.log( "Got products" );
                 this.products = products;

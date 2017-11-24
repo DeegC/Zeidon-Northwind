@@ -18,7 +18,7 @@ export class ShipperDetailComponent implements OnInit {
 
     ngOnInit() {
         let id = +this._route.snapshot.params['id'];
-        Shipper.activate( { ShipperId: id } ).subscribe( shipper => {
+        Shipper.activate( { ShipperId: id } ).then( shipper => {
             this.shipper = shipper;
             this.buildForm();
             console.log( "Loaded shipper" );
@@ -31,7 +31,7 @@ export class ShipperDetailComponent implements OnInit {
 
     saveShipper( event ) {
         this.shipper.Shipper$.update( this.form.value );
-        this.shipper.commit().subscribe(shipper => {
+        this.shipper.commit().then(shipper => {
             this.shipper = shipper;
             this.buildForm();
             window.history.back();

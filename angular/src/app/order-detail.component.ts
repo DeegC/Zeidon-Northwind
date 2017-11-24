@@ -35,7 +35,7 @@ export class OrderDetailComponent implements OnInit {
         console.log( JSON.stringify( this.form.value, null, 2 ) );
         this.order.Order$.update( this.form.value );
 //        console.log( JSON.stringify( this.order.toZeidonMeta(), null, 2 ) );
-        this.order.commit().subscribe(order => {
+        this.order.commit().then(order => {
             this.order = order;
             this.buildForm();
             window.history.back();
@@ -50,17 +50,17 @@ export class OrderDetailComponent implements OnInit {
             this.order.Order.create();
             this.buildForm();
         } else {
-            Order.activate( { OrderId: id } ).subscribe( order => {
+            Order.activate( { OrderId: id } ).then( order => {
                 this.order = order;
                 this.buildForm();
             } );
         }
 
-        Customer.activate( { rootOnly: true } ).subscribe( list => {
+        Customer.activate( { rootOnly: true } ).then( list => {
             this.customerList = list;
         } )
 
-        Employee.activate( { rootOnly: true } ).subscribe( list => {
+        Employee.activate( { rootOnly: true } ).then( list => {
             this.employeeList = list;
         } )
     }

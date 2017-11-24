@@ -28,7 +28,7 @@ export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWit
     ngOnInit() {
         let id = +this._route.snapshot.params['id'];
         console.log( "ProductDetail init" );
-        Product.activate( { ProductId: id } ).subscribe( product => {
+        Product.activate( { ProductId: id } ).then( product => {
             this.product = product;
             this.buildForm();
         } );
@@ -37,7 +37,7 @@ export class ProductDetailComponent implements OnInit, zeidon.ZeidonComponentWit
     saveProduct( event ) {
         this.product.Product$.update( this.form.value );
         console.log( JSON.stringify( this.product, null, 2 ) );
-        this.product.commit().subscribe(product => {
+        this.product.commit().then(product => {
             this.product = product;
             this.buildForm();
             window.history.back();

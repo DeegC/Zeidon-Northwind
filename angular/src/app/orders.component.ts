@@ -28,7 +28,7 @@ export class OrdersComponent implements OnInit {
             {
                 pagination: this.pagination,
                 rootOnly: true
-            } ).subscribe( orders =>
+            } ).then( orders =>
             {
                this.orders = orders;
             } );

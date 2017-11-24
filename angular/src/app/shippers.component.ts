@@ -25,7 +25,7 @@ export class ShippersComponent implements OnInit {
                 pagination: this.pagination,
                 rootOnly: true,
                 readOnly: true
-            } ).subscribe( shippers =>
+            } ).then( shippers =>
             {
                 console.log( "Got shippers" );
                 this.shippers = shippers;

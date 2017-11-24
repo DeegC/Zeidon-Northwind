@@ -5,7 +5,6 @@
 */
 
 import * as zeidon from '../zeidon';
-import { Observable } from 'rxjs';
 import { Northwind_DomainList } from './Northwind-DomainList';
 import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
@@ -52,7 +51,7 @@ export class Order extends zeidon.ObjectInstance {
         return (this.roots.selected() as Order_Order) || zeidon.SAFE_INSTANCE;
     }
 
-    public static activate( qual?: any ): Observable<Order> {
+    public static activate( qual?: any ): Promise<Order> {
         return zeidon.ObjectInstance.activateOi( new Order(), qual );
     }
 }

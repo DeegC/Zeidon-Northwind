@@ -21,7 +21,7 @@ newOrder.Order$.ShipName = "John Smith";
 newOrder.Order$.OrderDetail.create( { Quantity: 10 }, { position: Position.Last } );
 newOrder.logOi();
 
-Product.activate( { ProductId: 77 } ).subscribe(
+Product.activate( { ProductId: 77 } ).then(
     product => {
         console.log( "Got product" );
         newOrder.Order$.OrderDetail$.Product.include( product.Product$ );
