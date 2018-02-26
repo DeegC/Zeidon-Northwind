@@ -193,7 +193,7 @@ CREATE TABLE `Products` (
     `UnitsInStock` SMALLINT(2) DEFAULT 0,
     `UnitsOnOrder` SMALLINT(2) DEFAULT 0,
     `ReorderLevel` SMALLINT(2) DEFAULT 0,
-    `Discontinued` BIT NOT NULL DEFAULT 0,
+    `Discontinued` BOOLEAN NOT NULL DEFAULT 0,
     CONSTRAINT `PK_Products` PRIMARY KEY (`ProductID`)
 );
 

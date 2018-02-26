@@ -54,4 +54,4 @@ fi
 
 echo "Starting jirb"
 export SQLITE_DIR=../conf
-jruby -J-cp $(cat .tmpclasspath) -J-Djline.inputrc=~/.jline.inputrc -S irb -r ./jirb-startup.rb
+jruby -J-cp $(cat .tmpclasspath) $DEBUG_FLAGS -J-Djline.inputrc=~/.jline.inputrc -S irb -r ./jirb-startup.rb
