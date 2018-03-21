@@ -3,7 +3,6 @@
 # Start Ruby's IRB with JRuby and automatically create a Northwind task.
 
 DEBUG_PORT=8000
-DEBUG_FLAGS="-J-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n"
 
 while getopts "bcdxp:" option; do
     case $option in
@@ -12,8 +11,8 @@ while getopts "bcdxp:" option; do
             rm .tmpclasspath > /dev/null
             ;;
         d)
-	    echo "Debug mode will be started with suspend=y"
-	    DEBUG_FLAGS="-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=y"
+	    echo "Debug mode will be started with suspend=n"
+	    DEBUG_FLAGS="-J-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n"
             ;;
         p)
             echo "Using DEBUG_PORT=$OPTARG"
@@ -21,7 +20,7 @@ while getopts "bcdxp:" option; do
             ;;
         x)
             echo "Starting with debug in suspend mode"
-            DEBUG_FLAGS="-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=y"
+            DEBUG_FLAGS="-J-Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=y"
             ;;
     esac
 done

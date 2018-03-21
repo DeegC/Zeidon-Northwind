@@ -35,7 +35,7 @@ dependencies {
     
     compile 'org.xerial:sqlite-jdbc:3.21.0.1'
     compile 'mysql:mysql-connector-java:5.1.44'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     repl 'org.scala-lang:scala-compiler:2.12.3'
     repl 'jline:jline:2.13'
@@ -44,7 +44,7 @@ dependencies {
     compile "com.quinsoft.zeidon:object-browser:${versions.zeidon}"
 
     generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.5.0-SNAPSHOT'
-    generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.+'
+    generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     generateTypescriptFiles "com.quinsoft.zeidon:object-browser:${versions.zeidon}"
 }
 

@@ -1,17 +1,17 @@
-z1000-Zeidon    NORTHWINDTZEREMDO 03/26/16   21:28:57 1.0a2    
+z1000-Zeidon    NORTHWINDTZEREMDO 03/17/18   00:03:38 1.0a2    
 eEntpER_Model 1
 aName      Northwind
 aZKey      110000047
 aNextZKeyToAssign 110000720
-aLastSyncDate 20160326212857898
+aLastSyncDate 20180317000338106
 aDesc      Zeidon application using Northwind DB
 
 eER_Entity 2
 aName      Category
 aZKey      110000364
 aPurpose   F
-aER_DiagramPosX 19
-aER_DiagramPosY 16
+aER_DiagramPosX 11
+aER_DiagramPosY 30
 aTE_TableName categories
 aSAP_Entity 0
 awkSelectedAttributeForDragSort 5
@@ -91,10 +91,10 @@ aZKey      110000409
 aFact      Added thru ER Dialog
 aER_DiagramBendPosX 0
 aER_DiagramBendPosY 0
-aER_DiagramE1PosX 23
-aER_DiagramE1PosY 15
-aER_DiagramE2PosX 23
-aER_DiagramE2PosY 8
+aER_DiagramE1PosX 15
+aER_DiagramE1PosY 29
+aER_DiagramE2PosX 15
+aER_DiagramE2PosY 22
 
 eER_RelLink_Other 5
 aName      for
@@ -110,8 +110,8 @@ aSAP_Entity 0
 aName      Product
 aZKey      110000054
 aPurpose   F
-aER_DiagramPosX 15
-aER_DiagramPosY 3
+aER_DiagramPosX 11
+aER_DiagramPosY 17
 aTE_TableName products
 
 eER_EntIdentifier 3
@@ -125,7 +125,7 @@ aName      Customer
 aZKey      110000238
 aPurpose   F
 aER_DiagramPosX 66
-aER_DiagramPosY 10
+aER_DiagramPosY 17
 aTE_TableName customers
 aSAP_Entity 0
 awkSelectedAttributeForDragSort 1
@@ -246,12 +246,12 @@ aHangingForeignKeyEntity N
 eER_RelType_1 4
 aZKey      110000325
 aFact      Added thru ER Dialog
-aER_DiagramBendPosX 55
-aER_DiagramBendPosY 12
+aER_DiagramBendPosX 0
+aER_DiagramBendPosY 0
 aER_DiagramE1PosX 65
-aER_DiagramE1PosY 12
-aER_DiagramE2PosX 55
-aER_DiagramE2PosY 8
+aER_DiagramE1PosY 19
+aER_DiagramE2PosX 58
+aER_DiagramE2PosY 19
 
 eER_RelLink_Other 5
 aName      for
@@ -267,8 +267,8 @@ aSAP_Entity 0
 aName      Order
 aZKey      110000286
 aPurpose   F
-aER_DiagramPosX 51
-aER_DiagramPosY 3
+aER_DiagramPosX 49
+aER_DiagramPosY 17
 aTE_TableName orders
 
 eER_RelLink 3
@@ -285,10 +285,10 @@ aZKey      110000436
 aFact      Added thru ER Dialog
 aER_DiagramBendPosX 0
 aER_DiagramBendPosY 0
-aER_DiagramE1PosX 70
-aER_DiagramE1PosY 24
-aER_DiagramE2PosX 70
-aER_DiagramE2PosY 15
+aER_DiagramE1PosX 69
+aER_DiagramE1PosY 34
+aER_DiagramE2PosX 69
+aER_DiagramE2PosY 22
 aTE_TableName CustomerCustomerDemo
 
 eER_RelLink_Other 5
@@ -304,8 +304,8 @@ eER_Entity_Other 6
 aName      CustomerDemographics
 aZKey      110000371
 aPurpose   F
-aER_DiagramPosX 66
-aER_DiagramPosY 25
+aER_DiagramPosX 65
+aER_DiagramPosY 35
 
 eER_EntIdentifier 3
 
@@ -359,8 +359,8 @@ eER_Entity 2
 aName      Employee
 aZKey      110000216
 aPurpose   F
-aER_DiagramPosX 45
-aER_DiagramPosY 18
+aER_DiagramPosX 49
+aER_DiagramPosY 31
 aTE_TableName employees
 aSAP_Entity 0
 awkSelectedAttributeForDragSort 12
@@ -551,12 +551,12 @@ aCardMax   m
 eER_RelType_1 4
 aZKey      110000306
 aFact      Added thru ER Dialog
-aER_DiagramBendPosX 49
-aER_DiagramBendPosY 5
-aER_DiagramE1PosX 49
-aER_DiagramE1PosY 17
-aER_DiagramE2PosX 50
-aER_DiagramE2PosY 5
+aER_DiagramBendPosX 0
+aER_DiagramBendPosY 0
+aER_DiagramE1PosX 53
+aER_DiagramE1PosY 30
+aER_DiagramE2PosX 53
+aER_DiagramE2PosY 22
 
 eER_RelLink_Other 5
 aName      for
@@ -578,12 +578,12 @@ aHangingForeignKeyEntity N
 eER_RelType_1 4
 aZKey      110000424
 aFact      Added thru ER Dialog
-aER_DiagramBendPosX 32
-aER_DiagramBendPosY 20
-aER_DiagramE1PosX 32
-aER_DiagramE1PosY 22
-aER_DiagramE2PosX 44
-aER_DiagramE2PosY 20
+aER_DiagramBendPosX 0
+aER_DiagramBendPosY 0
+aER_DiagramE1PosX 36
+aER_DiagramE1PosY 34
+aER_DiagramE2PosX 48
+aER_DiagramE2PosY 34
 aTE_TableName EmployeeTerritories
 
 eER_RelLink_Other 5
@@ -600,8 +600,8 @@ aSAP_Entity 0
 aName      Territory
 aZKey      110000394
 aPurpose   A
-aER_DiagramPosX 28
-aER_DiagramPosY 23
+aER_DiagramPosX 27
+aER_DiagramPosY 32
 aTE_TableName territories
 
 eER_RelLink 3
@@ -613,12 +613,12 @@ aCardMax   m
 eER_RelType_1 4
 aZKey      110000442
 aFact      Added thru ER Dialog
-aER_DiagramBendPosX 57
-aER_DiagramBendPosY 14
-aER_DiagramE1PosX 51
-aER_DiagramE1PosY 17
-aER_DiagramE2PosX 54
-aER_DiagramE2PosY 18
+aER_DiagramBendPosX 61
+aER_DiagramBendPosY 27
+aER_DiagramE1PosX 55
+aER_DiagramE1PosY 30
+aER_DiagramE2PosX 58
+aER_DiagramE2PosY 31
 
 eER_RelLink_Other 5
 aName      reports to
@@ -646,7 +646,7 @@ eER_Entity 2
 aName      Northwind
 aZKey      110000048
 aPurpose   F
-aER_DiagramPosX 7
+aER_DiagramPosX 1
 aER_DiagramPosY 49
 
 eER_Attribute 3
@@ -803,10 +803,10 @@ aZKey      110000361
 aFact      Added thru ER Dialog
 aER_DiagramBendPosX 0
 aER_DiagramBendPosY 0
-aER_DiagramE1PosX 66
-aER_DiagramE1PosY 5
-aER_DiagramE2PosX 60
-aER_DiagramE2PosY 5
+aER_DiagramE1PosX 52
+aER_DiagramE1PosY 9
+aER_DiagramE2PosX 52
+aER_DiagramE2PosY 16
 
 eER_RelLink_Other 5
 aName      has
@@ -819,8 +819,8 @@ aSAP_Entity 0
 aName      Shipper
 aZKey      110000337
 aPurpose   F
-aER_DiagramPosX 67
-aER_DiagramPosY 3
+aER_DiagramPosX 48
+aER_DiagramPosY 4
 aTE_TableName shippers
 
 eER_RelLink 3
@@ -837,10 +837,10 @@ aZKey      110000418
 aFact      Added thru ER Dialog
 aER_DiagramBendPosX 0
 aER_DiagramBendPosY 0
-aER_DiagramE1PosX 50
-aER_DiagramE1PosY 3
-aER_DiagramE2PosX 43
-aER_DiagramE2PosY 3
+aER_DiagramE1PosX 48
+aER_DiagramE1PosY 19
+aER_DiagramE2PosX 41
+aER_DiagramE2PosY 19
 
 eER_RelLink_Other 5
 aName      for
@@ -855,8 +855,8 @@ eER_Entity_Other 6
 aName      OrderDetail
 aZKey      110000399
 aPurpose   S
-aER_DiagramPosX 34
-aER_DiagramPosY 3
+aER_DiagramPosX 32
+aER_DiagramPosY 17
 aTE_TableName orderdetails
 
 eER_EntIdentifier 3
@@ -910,10 +910,10 @@ aZKey      110000415
 aFact      Added thru ER Dialog
 aER_DiagramBendPosX 0
 aER_DiagramBendPosY 0
-aER_DiagramE1PosX 24
-aER_DiagramE1PosY 5
-aER_DiagramE2PosX 33
-aER_DiagramE2PosY 5
+aER_DiagramE1PosX 20
+aER_DiagramE1PosY 19
+aER_DiagramE2PosX 31
+aER_DiagramE2PosY 19
 
 eER_RelLink_Other 5
 aName      has
@@ -1037,12 +1037,12 @@ aCardMax   1
 eER_RelType_1 4
 aZKey      110000406
 aFact      Added thru ER Dialog
-aER_DiagramBendPosX 11
-aER_DiagramBendPosY 5
-aER_DiagramE1PosX 11
-aER_DiagramE1PosY 15
-aER_DiagramE2PosX 14
-aER_DiagramE2PosY 5
+aER_DiagramBendPosX 0
+aER_DiagramBendPosY 0
+aER_DiagramE1PosX 15
+aER_DiagramE1PosY 8
+aER_DiagramE2PosX 15
+aER_DiagramE2PosY 16
 
 eER_RelLink_Other 5
 aName      has
@@ -1055,8 +1055,8 @@ aSAP_Entity 0
 aName      Supplier
 aZKey      110000077
 aPurpose   F
-aER_DiagramPosX 7
-aER_DiagramPosY 16
+aER_DiagramPosX 11
+aER_DiagramPosY 3
 aTE_TableName suppliers
 
 eER_RelLink 3
@@ -1085,8 +1085,8 @@ eER_Entity 2
 aName      Region
 aZKey      110000389
 aPurpose   F
-aER_DiagramPosX 28
-aER_DiagramPosY 35
+aER_DiagramPosX 27
+aER_DiagramPosY 43
 aTE_TableName regions
 aSAP_Entity 0
 awkSelectedAttributeForDragSort 2
@@ -1131,10 +1131,10 @@ aZKey      110000430
 aFact      Added thru ER Dialog
 aER_DiagramBendPosX 0
 aER_DiagramBendPosY 0
-aER_DiagramE1PosX 32
-aER_DiagramE1PosY 34
-aER_DiagramE2PosX 32
-aER_DiagramE2PosY 28
+aER_DiagramE1PosX 31
+aER_DiagramE1PosY 42
+aER_DiagramE2PosX 31
+aER_DiagramE2PosY 37
 
 eER_RelLink_Other 5
 aName      for
@@ -1387,8 +1387,8 @@ aName      ZeidonLocking
 aZKey      110000709
 aPurpose   F
 aDesc      Used for Automatic database locking
-aER_DiagramPosX 6
-aER_DiagramPosY 26
+aER_DiagramPosX 1
+aER_DiagramPosY 42
 awkSelectedAttributeForDragSort 1
 
 eER_Attribute 3
