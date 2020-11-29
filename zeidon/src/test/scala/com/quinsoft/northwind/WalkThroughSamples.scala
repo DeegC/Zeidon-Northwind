@@ -5,7 +5,7 @@ package com.quinsoft.northwind
 
 import com.quinsoft.zeidon.standardoe.JavaObjectEngine
 import com.quinsoft.zeidon.scala.ZeidonOperations
-import com.quinsoft.zeidon.Task
+import com.quinsoft.zeidon.scala.Task
 import com.quinsoft.zeidon.scala.View
 import com.quinsoft.zeidon.scala.basedOn
 import com.quinsoft.zeidon.ZeidonException
@@ -14,9 +14,22 @@ import com.quinsoft.zeidon.ZeidonException
  * This contains all the code used in the Zeidon Quick Walk Through:
  *     http://deegc.github.io/zeidon-joe/QuickWalkThrough.html
  */
-class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
+class WalkThroughSamples( var task: Task ) {
 
     def simpleActivate() {
+        val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
+        myOrder.serializeOi.toTempDir( "order.json" )
+
+        println( "Order ShipName = " + myOrder.Order.ShipName )
+        println( "Employee Name = " + myOrder.Employee.FirstName + " " + myOrder.Employee.LastName )
+
+        println( "Products in order # " + myOrder.Order.OrderId )
+        myOrder.OrderDetail.each {
+            println( "   " + myOrder.Product.ProductName + ": " + myOrder.OrderDetail.Quantity )
+        }
+    }
+
+    def simpleActivateVml() {
         val myOrder = View( task ) basedOn "Order"
         myOrder activateWhere( _.Order.OrderId = 10250 )
         myOrder.serializeOi.toTempDir( "order.json" )
@@ -31,18 +44,16 @@ class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
     }
 
     def simpleUpdate() {
-        val myOrder = View( task ) basedOn "Order"
-        myOrder activateWhere( _.Order.OrderId = 10250 )
+        val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
 
-        myOrder.OrderDetail.Quantity = myOrder.OrderDetail.Quantity + 1
+        myOrder.OrderDetail.Quantity += 1
         println( "New quantity = " + myOrder.OrderDetail.Quantity )
         myOrder.commit()
     }
 
     def errorUpdate1() {
         try {
-            val myOrder = View( task ) basedOn "Order"
-            myOrder activateWhere( _.Order.OrderId = 10250 )
+            val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
 
             myOrder.OrderDetail create()
             myOrder.OrderDetail.UnitPrice = 10.0
@@ -58,8 +69,7 @@ class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
 
     def errorUpdate2() {
         try {
-            val myOrder = View( task ) basedOn "Order"
-            myOrder activateWhere( _.Order.OrderId = 10250 )
+            val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
 
             myOrder.OrderDetail create()
             myOrder.OrderDetail.UnitPrice = 10.0
@@ -76,33 +86,29 @@ class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
     }
 
     def includeProduct() {
-        val myOrder = View( task ) basedOn "Order"
-        myOrder activateWhere( _.Order.OrderId = 10250 )
+        val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
 
         myOrder.OrderDetail create()
         myOrder.OrderDetail.UnitPrice = 10.0
         myOrder.OrderDetail.Quantity = 5
         myOrder.OrderDetail.Discount = 0.0
 
-        val product = View( task ) basedOn "Product"
-        product.activateWhere( _.Product.ProductId = 48 )
-
+        val product = task.Product.activate( _.Product.ProductId = 48 )
         myOrder.Product include product.Product
 
         myOrder.commit()
     }
 
     def includeProductWithCache() {
-        val myOrder = View( task ) basedOn "Order"
-        myOrder activateWhere( _.Order.OrderId = 10250 )
+        val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
 
         myOrder.OrderDetail create()
         myOrder.OrderDetail.UnitPrice = 10.0
         myOrder.OrderDetail.Quantity = 5
         myOrder.OrderDetail.Discount = 0.0
 
-        val products = View( task ) basedOn "Product"
-        products.buildQual( _.Product.Discontinued = false )
+        val products = task.Product.buildQual
+                .where( _.Product.Discontinued = false )
                 .cachedAs( "ProductsList" )
                 .activate()
 
@@ -113,8 +119,7 @@ class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
     }
 
     def deleteEntity() {
-        val myOrder = View( task ) basedOn "Order"
-        myOrder activateWhere( _.Order.OrderId = 10250 )
+        val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
 
         myOrder.OrderDetail setFirst()
         myOrder.OrderDetail delete()
@@ -123,42 +128,37 @@ class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
     }
 
     def deleteParentEntity() {
-        val myOrder = View( task ) basedOn "Order"
-        myOrder activateWhere( _.Order.OrderId = 10250 )
-
+        val myOrder = task.Order.activate( _.Order.OrderId = 10250 )
         myOrder.Order delete()
-
         myOrder commit()
     }
 
     def complexQualifications() {
-        val orders = View( task ) basedOn "Order"
-        orders.activateWhere( _.Product.Discontinued = true )
+        val orders = task.Order.activate( _.Product.Discontinued = true )
 
-        orders.buildQual( _.Product.Discontinued = true )
+        val orders2 = task.Order.buildQual()
+              .where( _.Product.Discontinued = true )
               .restrict( _.OrderDetail ).to( _.Product.Discontinued = true )
               .asynchronous
               .activate()
 
-        orders.buildQual( _.Order.OrderDate > "2015-01-01" )
+        val orders3 = task.Order.buildQual()
+              .where( _.Order.OrderDate > "2015-01-01" )
               .and( _.Employee.LastName = "Smith" )
               .and( _.Product.Discontinued = true )
               .activate()
     }
 
     def loadShippers() : View @basedOn( "Shipper" ) = {
-        val shippers = View( task ) basedOn "Shipper"
-        shippers.activateAll()
+        task.Shipper.all()
     }
 
     def loadEmployees() = {
-        val employees = View( task ) basedOn "Employee"
-        employees.buildQual.cachedAs( "AllEmployees" ).activate()
+        task.Employee.buildQual.cachedAs( "AllEmployees" ).activate()
     }
 
     def loadCustomers() = {
-        val customers = View ( task ) basedOn "Customer"
-        customers.buildQual.cachedAs( "AllCustomers" ).activate()
+        task.Customer.buildQual.cachedAs( "AllCustomers" ).activate()
     }
 
     def createOrder( productId: Int,
@@ -171,14 +171,13 @@ class WalkThroughSamples( var task: Task ) extends ZeidonOperations {
         val employees = loadEmployees()
         val customers = loadCustomers()
 
-        val newOrder = View( task ) basedOn "Order"
-        newOrder activateEmpty()
+        val newOrder = task.Order.empty()
         newOrder.Order create()
         newOrder.Order.ShipName = "Joe Smith"
         newOrder.Order.ShipAddress = "1 Main St"
         newOrder.Order.ShipPostalCode = "01234"
 
-        val product = View( task ) basedOn "Product"
+        val product = task.Product.empty()
         try {
             // This will activate the OI with pessimistic locking.
             product.activateWhere( _.Product.ProductId = productId )

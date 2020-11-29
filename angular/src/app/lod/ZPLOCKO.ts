@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // ZPLOCKO LOD.
 export class ZPLOCKO extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "ZPLOCKO" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return ZPLOCKOEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return ZPLOCKO_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( ZPLOCKO_LodDef, initialize, options );
     }
 
     get ZeidonLock(): zeidon.EntityArray<ZPLOCKO_ZeidonLock> {
@@ -44,12 +25,9 @@ export class ZPLOCKO extends zeidon.ObjectInstance {
         return this.roots.selected() as ZPLOCKO_ZeidonLock;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get ZeidonLock$$(): ZPLOCKO_ZeidonLock {
-        return (this.roots.selected() as ZPLOCKO_ZeidonLock) || zeidon.SAFE_INSTANCE;
-    }
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
 
     public static activate( qual?: any ): Promise<ZPLOCKO> {
         return zeidon.ObjectInstance.activateOi( new ZPLOCKO(), qual );
@@ -83,8 +61,10 @@ const ZPLOCKOEntityPrototypes = {
     ZeidonLock: ZPLOCKO_ZeidonLock.prototype, 
 }
 
-export const ZPLOCKO_LodDef = {
+export const ZPLOCKO_LodDefStructure = {
     name: "ZPLOCKO",
+    root: "ZeidonLock",
+    applicationName: "Northwind",
     entities: {
         ZeidonLock: {
             name:        "ZeidonLock",
@@ -97,6 +77,7 @@ export const ZPLOCKO_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
             },
@@ -166,3 +147,6 @@ export const ZPLOCKO_LodDef = {
 
     }
 }
+
+export const ZPLOCKO_LodDef = new zeidon.LodDef( ZPLOCKO_LodDefStructure, ZPLOCKOEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        

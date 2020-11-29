@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // Shipper LOD.
 export class Shipper extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "Shipper" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return ShipperEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return Shipper_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( Shipper_LodDef, initialize, options );
     }
 
     get Shipper(): zeidon.EntityArray<Shipper_Shipper> {
@@ -44,12 +25,9 @@ export class Shipper extends zeidon.ObjectInstance {
         return this.roots.selected() as Shipper_Shipper;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get Shipper$$(): Shipper_Shipper {
-        return (this.roots.selected() as Shipper_Shipper) || zeidon.SAFE_INSTANCE;
-    }
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
 
     public static activate( qual?: any ): Promise<Shipper> {
         return zeidon.ObjectInstance.activateOi( new Shipper(), qual );
@@ -74,8 +52,10 @@ const ShipperEntityPrototypes = {
     Shipper: Shipper_Shipper.prototype, 
 }
 
-export const Shipper_LodDef = {
+export const Shipper_LodDefStructure = {
     name: "Shipper",
+    root: "Shipper",
+    applicationName: "Northwind",
     entities: {
         Shipper: {
             name:        "Shipper",
@@ -88,6 +68,7 @@ export const Shipper_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
             },
@@ -127,3 +108,6 @@ export const Shipper_LodDef = {
 
     }
 }
+
+export const Shipper_LodDef = new zeidon.LodDef( Shipper_LodDefStructure, ShipperEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        

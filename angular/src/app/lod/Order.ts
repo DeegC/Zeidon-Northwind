@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // Order LOD.
 export class Order extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "Order" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return OrderEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return Order_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( Order_LodDef, initialize, options );
     }
 
     get Order(): zeidon.EntityArray<Order_Order> {
@@ -44,11 +25,56 @@ export class Order extends zeidon.ObjectInstance {
         return this.roots.selected() as Order_Order;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get Order$$(): Order_Order {
-        return (this.roots.selected() as Order_Order) || zeidon.SAFE_INSTANCE;
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
+
+    get OrderDetail(): zeidon.EntityArray<Order_OrderDetail> {
+        return this.Order$?.OrderDetail;
+    }
+
+    get OrderDetail$(): Order_OrderDetail {
+        return this.Order$?.OrderDetail$;
+    }
+
+    get Product(): zeidon.EntityArray<Order_Product> {
+        return this.Order$?.OrderDetail$?.Product;
+    }
+
+    get Product$(): Order_Product {
+        return this.Order$?.OrderDetail$?.Product$;
+    }
+
+    get Category(): zeidon.EntityArray<Order_Category> {
+        return this.Order$?.OrderDetail$?.Product$?.Category;
+    }
+
+    get Category$(): Order_Category {
+        return this.Order$?.OrderDetail$?.Product$?.Category$;
+    }
+
+    get Customer(): zeidon.EntityArray<Order_Customer> {
+        return this.Order$?.Customer;
+    }
+
+    get Customer$(): Order_Customer {
+        return this.Order$?.Customer$;
+    }
+
+    get Employee(): zeidon.EntityArray<Order_Employee> {
+        return this.Order$?.Employee;
+    }
+
+    get Employee$(): Order_Employee {
+        return this.Order$?.Employee$;
+    }
+
+    get Shipper(): zeidon.EntityArray<Order_Shipper> {
+        return this.Order$?.Shipper;
+    }
+
+    get Shipper$(): Order_Shipper {
+        return this.Order$?.Shipper$;
     }
 
     public static activate( qual?: any ): Promise<Order> {
@@ -102,10 +128,6 @@ export class Order_Order extends zeidon.EntityInstance {
         return this.getChildEntityArray("OrderDetail").selected() as Order_OrderDetail;
     }
 
-    get OrderDetail$$(): Order_OrderDetail {
-        return (this.getChildEntityArray("OrderDetail").selected() as Order_OrderDetail) || zeidon.SAFE_INSTANCE;
-    }
-
     get Customer(): zeidon.EntityArray<Order_Customer> {
         return this.getChildEntityArray("Customer") as zeidon.EntityArray<Order_Customer>;
     }
@@ -113,10 +135,6 @@ export class Order_Order extends zeidon.EntityInstance {
 
     get Customer$(): Order_Customer {
         return this.getChildEntityArray("Customer").selected() as Order_Customer;
-    }
-
-    get Customer$$(): Order_Customer {
-        return (this.getChildEntityArray("Customer").selected() as Order_Customer) || zeidon.SAFE_INSTANCE;
     }
 
     get Employee(): zeidon.EntityArray<Order_Employee> {
@@ -128,10 +146,6 @@ export class Order_Order extends zeidon.EntityInstance {
         return this.getChildEntityArray("Employee").selected() as Order_Employee;
     }
 
-    get Employee$$(): Order_Employee {
-        return (this.getChildEntityArray("Employee").selected() as Order_Employee) || zeidon.SAFE_INSTANCE;
-    }
-
     get Shipper(): zeidon.EntityArray<Order_Shipper> {
         return this.getChildEntityArray("Shipper") as zeidon.EntityArray<Order_Shipper>;
     }
@@ -139,10 +153,6 @@ export class Order_Order extends zeidon.EntityInstance {
 
     get Shipper$(): Order_Shipper {
         return this.getChildEntityArray("Shipper").selected() as Order_Shipper;
-    }
-
-    get Shipper$$(): Order_Shipper {
-        return (this.getChildEntityArray("Shipper").selected() as Order_Shipper) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -165,10 +175,6 @@ export class Order_OrderDetail extends zeidon.EntityInstance {
 
     get Product$(): Order_Product {
         return this.getChildEntityArray("Product").selected() as Order_Product;
-    }
-
-    get Product$$(): Order_Product {
-        return (this.getChildEntityArray("Product").selected() as Order_Product) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -206,10 +212,6 @@ export class Order_Product extends zeidon.EntityInstance {
 
     get Category$(): Order_Category {
         return this.getChildEntityArray("Category").selected() as Order_Category;
-    }
-
-    get Category$$(): Order_Category {
-        return (this.getChildEntityArray("Category").selected() as Order_Category) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -305,8 +307,10 @@ const OrderEntityPrototypes = {
     Shipper: Order_Shipper.prototype, 
 }
 
-export const Order_LodDef = {
+export const Order_LodDefStructure = {
     name: "Order",
+    root: "Order",
+    applicationName: "Northwind",
     entities: {
         Order: {
             name:        "Order",
@@ -319,6 +323,7 @@ export const Order_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
                 OrderDetail: {},
@@ -484,6 +489,7 @@ export const Order_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
                 Product: {},
@@ -555,6 +561,7 @@ export const Order_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
                 Category: {},
@@ -676,6 +683,7 @@ export const Order_LodDef = {
             deletable:   false,
             excludable:  false,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -736,6 +744,7 @@ export const Order_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -866,6 +875,7 @@ export const Order_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -1076,6 +1086,7 @@ export const Order_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -1115,3 +1126,6 @@ export const Order_LodDef = {
 
     }
 }
+
+export const Order_LodDef = new zeidon.LodDef( Order_LodDefStructure, OrderEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        

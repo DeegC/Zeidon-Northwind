@@ -10,6 +10,7 @@ import com.quinsoft.zeidon.Blob
 import com.quinsoft.zeidon.PessimisticLockingException
 import com.quinsoft.zeidon.ZeidonException
 import com.quinsoft.zeidon.scala.View
+import com.quinsoft.zeidon.scala.Task
 import com.quinsoft.zeidon.standardoe.JavaObjectEngine
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -20,7 +21,7 @@ import java.io.File
  */
 class ZeidonUnitTests {
     val oe = JavaObjectEngine.getInstance()
-    var task = oe.createTask("Northwind")
+    var task : Task = oe.createTask("Northwind")
 
 
     @Before
@@ -42,11 +43,7 @@ class ZeidonUnitTests {
 
     @Test
     def updateOrder() {
-        val order = View( task ) basedOn "Order"
-        order.activate( qb =>
-            qb.where(_.Order.OrderId = 10248 )
-        )
-
+        val order = task.Order.activate(_.Order.OrderId = 10248 )
         order.OrderDetail.Quantity = 99
         order.UpdateOrder()
     }

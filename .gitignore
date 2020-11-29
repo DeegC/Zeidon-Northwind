@@ -15,3 +15,7 @@ target/
 .tmpclasspath
 
 angular/dist
+.bloop/
+.metals/
+.vscode/
+angular/node_modules

@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // Customer LOD.
 export class Customer extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "Customer" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return CustomerEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return Customer_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( Customer_LodDef, initialize, options );
     }
 
     get Customer(): zeidon.EntityArray<Customer_Customer> {
@@ -44,11 +25,24 @@ export class Customer extends zeidon.ObjectInstance {
         return this.roots.selected() as Customer_Customer;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get Customer$$(): Customer_Customer {
-        return (this.roots.selected() as Customer_Customer) || zeidon.SAFE_INSTANCE;
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
+
+    get Order(): zeidon.EntityArray<Customer_Order> {
+        return this.Customer$?.Order;
+    }
+
+    get Order$(): Customer_Order {
+        return this.Customer$?.Order$;
+    }
+
+    get OrderDetail(): zeidon.EntityArray<Customer_OrderDetail> {
+        return this.Customer$?.Order$?.OrderDetail;
+    }
+
+    get OrderDetail$(): Customer_OrderDetail {
+        return this.Customer$?.Order$?.OrderDetail$;
     }
 
     public static activate( qual?: any ): Promise<Customer> {
@@ -101,10 +95,6 @@ export class Customer_Customer extends zeidon.EntityInstance {
     get Order$(): Customer_Order {
         return this.getChildEntityArray("Order").selected() as Customer_Order;
     }
-
-    get Order$$(): Customer_Order {
-        return (this.getChildEntityArray("Order").selected() as Customer_Order) || zeidon.SAFE_INSTANCE;
-    }
 }
 
 export class Customer_Order extends zeidon.EntityInstance {
@@ -151,10 +141,6 @@ export class Customer_Order extends zeidon.EntityInstance {
     get OrderDetail$(): Customer_OrderDetail {
         return this.getChildEntityArray("OrderDetail").selected() as Customer_OrderDetail;
     }
-
-    get OrderDetail$$(): Customer_OrderDetail {
-        return (this.getChildEntityArray("OrderDetail").selected() as Customer_OrderDetail) || zeidon.SAFE_INSTANCE;
-    }
 }
 
 export class Customer_OrderDetail extends zeidon.EntityInstance {
@@ -176,8 +162,10 @@ const CustomerEntityPrototypes = {
     OrderDetail: Customer_OrderDetail.prototype, 
 }
 
-export const Customer_LodDef = {
+export const Customer_LodDefStructure = {
     name: "Customer",
+    root: "Customer",
+    applicationName: "Northwind",
     entities: {
         Customer: {
             name:        "Customer",
@@ -190,6 +178,7 @@ export const Customer_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
                 Order: {},
@@ -321,6 +310,7 @@ export const Customer_LodDef = {
             deletable:   false,
             excludable:  false,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
                 OrderDetail: {},
@@ -482,6 +472,7 @@ export const Customer_LodDef = {
             deletable:   false,
             excludable:  false,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -541,3 +532,6 @@ export const Customer_LodDef = {
 
     }
 }
+
+export const Customer_LodDef = new zeidon.LodDef( Customer_LodDefStructure, CustomerEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        

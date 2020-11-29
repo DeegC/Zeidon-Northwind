@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // Employee LOD.
 export class Employee extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "Employee" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return EmployeeEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return Employee_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( Employee_LodDef, initialize, options );
     }
 
     get Employee(): zeidon.EntityArray<Employee_Employee> {
@@ -44,11 +25,40 @@ export class Employee extends zeidon.ObjectInstance {
         return this.roots.selected() as Employee_Employee;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get Employee$$(): Employee_Employee {
-        return (this.roots.selected() as Employee_Employee) || zeidon.SAFE_INSTANCE;
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
+
+    get DirectReport(): zeidon.EntityArray<Employee_DirectReport> {
+        return this.Employee$?.DirectReport;
+    }
+
+    get DirectReport$(): Employee_DirectReport {
+        return this.Employee$?.DirectReport$;
+    }
+
+    get Supervisor(): zeidon.EntityArray<Employee_Supervisor> {
+        return this.Employee$?.Supervisor;
+    }
+
+    get Supervisor$(): Employee_Supervisor {
+        return this.Employee$?.Supervisor$;
+    }
+
+    get Territory(): zeidon.EntityArray<Employee_Territory> {
+        return this.Employee$?.Territory;
+    }
+
+    get Territory$(): Employee_Territory {
+        return this.Employee$?.Territory$;
+    }
+
+    get Region(): zeidon.EntityArray<Employee_Region> {
+        return this.Employee$?.Territory$?.Region;
+    }
+
+    get Region$(): Employee_Region {
+        return this.Employee$?.Territory$?.Region$;
     }
 
     public static activate( qual?: any ): Promise<Employee> {
@@ -123,10 +133,6 @@ export class Employee_Employee extends zeidon.EntityInstance {
         return this.getChildEntityArray("DirectReport").selected() as Employee_DirectReport;
     }
 
-    get DirectReport$$(): Employee_DirectReport {
-        return (this.getChildEntityArray("DirectReport").selected() as Employee_DirectReport) || zeidon.SAFE_INSTANCE;
-    }
-
     get Supervisor(): zeidon.EntityArray<Employee_Supervisor> {
         return this.getChildEntityArray("Supervisor") as zeidon.EntityArray<Employee_Supervisor>;
     }
@@ -136,10 +142,6 @@ export class Employee_Employee extends zeidon.EntityInstance {
         return this.getChildEntityArray("Supervisor").selected() as Employee_Supervisor;
     }
 
-    get Supervisor$$(): Employee_Supervisor {
-        return (this.getChildEntityArray("Supervisor").selected() as Employee_Supervisor) || zeidon.SAFE_INSTANCE;
-    }
-
     get Territory(): zeidon.EntityArray<Employee_Territory> {
         return this.getChildEntityArray("Territory") as zeidon.EntityArray<Employee_Territory>;
     }
@@ -147,10 +149,6 @@ export class Employee_Employee extends zeidon.EntityInstance {
 
     get Territory$(): Employee_Territory {
         return this.getChildEntityArray("Territory").selected() as Employee_Territory;
-    }
-
-    get Territory$$(): Employee_Territory {
-        return (this.getChildEntityArray("Territory").selected() as Employee_Territory) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -287,10 +285,6 @@ export class Employee_Territory extends zeidon.EntityInstance {
     get Region$(): Employee_Region {
         return this.getChildEntityArray("Region").selected() as Employee_Region;
     }
-
-    get Region$$(): Employee_Region {
-        return (this.getChildEntityArray("Region").selected() as Employee_Region) || zeidon.SAFE_INSTANCE;
-    }
 }
 
 export class Employee_Region extends zeidon.EntityInstance {
@@ -311,8 +305,10 @@ const EmployeeEntityPrototypes = {
     Region: Employee_Region.prototype, 
 }
 
-export const Employee_LodDef = {
+export const Employee_LodDefStructure = {
     name: "Employee",
+    root: "Employee",
+    applicationName: "Northwind",
     entities: {
         Employee: {
             name:        "Employee",
@@ -325,6 +321,7 @@ export const Employee_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
                 DirectReport: {},
@@ -538,6 +535,7 @@ export const Employee_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -748,6 +746,7 @@ export const Employee_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -958,6 +957,7 @@ export const Employee_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
                 Region: {},
@@ -1009,6 +1009,7 @@ export const Employee_LodDef = {
             deletable:   false,
             excludable:  false,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -1038,3 +1039,6 @@ export const Employee_LodDef = {
 
     }
 }
+
+export const Employee_LodDef = new zeidon.LodDef( Employee_LodDefStructure, EmployeeEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        

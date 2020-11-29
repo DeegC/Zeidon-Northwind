@@ -33,7 +33,7 @@ dependencies {
 	exclude module: 'scala-xml_2.12'
     }
     
-    compile 'org.xerial:sqlite-jdbc:3.21.0.1'
+    compile 'org.xerial:sqlite-jdbc:3.32.3.2'
     compile 'mysql:mysql-connector-java:5.1.44'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
@@ -43,10 +43,16 @@ dependencies {
     compile "com.quinsoft.zeidon:zruby:${versions.zeidon}"
     compile "com.quinsoft.zeidon:object-browser:${versions.zeidon}"
 
-    generateTypescriptFiles 'com.quinsoft.zeidon:javascript:1.5.0-SNAPSHOT'
+    generateTypescriptFiles 'com.quinsoft.zeidon:javascript:2.0.0-SNAPSHOT'
     generateTypescriptFiles  group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     generateTypescriptFiles "com.quinsoft.zeidon:object-browser:${versions.zeidon}"
 }
+
+test {
+    testLogging.showStandardStreams = true
+    testLogging.exceptionFormat = 'full'
+}
+
 
 task generateTypescriptFiles( type: JavaExec ) {
     description 'Generates Typescript files for each LOD.'
@@ -56,8 +62,8 @@ task generateTypescriptFiles( type: JavaExec ) {
 
     // Set up properties so this only gets executed if an XOD has changed.
     outputs.upToDateSpec = new org.gradle.api.specs.AndSpec()
-    inputs.files "$xodDir/Configuration.XOD"
-    outputs.files typescriptDir
+    inputs.files "$xodDir/*.XOD"
+    outputs.files "$typescriptDir/*.XOD"
 
     main = "com.quinsoft.zeidon.javascript.GenerateXodsForTypescript"
     classpath( configurations.generateTypescriptFiles, sourceSets.main.runtimeClasspath, '../conf' )

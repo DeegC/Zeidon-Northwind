@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // Product LOD.
 export class Product extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "Product" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return ProductEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return Product_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( Product_LodDef, initialize, options );
     }
 
     get Product(): zeidon.EntityArray<Product_Product> {
@@ -44,11 +25,24 @@ export class Product extends zeidon.ObjectInstance {
         return this.roots.selected() as Product_Product;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get Product$$(): Product_Product {
-        return (this.roots.selected() as Product_Product) || zeidon.SAFE_INSTANCE;
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
+
+    get Supplier(): zeidon.EntityArray<Product_Supplier> {
+        return this.Product$?.Supplier;
+    }
+
+    get Supplier$(): Product_Supplier {
+        return this.Product$?.Supplier$;
+    }
+
+    get Category(): zeidon.EntityArray<Product_Category> {
+        return this.Product$?.Category;
+    }
+
+    get Category$(): Product_Category {
+        return this.Product$?.Category$;
     }
 
     public static activate( qual?: any ): Promise<Product> {
@@ -93,10 +87,6 @@ export class Product_Product extends zeidon.EntityInstance {
         return this.getChildEntityArray("Supplier").selected() as Product_Supplier;
     }
 
-    get Supplier$$(): Product_Supplier {
-        return (this.getChildEntityArray("Supplier").selected() as Product_Supplier) || zeidon.SAFE_INSTANCE;
-    }
-
     get Category(): zeidon.EntityArray<Product_Category> {
         return this.getChildEntityArray("Category") as zeidon.EntityArray<Product_Category>;
     }
@@ -104,10 +94,6 @@ export class Product_Product extends zeidon.EntityInstance {
 
     get Category$(): Product_Category {
         return this.getChildEntityArray("Category").selected() as Product_Category;
-    }
-
-    get Category$$(): Product_Category {
-        return (this.getChildEntityArray("Category").selected() as Product_Category) || zeidon.SAFE_INSTANCE;
     }
 }
 
@@ -173,8 +159,10 @@ const ProductEntityPrototypes = {
     Category: Product_Category.prototype, 
 }
 
-export const Product_LodDef = {
+export const Product_LodDefStructure = {
     name: "Product",
+    root: "Product",
+    applicationName: "Northwind",
     entities: {
         Product: {
             name:        "Product",
@@ -187,6 +175,7 @@ export const Product_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
                 Supplier: {},
@@ -309,6 +298,7 @@ export const Product_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -449,6 +439,7 @@ export const Product_LodDef = {
             deletable:   false,
             excludable:  true,
             updatable:   false,
+            derived:     false,
             parentDelete: false,
             childEntities: {
             },
@@ -498,3 +489,6 @@ export const Product_LodDef = {
 
     }
 }
+
+export const Product_LodDef = new zeidon.LodDef( Product_LodDefStructure, ProductEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        

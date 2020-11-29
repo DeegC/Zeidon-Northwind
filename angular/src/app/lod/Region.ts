@@ -12,28 +12,9 @@ import { Northwind_DomainFunctions } from './Northwind-DomainFunctions';
 
 // Region LOD.
 export class Region extends zeidon.ObjectInstance {
-    protected rootEntityName(): string { return "Region" };
 
-    public getApplicationName(): String { return "Northwind" };
-
-    getPrototype(entityName: string): any {
-        return RegionEntityPrototypes[entityName];
-    }
-
-    public getLodDef() {
-        return Region_LodDef;
-    };
-
-    public getDomain( name: string ): zeidon.Domain {
-        return Northwind_DomainList[name];
-    };
-
-    public getDomainFunctions( domain: zeidon.Domain ): zeidon.DomainFunctions {
-        let f = Northwind_DomainFunctions[ domain.class ];
-        if ( f )
-            return new f( domain );
-
-        return undefined;
+    constructor( initialize = undefined, options: zeidon.CreateOptions = undefined ) {
+        super( Region_LodDef, initialize, options );
     }
 
     get Region(): zeidon.EntityArray<Region_Region> {
@@ -44,11 +25,16 @@ export class Region extends zeidon.ObjectInstance {
         return this.roots.selected() as Region_Region;
     }
 
-    // Returns the current entity instance if it exists, otherwise returns an instance
-    // that will returned 'undefined' for any property values.  This is the
-    // equivalent to the "elvis operator"
-    get Region$$(): Region_Region {
-        return (this.roots.selected() as Region_Region) || zeidon.SAFE_INSTANCE;
+    // Following allow accessing of child entity instances directly from the OI,
+    // similar to Zeidon Views.
+
+
+    get Territory(): zeidon.EntityArray<Region_Territory> {
+        return this.Region$?.Territory;
+    }
+
+    get Territory$(): Region_Territory {
+        return this.Region$?.Territory$;
     }
 
     public static activate( qual?: any ): Promise<Region> {
@@ -74,10 +60,6 @@ export class Region_Region extends zeidon.EntityInstance {
     get Territory$(): Region_Territory {
         return this.getChildEntityArray("Territory").selected() as Region_Territory;
     }
-
-    get Territory$$(): Region_Territory {
-        return (this.getChildEntityArray("Territory").selected() as Region_Territory) || zeidon.SAFE_INSTANCE;
-    }
 }
 
 export class Region_Territory extends zeidon.EntityInstance {
@@ -95,8 +77,10 @@ const RegionEntityPrototypes = {
     Territory: Region_Territory.prototype, 
 }
 
-export const Region_LodDef = {
+export const Region_LodDefStructure = {
     name: "Region",
+    root: "Region",
+    applicationName: "Northwind",
     entities: {
         Region: {
             name:        "Region",
@@ -109,6 +93,7 @@ export const Region_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
                 Territory: {},
@@ -150,6 +135,7 @@ export const Region_LodDef = {
             deletable:   true,
             excludable:  false,
             updatable:   true,
+            derived:     false,
             parentDelete: true,
             childEntities: {
             },
@@ -189,3 +175,6 @@ export const Region_LodDef = {
 
     }
 }
+
+export const Region_LodDef = new zeidon.LodDef( Region_LodDefStructure, RegionEntityPrototypes, Northwind_DomainList, Northwind_DomainFunctions );
+        
