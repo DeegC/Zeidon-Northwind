@@ -1,0 +1,13 @@
+description ="""
+Simple JAX RS server using Zeidon's JAX RS REST engine.
+
+Project name: ${project.name}
+"""
+
+apply plugin: 'war'
+
+dependencies {
+    compile project(':northwind-zeidon')
+    compile 'mysql:mysql-connector-java:5.1.6'
+    compile( 'com.quinsoft.zeidon:zeidon-resteasy:2.0.0-SNAPSHOT' )
+}
