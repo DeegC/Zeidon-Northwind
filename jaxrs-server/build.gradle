@@ -6,8 +6,23 @@ Project name: ${project.name}
 
 apply plugin: 'war'
 
+configurations {
+   jarSource { transitive = false }
+}
+
 dependencies {
     compile project(':northwind-zeidon')
     compile 'mysql:mysql-connector-java:5.1.6'
-    compile( 'com.quinsoft.zeidon:zeidon-resteasy:2.0.0-SNAPSHOT' )
+    compile 'com.quinsoft.zeidon:zeidon-jaxrs:2.0.0-SNAPSHOT'
+    jarSource 'com.quinsoft.zeidon:zeidon-jaxrs:2.0.0-SNAPSHOT'
 }
+
+//task extractScripts(type: Copy) {
+war {
+    from( zipTree(configurations.jarSource.singleFile).matching {
+        include '**/web.xml'
+    })
+    includeEmptyDirs = false
+}
+
+//compileJava.dependsOn(extractScripts)
