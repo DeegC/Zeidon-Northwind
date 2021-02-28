@@ -20,7 +20,7 @@ dependencies {
 
 gretty {
     classPath "$projectDir/../conf"
-    jvmArgs = ["-DSQLITE_DIR=$projectDir/../conf"]
+    jvmArgs = ["-DSQLITE_DIR=$projectDir"]
 
 }
 
