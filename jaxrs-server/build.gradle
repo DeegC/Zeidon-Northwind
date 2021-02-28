@@ -5,6 +5,7 @@ Project name: ${project.name}
 """
 
 apply plugin: 'war'
+apply from: 'https://raw.github.com/gretty-gradle-plugin/gretty/master/pluginScripts/gretty.plugin'
 
 configurations {
    jarSource { transitive = false }
@@ -17,8 +18,16 @@ dependencies {
     jarSource 'com.quinsoft.zeidon:zeidon-jaxrs:2.0.0-SNAPSHOT'
 }
 
+gretty {
+    classPath "$projectDir/../conf"
+    jvmArgs = ["-DSQLITE_DIR=$projectDir/../conf"]
+
+}
+
 //task extractScripts(type: Copy) {
 war {
+    // Extract the default web.xml from zeidon-jaxrs so we can use it in Northwind.
+    // This saves us from having to have our own web.xml
     from( zipTree(configurations.jarSource.singleFile).matching {
         include '**/web.xml'
     })
